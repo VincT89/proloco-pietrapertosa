@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "components/Header.jsx", "components/Hero.jsx", "components/Manifesto.jsx", "components/Banner.jsx", "components/Borgo.jsx", "components/Esperienze.jsx", "components/Galleria.jsx", "components/News.jsx", "components/Eventi.jsx", "components/Squadra.jsx", "components/CTA.jsx", "components/Contatti.jsx", "components/Footer.jsx"  ],
   "exclude": ["node_modules"]
 }
