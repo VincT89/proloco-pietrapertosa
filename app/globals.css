@@ -423,7 +423,7 @@ html, body { -ms-overflow-style: none; scrollbar-width: none; }
 .ed-wrap { max-width: 1480px; margin: 0 auto; }
 
 /* Grand Typography */
-.ed-title { font-family: "Fraunces", serif; font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 300; line-height: 0.95; color: var(--paper); letter-spacing: -0.01em; margin-bottom: clamp(40px, 6vw, 70px); }
+.ed-title { font-family: "Fraunces", serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 300; line-height: 0.95; color: var(--paper); letter-spacing: -0.01em; margin-bottom: clamp(40px, 6vw, 70px); }
 .ed-sec.paper .ed-title { color: var(--ink); }
 .ed-title em { font-style: italic; color: var(--gold); }
 .ed-subtitle { font-size: 0.85rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-soft); font-weight: 600; margin-bottom: 16px; display: block; }

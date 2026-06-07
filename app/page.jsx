@@ -64,15 +64,15 @@ export default function Home() {
             <div className="ed-list" style={{ borderTop: '1px solid var(--hair)' }}>
               {notizieVerificate.map(notizia => (
                 <Link key={notizia.id} href={`/notizie#avviso-${notizia.id}`} style={{ textDecoration: 'none' }}>
-                  <div className="ed-list-item" style={{ padding: '30px 0', borderBottom: '1px solid var(--hair)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'background 0.3s', cursor: 'pointer' }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '40px', flexWrap: 'wrap' }}>
-                      <div style={{ color: 'var(--gold)', fontFamily: '"Playfair Display", serif', fontSize: '1.3rem', minWidth: '120px' }}>{notizia.data}</div>
+                  <div className="ed-list-item" style={{ padding: '20px 0', borderBottom: '1px solid var(--hair)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'background 0.3s', cursor: 'pointer' }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '30px', flexWrap: 'wrap' }}>
+                      <div style={{ color: 'var(--gold)', fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', minWidth: '100px' }}>{notizia.data}</div>
                       <div>
-                        <h4 style={{ fontSize: '1.6rem', fontFamily: '"Playfair Display", serif', color: 'var(--paper)', marginBottom: '8px', fontWeight: 400 }}>{notizia.titolo}</h4>
-                        <p style={{ color: 'var(--stone)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>{notizia.tipo}</p>
+                        <h4 style={{ fontSize: '1.3rem', fontFamily: '"Playfair Display", serif', color: 'var(--paper)', marginBottom: '4px', fontWeight: 400 }}>{notizia.titolo}</h4>
+                        <p style={{ color: 'var(--stone)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>{notizia.tipo}</p>
                       </div>
                     </div>
-                    <span style={{ color: 'var(--gold)', fontSize: '1.5rem', marginLeft: '20px' }}>→</span>
+                    <span style={{ color: 'var(--gold)', fontSize: '1.2rem', marginLeft: '20px' }}>→</span>
                   </div>
                 </Link>
               ))}
