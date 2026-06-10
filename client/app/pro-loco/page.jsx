@@ -47,7 +47,7 @@ export default function ProLoco() {
               </p>
               <a href="#" className="ed-btn proloco-btn-pad">
                 <FileText size={18} className="proloco-btn-icon" />
-                {isEn ? "Download the Statute (PDF)" : "Scarica lo Statuto (PDF)"}
+                {isEn ? "View the Statute (PDF)" : "Visualizza lo Statuto (PDF)"}
               </a>
             </div>
           </div>
