@@ -202,7 +202,7 @@ export default function Eventi() {
                       <thead>
                         <tr className="ev-cal-th-row">
                           <th className="ev-cal-th-1">{isEn ? "Date" : "Data"}</th>
-                          <th className="ev-cal-th-2">{isEn ? "Title & Details" : "Titolo & Dettagli"}</th>
+                          <th className="ev-cal-th-2">{isEn ? "Title" : "Titolo"}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -222,10 +222,7 @@ export default function Eventi() {
                               </td>
                               <td className="ev-cal-td-2">
                                 <h4 className="ev-cal-item-title">{cal.title}</h4>
-                                <div 
-                                  className="ql-editor-content ev-cal-item-desc"
-                                  dangerouslySetInnerHTML={{ __html: cal.description }} 
-                                />
+                                
                               </td>
                             </tr>
                           );

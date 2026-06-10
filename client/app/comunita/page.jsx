@@ -52,7 +52,7 @@ export default async function Comunita({ searchParams }) {
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
-            padding: 0 clamp(40px, 8vw, 120px);
+            padding: 0 clamp(20px, 4vw, 60px);
             background: var(--ink);
             z-index: 10;
           }

@@ -21,12 +21,10 @@ export default function Header() {
   }, [pathname]);
 
   const toggleMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-    if (!isMobileMenuOpen) {
-      document.body.classList.add("mo");
-    } else {
-      document.body.classList.remove("mo");
-    }
+    setIsMobileMenuOpen((open) => {
+      document.body.classList.toggle("mo", !open);
+      return !open;
+    });
   };
 
   const closeMenu = () => {
@@ -39,9 +37,16 @@ export default function Header() {
   };
 
   return (
-    <nav id="nav">
-      <Link href={getRoute("/")} className="brand" onClick={closeMenu}>
-        <img src="/images/logo.png" alt="Logo Associazione Pro Loco Pietrapertosana" />
+    <>
+      <button
+        className="nav-overlay"
+        type="button"
+        aria-label={isEn ? "Close menu" : "Chiudi menu"}
+        onClick={closeMenu}
+      />
+      <nav id="nav">
+        <Link href={getRoute("/")} className="brand" onClick={closeMenu}>
+          <img src="/images/logo.png" alt="Logo Associazione Pro Loco Pietrapertosana" />
         <span className="t">
           <b>Pietrapertosa</b>
           <small>Pro Loco · Dolomiti Lucane</small>
@@ -78,5 +83,6 @@ export default function Header() {
         </button>
       </div>
     </nav>
+    </>
   );
 }
