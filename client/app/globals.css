@@ -352,6 +352,8 @@ footer{padding:clamp(40px,5vw,70px) clamp(20px,4.5vw,64px) 30px;border-top:1px s
   .adm-form{grid-template-columns:1fr}
 }
 
+.drawer-close { display: none; }
+
 @media(max-width:1440px){
   nav .links {
     position: fixed;

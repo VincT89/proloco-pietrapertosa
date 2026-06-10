@@ -6,6 +6,7 @@ import ClientScripts from '@/components/ClientScripts';
 import { StoreProvider } from '@/components/Store';
 import { getHomeData } from '@/data/home';
 import Link from 'next/link';
+import { withLang } from '@/utils/lang';
 
 async function getEvents(lang) {
   try {
@@ -135,7 +136,7 @@ export default async function Home({ searchParams }) {
               </div>
             ) : (
               notizieVerificate.map(notizia => (
-                <Link key={notizia.id} href={`/notizie#avviso-${notizia.id}`} className="ed-link-clean">
+                <Link key={notizia.id} href={withLang(`/notizie#avviso-${notizia.id}`, lang)} className="ed-link-clean">
                   <div className="ed-list-item ed-list-item-hover">
                     <div className="ed-item-row">
                       <div className="ed-item-date">
@@ -165,7 +166,7 @@ export default async function Home({ searchParams }) {
           <div className="ed-wrap">
             <div className="ed-split ed-split-center">
               <div className="ed-col-center">
-                <span className="ed-subtitle">Esplora il territorio</span>
+                <span className="ed-subtitle">{isEn ? "Explore the territory" : "Esplora il territorio"}</span>
                 <h2 className="ed-title ed-title-large">{data.scopri.titolo}</h2>
                 <p className="ed-desc-text">
                   {isEn 
@@ -177,14 +178,14 @@ export default async function Home({ searchParams }) {
                   {scopriVerificati.map(scopri => (
                     <li key={scopri.id} className="ed-li-flex">
                       <span className="ed-list-bullet"></span>
-                      <span className="ed-li-text">{scopri.nome}</span>
+                      <span className="ed-li-text">{isEn && scopri.nome_en ? scopri.nome_en : scopri.nome}</span>
                     </li>
                   ))}
                 </ul>
 
                 <div>
                   <a href="https://www.borgoracconta.it/citta/pietrapertosa/" target="_blank" rel="noopener noreferrer" className="ed-btn ed-btn-gold">
-                    Vai a Borgo Racconta
+                    {isEn ? "Go to Borgo Racconta" : "Vai a Borgo Racconta"}
                   </a>
                 </div>
               </div>

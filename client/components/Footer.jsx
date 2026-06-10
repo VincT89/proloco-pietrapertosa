@@ -62,16 +62,16 @@ export default function Footer() {
         <div>
           <h5>{isEn ? "Territory" : "Territorio"}</h5>
           <a href="https://www.volodellangelo.com" target="_blank" rel="noopener noreferrer">Volo dell&apos;Angelo</a>
-          <a href="https://www.parcogallipolicognato.it" target="_blank" rel="noopener noreferrer">Parco Gallipoli Cognato</a>
-          <a href="https://www.basilicataturistica.it" target="_blank" rel="noopener noreferrer">APT Basilicata</a>
-          <a href="https://borghipiubelliditalia.it" target="_blank" rel="noopener noreferrer">Borghi più belli d&apos;Italia</a>
+          <a href="https://www.parcogallipolicognato.it/comuni_dettaglio.php?id=76061" target="_blank" rel="noopener noreferrer">Parco Gallipoli Cognato</a>
+          <a href="https://www.basilicataturistica.it/territori/pietrapertosa/" target="_blank" rel="noopener noreferrer">APT Basilicata</a>
+          <a href="https://borghipiubelliditalia.it/borgo/pietrapertosa/" target="_blank" rel="noopener noreferrer">Borghi più belli d&apos;Italia</a>
         </div>
 
         <div>
           <h5>{isEn ? "Follow us" : "Seguici"}</h5>
           <a href="https://www.facebook.com/prolocopietrapertosa1/?locale=it_IT" target="_blank" rel="noopener noreferrer">Facebook</a>
           <a href="https://www.instagram.com/proloco_pietrapertosa/" target="_blank" rel="noopener noreferrer">Instagram</a>
-          <a href="https://prolocopietrapertosa.org" target="_blank" rel="noopener noreferrer">{isEn ? "Our archive" : "Il nostro archivio"}</a>
+          <Link href={getRoute("/galleria")}>Il nostro archivio</Link>
         </div>
       </div>
 

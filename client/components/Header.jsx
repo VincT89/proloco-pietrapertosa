@@ -16,10 +16,9 @@ export default function Header() {
   const isEn = currentLang === "en";
 
   useEffect(() => {
-    return () => {
-      document.body.classList.remove("mo");
-    };
-  }, [pathname, searchParams]);
+    setIsMobileMenuOpen(false);
+    document.body.classList.remove("mo");
+  }, [pathname]);
 
   const toggleMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -54,7 +53,7 @@ export default function Header() {
             <X size={24} />
           </button>
           
-          <Link href={getRoute("/")} className={pathname === getRoute("/") ? "active" : ""} onClick={closeMenu}>Home</Link>
+          <Link href={getRoute("/")} className={pathname === "/" ? "active" : ""} onClick={closeMenu}>Home</Link>
           <Link href={getRoute("/eventi")} className={pathname.includes("/eventi") || pathname.includes("/events") ? "active" : ""} onClick={closeMenu}>{isEn ? "Events" : "Eventi"}</Link>
           <Link href={getRoute("/comunita")} className={pathname.includes("/comunita") || pathname.includes("/community") ? "active" : ""} onClick={closeMenu}>{isEn ? "Community" : "Comunità"}</Link>
           <Link href={getRoute("/notizie")} className={pathname.includes("/notizie") || pathname.includes("/news") ? "active" : ""} onClick={closeMenu}>{isEn ? "News" : "Notizie"}</Link>
