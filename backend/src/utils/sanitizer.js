@@ -7,26 +7,20 @@ const sanitizeConfig = {
   allowedAttributes: {
     ...sanitizeHtml.defaults.allowedAttributes,
     'img': ['src', 'alt', 'width', 'height'],
-    'p': ['class', 'style'],
-    'span': ['class', 'style'],
-    'h1': ['class', 'style'],
-    'h2': ['class', 'style'],
-    'h3': ['class', 'style'],
-    'h4': ['class', 'style'],
-    'h5': ['class', 'style'],
-    'h6': ['class', 'style'],
-    'div': ['class', 'style'],
+    'p': ['class'],
+    'span': ['class'],
+    'h1': ['class'],
+    'h2': ['class'],
+    'h3': ['class'],
+    'h4': ['class'],
+    'h5': ['class'],
+    'h6': ['class'],
+    'div': ['class'],
   },
   allowedClasses: {
     '*': [/^ql-/] // Accetta solo classi generate da Quill (es. ql-align-center, ql-size-large)
   },
-  allowedStyles: {
-    '*': {
-      'color': [/^#(0x)?[0-9a-f]+$/i, /^rgb\(/],
-      'background-color': [/^#(0x)?[0-9a-f]+$/i, /^rgb\(/],
-      'text-align': [/^left$/, /^right$/, /^center$/, /^justify$/]
-    }
-  },
+  allowedStyles: {},
   allowedSchemes: ['http', 'https', 'ftp', 'mailto', 'tel'],
   allowProtocolRelative: true,
   nonTextTags: [ 'style', 'script', 'textarea', 'option', 'noscript' ]

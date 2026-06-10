@@ -7,7 +7,7 @@ export default function CTA() {
       <div
         className="bgi"
         style={{
-          backgroundImage: "url('/images/panorama.jpg')",
+          backgroundImage: "url('/images/pietrapertosaPrimaFooter.jpg')",
         }}
       ></div>
 

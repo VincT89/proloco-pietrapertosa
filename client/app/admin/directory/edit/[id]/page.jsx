@@ -158,7 +158,7 @@ function DirectoryEditContent({ id }) {
           <Link href="/admin/directory" style={{ color: 'var(--admin-muted)' }}>
             <ArrowLeft size={24} />
           </Link>
-          <h1 className="admin-page-title">{isNew ? 'Nuovo Elemento Directory' : 'Modifica Elemento'}</h1>
+          <h1 className="admin-page-title">{isNew ? 'Nuovo Elemento' : 'Modifica Elemento'}</h1>
         </div>
       </div>
 
@@ -184,7 +184,22 @@ function DirectoryEditContent({ id }) {
 
         <Card>
           <div className="flex-col">
-            <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Galleria Immagini (Seleziona per creare il Collage)</label>
+            <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Immagini Selezionate (Clicca sulla X per rimuovere)</label>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '24px' }}>
+              {(formData.gallery || []).map((url, i) => (
+                <div 
+                  key={i} 
+                  style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '6px', overflow: 'hidden', cursor: 'pointer', border: '2px solid var(--admin-accent)' }}
+                  onClick={() => toggleGallery(url)}
+                >
+                  <img src={url} alt="Selected" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,0.7)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 'bold', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'red'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.7)'}>&times;</div>
+                </div>
+              ))}
+              {(formData.gallery || []).length === 0 && <span style={{ color: 'var(--admin-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>Nessuna immagine selezionata</span>}
+            </div>
+
+            <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Scegli dalla Libreria Media (Clicca per aggiungere/rimuovere)</label>
             <div className="admin-gallery-grid">
               {mediaList.length === 0 ? <span style={{color: 'var(--admin-muted)'}}>Nessun media caricato.</span> : mediaList.map(media => {
                 const isSelected = (formData.gallery || []).includes(media.url);
@@ -197,7 +212,6 @@ function DirectoryEditContent({ id }) {
                       border: isSelected ? '3px solid var(--admin-accent)' : '1px solid var(--admin-border)'
                     }}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     {media.resource_type === 'video' ? (
                       <video src={media.url} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isSelected ? 1 : 0.6 }} />
                     ) : (

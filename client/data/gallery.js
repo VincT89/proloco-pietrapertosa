@@ -2,7 +2,7 @@ const galleryDataIt = {
   hero: {
     title: "Archivio Fotografico",
     subtitle: "Pietrapertosa in immagini",
-    img: "/images/castello.jpg",
+    img: "/images/pietrapertosaGalleria.png",
     source: "Archivio Pro Loco",
     status: "verified"
   },
@@ -20,7 +20,7 @@ const galleryDataEn = {
   hero: {
     title: "Photo Archive",
     subtitle: "Pietrapertosa in pictures",
-    img: "/images/castello.jpg",
+    img: "/images/pietrapertosaGalleria.png",
     source: "Archivio Pro Loco",
     status: "verified"
   },

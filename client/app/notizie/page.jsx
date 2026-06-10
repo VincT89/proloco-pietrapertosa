@@ -8,13 +8,15 @@ import Footer from '@/components/Footer';
 import ClientScripts from '@/components/ClientScripts';
 import { StoreProvider } from '@/components/Store';
 import { homeData } from '@/data/home';
-import { usePathname } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { getLang } from '@/utils/lang';
 
 export default function Notizie() {
   const [notizie, setNotizie] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  const pathname = usePathname() || '';
-  const isEn = pathname.startsWith('/en');
+  const searchParams = useSearchParams();
+  const lang = getLang(searchParams);
+  const isEn = lang === 'en';
 
   React.useEffect(() => {
     const fetchNotizie = async () => {
@@ -41,7 +43,8 @@ export default function Notizie() {
       <SectionHero 
         title={isEn ? "Notice Board" : "Bacheca e Avvisi"}
         subtitle={isEn ? "Stay updated on the latest communications from Pro Loco." : "Resta aggiornato sulle ultime comunicazioni della Pro Loco."}
-        img="/images/sapori_hero.png" 
+        img="/images/pietrapertosaBacheca.png" 
+        bgPosition="center 30%"
       />
       
       <PageIntro 

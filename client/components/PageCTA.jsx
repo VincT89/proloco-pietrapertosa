@@ -7,11 +7,11 @@ export default function PageCTA({ title, subtitle = "Vieni a trovarci", text, bt
   const renderButtons = () => {
     if (buttons && buttons.length > 0) {
       return (
-        <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div className="cta-buttons-wrapper">
           {buttons.map((btn, idx) => {
             const BtnIcon = btn.icon || Mail;
             return (
-              <a key={idx} href={btn.link || '#'} className="cta-line fad" style={{ opacity: 1 }}>
+              <a key={idx} href={btn.link || '#'} className="cta-line fad cta-line-visible">
                 <span className="ring">
                   <BtnIcon className="ico" />
                 </span> 
@@ -26,8 +26,8 @@ export default function PageCTA({ title, subtitle = "Vieni a trovarci", text, bt
     // Fallback single button
     if (btnText) {
       return (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <a href={btnLink || '#'} className="cta-line fad" style={{ opacity: 1 }}>
+        <div className="cta-buttons-wrapper">
+          <a href={btnLink || '#'} className="cta-line fad cta-line-visible">
             <span className="ring">
               <Icon className="ico" />
             </span> 
@@ -41,12 +41,12 @@ export default function PageCTA({ title, subtitle = "Vieni a trovarci", text, bt
   };
 
   return (
-    <section className="cta" style={{ paddingLeft: 0, paddingRight: 0 }}>
-      <div className="bgi" style={{ backgroundImage: "url('https://commons.wikimedia.org/wiki/Special:FilePath/Chiesa%20di%20San%20Giacomo%20sullo%20sfondo%20del%20panorama%20di%20Pietrapertosa.jpg?width=1800')" }}></div>
+    <section className="cta cta-no-padding">
+      <div className="bgi cta-bgi"></div>
       <div className="in">
-        <span className="lbl fad" style={{ display: 'block', marginBottom: '24px' }}>{subtitle}</span>
+        <span className="lbl fad cta-subtitle">{subtitle}</span>
         <h2 className="wr">{title}</h2>
-        <p className="fad" style={{ margin: '24px auto 40px', maxWidth: '52ch' }}>{text}</p>
+        <p className="fad cta-text">{text}</p>
         {renderButtons()}
       </div>
     </section>

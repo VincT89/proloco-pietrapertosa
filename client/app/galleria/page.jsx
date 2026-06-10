@@ -10,10 +10,10 @@ import { StoreProvider } from '@/components/Store';
 import { galleryData } from '@/data/gallery';
 import { Camera } from 'lucide-react';
 
-async function getGalleryData() {
+async function getGalleryData(lang) {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
-    const res = await fetch(`${apiUrl}/gallery`, { cache: 'no-store' });
+    const res = await fetch(`${apiUrl}/gallery${lang === 'en' ? '?lang=en' : ''}`, { cache: 'no-store' });
     if (!res.ok) return [];
     const data = await res.json();
     return data.items || [];
@@ -28,7 +28,7 @@ export default async function Galleria({ searchParams }) {
   const isEn = sp?.lang === 'en';
   const heroData = isEn ? galleryData.en.hero : galleryData.it.hero;
   
-  const rawAlbums = await getGalleryData();
+  const rawAlbums = await getGalleryData(sp?.lang || 'it');
 
   return (
     <StoreProvider>

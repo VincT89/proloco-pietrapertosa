@@ -3,7 +3,7 @@ const errorHandler = (err, req, res, next) => {
   // Log dell'errore (in un sistema enterprise questo verrebbe mandato a Datadog/Sentry)
   console.error('[Error Handler]', {
     message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
+    stack: process.env.NODE_ENV === 'production' ? '[hidden]' : err.stack,
     path: req.path,
     method: req.method,
     body: req.body

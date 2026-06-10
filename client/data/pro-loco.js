@@ -2,7 +2,7 @@ const proLocoDataIt = {
   hero: {
     title: "La Pro Loco",
     subtitle: "MOTORE DELLA NOSTRA COMUNITÀ",
-    img: "/images/arabata01.jpg"
+    img: "/images/pietrapertosaProloco.png"
   },
   intro: {
     title: "Chi Siamo"
@@ -11,11 +11,11 @@ const proLocoDataIt = {
     titolo: "Quelli che montano il palco",
     sottotitolo: "Il Direttivo Pro Loco",
     membri: [
-      { nome: "Carmela Coviello", ruolo: "PRESIDENTE" },
-      { nome: "Rocco De Rosa", ruolo: "VICE PRESIDENTE" },
-      { nome: "Martina Caturano", ruolo: "SEGRETARIO" },
-      { nome: "Viviana Caturano", ruolo: "TESORIERE" },
-      { nome: "Vincenzo Palladino", ruolo: "CONSIGLIERE" }
+      { nome: "Laraia Marinella", ruolo: "PRESIDENTE" },
+      { nome: "Lucia Zottarelli", ruolo: "VICE PRESIDENTE" },
+      { nome: "Marilina Giannotta", ruolo: "SEGRETARIO" },
+      { nome: "Marianna Giannotta", ruolo: "TESORIERE" },
+      { nome: "Marinella Pellettiere", ruolo: "CONSIGLIERE" }
     ],
     img: "/images/squadra1.jpg"
   }
@@ -25,7 +25,7 @@ const proLocoDataEn = {
   hero: {
     title: "The Pro Loco",
     subtitle: "THE ENGINE OF OUR COMMUNITY",
-    img: "/images/arabata01.jpg"
+    img: "/images/pietrapertosaProloco.png"
   },
   intro: {
     title: "Who We Are"
@@ -34,11 +34,11 @@ const proLocoDataEn = {
     titolo: "The ones who set up the stage",
     sottotitolo: "The Pro Loco Board",
     membri: [
-      { nome: "Carmela Coviello", ruolo: "PRESIDENT" },
-      { nome: "Rocco De Rosa", ruolo: "VICE PRESIDENT" },
-      { nome: "Martina Caturano", ruolo: "SECRETARY" },
-      { nome: "Viviana Caturano", ruolo: "TREASURER" },
-      { nome: "Vincenzo Palladino", ruolo: "COUNCILOR" }
+      { nome: "Laraia Marinella", ruolo: "PRESIDENT" },
+      { nome: "Lucia Zottarelli", ruolo: "VICE PRESIDENT" },
+      { nome: "Marilina Giannotta", ruolo: "SECRETARY" },
+      { nome: "Marianna Giannotta", ruolo: "TREASURER" },
+      { nome: "Marinella Pellettiere", ruolo: "COUNCILOR" }
     ],
     img: "/images/squadra1.jpg"
   }

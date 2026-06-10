@@ -43,7 +43,7 @@ export default function AutoCarousel({ images, interval = 4000, objectFit = "cov
           {images.map((_, idx) => (
             <div
               key={idx}
-              onClick={() => setCurrentIndex(idx)}
+              onClick={(e) => { e.stopPropagation(); setCurrentIndex(idx); }}
               style={{
                 width: "8px",
                 height: "8px",

@@ -47,7 +47,7 @@ export default async function Territorio({ searchParams }) {
   const isEn = lang === 'en';
 
   if (!page) {
-    return <div style={{ padding: '100px', textAlign: 'center', color: 'white' }}>{isEn ? "Page under maintenance..." : "Pagina in manutenzione..."}</div>;
+    return <div className="terr-maintenance">{isEn ? "Page under maintenance..." : "Pagina in manutenzione..."}</div>;
   }
 
   return (
@@ -56,7 +56,8 @@ export default async function Territorio({ searchParams }) {
       <SectionHero 
         title={page.hero_title} 
         subtitle={page.hero_subtitle} 
-        img={page.hero_image_url} 
+        img="/images/pietrapertosaTerritorio.png"
+        bgPosition="center 30%"
       />
       
       <PageIntro 
@@ -66,24 +67,24 @@ export default async function Territorio({ searchParams }) {
 
       {/* Sezione Aziende Agricole */}
       {aziende.length > 0 && (
-        <section className="wrap" style={{ paddingBottom: '80px', paddingTop: '40px' }}>
-          <h2 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-cormorant), serif', marginBottom: '60px', color: 'var(--paper)' }}>
+        <section className="wrap terr-section-1">
+          <h2 className="terr-title">
             {isEn ? "Farms" : "Aziende Agricole"}
           </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '100px' }}>
+          <div className="terr-list">
             {aziende.map((az, index) => {
               const gallery = typeof az.gallery === 'string' ? safeJsonParse(az.gallery) : (az.gallery || []);
               return (
-                <div key={az.id} className="ed-split" style={{ alignItems: 'center', direction: index % 2 !== 0 ? 'rtl' : 'ltr' }}>
-                  <div style={{ direction: 'ltr' }}>
-                    <span className="lbl-mut" style={{ color: 'var(--gold)', letterSpacing: '0.2em' }}>{az.subtitle}</span>
-                    <h3 style={{ fontSize: '2.2rem', fontFamily: '"Cormorant Garamond", serif', margin: '16px 0', color: 'var(--paper)', lineHeight: 1.2 }}>
+                <div key={az.id} className={`ed-split terr-item ${index % 2 !== 0 ? 'terr-item-rtl' : 'terr-item-ltr'}`}>
+                  <div className="terr-text-reset">
+                    <span className="lbl-mut terr-item-subtitle">{az.subtitle}</span>
+                    <h3 className="terr-item-title">
                       {az.title}
                     </h3>
-                    <p style={{ color: 'var(--stone)', fontSize: '1.1rem', lineHeight: '1.7', maxWidth: '45ch', marginBottom: '20px', whiteSpace: 'pre-wrap' }}>
+                    <p className="terr-item-desc">
                       {az.description}
                     </p>
-                    {az.contact_info && <div style={{ fontSize: '0.85rem', color: 'var(--stone)' }}>{isEn ? "Contact:" : "Contatto:"} {az.contact_info}</div>}
+                    {az.contact_info && <div className="terr-item-contact">{isEn ? "Contact:" : "Contatto:"} {az.contact_info}</div>}
                   </div>
                   <InteractiveCollage images={gallery} altText={az.title} />
                 </div>
@@ -95,24 +96,24 @@ export default async function Territorio({ searchParams }) {
 
       {/* Sezione Food Truck */}
       {foodtruck.length > 0 && (
-        <section className="wrap" style={{ paddingBottom: '80px' }}>
-          <h2 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-cormorant), serif', marginBottom: '60px', color: 'var(--paper)' }}>
+        <section className="wrap terr-section-2">
+          <h2 className="terr-title">
             {isEn ? "Food Truck and Street Food" : "Food Truck e Street Food"}
           </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '100px' }}>
+          <div className="terr-list">
             {foodtruck.map((ft, index) => {
               const gallery = typeof ft.gallery === 'string' ? safeJsonParse(ft.gallery) : (ft.gallery || []);
               return (
-                <div key={ft.id} className="ed-split" style={{ alignItems: 'center', direction: index % 2 === 0 ? 'rtl' : 'ltr' }}>
-                  <div style={{ direction: 'ltr' }}>
-                    <span className="lbl-mut" style={{ color: 'var(--gold)', letterSpacing: '0.2em' }}>{ft.subtitle}</span>
-                    <h3 style={{ fontSize: '2.2rem', fontFamily: '"Cormorant Garamond", serif', margin: '16px 0', color: 'var(--paper)', lineHeight: 1.2 }}>
+                <div key={ft.id} className={`ed-split terr-item ${index % 2 === 0 ? 'terr-item-rtl' : 'terr-item-ltr'}`}>
+                  <div className="terr-text-reset">
+                    <span className="lbl-mut terr-item-subtitle">{ft.subtitle}</span>
+                    <h3 className="terr-item-title">
                       {ft.title}
                     </h3>
-                    <p style={{ color: 'var(--stone)', fontSize: '1.1rem', lineHeight: '1.7', maxWidth: '45ch', marginBottom: '20px', whiteSpace: 'pre-wrap' }}>
+                    <p className="terr-item-desc">
                       {ft.description}
                     </p>
-                    {ft.contact_info && <div style={{ fontSize: '0.85rem', color: 'var(--stone)' }}>{isEn ? "Contact:" : "Contatto:"} {ft.contact_info}</div>}
+                    {ft.contact_info && <div className="terr-item-contact">{isEn ? "Contact:" : "Contatto:"} {ft.contact_info}</div>}
                   </div>
                   <InteractiveCollage images={gallery} altText={ft.title} />
                 </div>
@@ -124,24 +125,24 @@ export default async function Territorio({ searchParams }) {
 
       {/* Sezione Artigiani */}
       {artigiani.length > 0 && (
-        <section className="wrap" style={{ paddingBottom: '100px' }}>
-          <h2 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-cormorant), serif', marginBottom: '60px', color: 'var(--paper)' }}>
+        <section className="wrap terr-section-3">
+          <h2 className="terr-title">
             {isEn ? "Artisans" : "Artigiani"}
           </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '100px' }}>
+          <div className="terr-list">
             {artigiani.map((art, index) => {
               const gallery = typeof art.gallery === 'string' ? safeJsonParse(art.gallery) : (art.gallery || []);
               return (
-                <div key={art.id} className="ed-split" style={{ alignItems: 'center', direction: index % 2 !== 0 ? 'rtl' : 'ltr' }}>
-                  <div style={{ direction: 'ltr' }}>
-                    <span className="lbl-mut" style={{ color: 'var(--gold)', letterSpacing: '0.2em' }}>{art.subtitle}</span>
-                    <h3 style={{ fontSize: '2.2rem', fontFamily: '"Cormorant Garamond", serif', margin: '16px 0', color: 'var(--paper)', lineHeight: 1.2 }}>
+                <div key={art.id} className={`ed-split terr-item ${index % 2 !== 0 ? 'terr-item-rtl' : 'terr-item-ltr'}`}>
+                  <div className="terr-text-reset">
+                    <span className="lbl-mut terr-item-subtitle">{art.subtitle}</span>
+                    <h3 className="terr-item-title">
                       {art.title}
                     </h3>
-                    <p style={{ color: 'var(--stone)', fontSize: '1.1rem', lineHeight: '1.7', maxWidth: '45ch', marginBottom: '20px', whiteSpace: 'pre-wrap' }}>
+                    <p className="terr-item-desc">
                       {art.description}
                     </p>
-                    {art.contact_info && <div style={{ fontSize: '0.85rem', color: 'var(--stone)' }}>{isEn ? "Contact:" : "Contatto:"} {art.contact_info}</div>}
+                    {art.contact_info && <div className="terr-item-contact">{isEn ? "Contact:" : "Contatto:"} {art.contact_info}</div>}
                   </div>
                   <InteractiveCollage images={gallery} altText={art.title} />
                 </div>

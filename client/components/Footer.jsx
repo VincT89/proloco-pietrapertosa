@@ -1,29 +1,17 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Lock } from "lucide-react";
+import { getLang, withLang } from "../utils/lang";
 
 export default function Footer() {
   const pathname = usePathname() || '';
-  const isEn = pathname.startsWith('/en');
-
-  const itToEn = {
-    '/eventi': '/events',
-    '/comunita': '/community',
-    '/notizie': '/news',
-    '/territorio': '/territory',
-    '/sapori': '/tastes',
-    '/scopri': '/discover',
-    '/storie': '/stories',
-    '/galleria': '/gallery',
-    '/pro-loco': '/pro-loco',
-    '/': ''
-  };
+  const searchParams = useSearchParams();
+  const currentLang = getLang(searchParams);
+  const isEn = currentLang === "en";
 
   const getRoute = (path) => {
-    if (isEn) {
-      return `/en${itToEn[path] !== undefined ? itToEn[path] : path}`;
-    }
-    return path;
+    return withLang(path, currentLang);
   };
 
   return (
@@ -33,8 +21,8 @@ export default function Footer() {
       </div>
 
       <div className="f-cols">
-        <div className="fb" style={{ display: "flex", gap: "18px", alignItems: "flex-start", flexDirection: "column" }}>
-          <img src="/images/logo.png" alt="" style={{ height: 70, width: "auto", flexShrink: 0 }} />
+        <div className="fb footer-brand-box">
+          <img src="/images/logo.png" alt="Pro Loco Pietrapertosa Logo" className="footer-logo" />
           <div>
             <b>Pro Loco Pietrapertosana</b>
             <ul className="fu">
@@ -44,11 +32,18 @@ export default function Footer() {
             <p>
               {isEn ? "Non-profit association for the touristic and cultural promotion of the village, in the Park of the Lucanian Dolomites." : "Associazione no profit per la promozione turistica e culturale del borgo, nel Parco delle Piccole Dolomiti Lucane."}
             </p>
-            <div style={{ marginTop: "16px", fontSize: "0.8rem", color: "var(--stone)", lineHeight: "1.6" }}>
+            <div className="footer-address">
               Via della Speranza, 159<br/>
               85010 Pietrapertosa (PZ)<br/>
               P.Iva: 01925320762<br/>
               Cod. Fiscale: 96028030763
+            </div>
+            
+            <div className="footer-admin-link-wrapper">
+              <Link href="/admin/login" className="adm-link footer-admin-link">
+                <Lock size={12} className="footer-admin-icon" />
+                {isEn ? "Restricted Access" : "Accesso Riservato"}
+              </Link>
             </div>
           </div>
         </div>
@@ -83,7 +78,7 @@ export default function Footer() {
       <div className="f-bot">
         <span>© 2026 Pro Loco Pietrapertosa</span>
         <span>
-          <i style={{ color: "var(--gold-soft)" }}>{isEn ? "made with heart, at 1.088 meters" : "fatto con il cuore, a 1.088 metri"}</i>
+          <i className="footer-credit">{isEn ? "made with heart, at 1.088 meters" : "fatto con il cuore, a 1.088 metri"}</i>
         </span>
       </div>
     </footer>

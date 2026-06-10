@@ -79,7 +79,7 @@ function DirectoryAdminContent() {
   return (
     <div>
       <div className="admin-page-header">
-        <h1 className="admin-page-title">Directory <span>attività e territorio</span></h1>
+        <h1 className="admin-page-title">Attività <span>e Territorio</span></h1>
         <Link href={`/admin/directory/edit/new?category=${filterCategory}`} style={{ textDecoration: 'none' }}>
           <Button icon={<Plus size={16} />}>Nuovo Elemento</Button>
         </Link>

@@ -1,33 +1,18 @@
 "use client";
 import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { getLang, withLang } from '../utils/lang';
 
 export default function SEO() {
   const pathname = usePathname() || '';
-  const isEn = pathname.startsWith('/en');
-
-  const itToEn = {
-    '/eventi': '/events',
-    '/comunita': '/community',
-    '/notizie': '/news',
-    '/territorio': '/territory',
-    '/sapori': '/tastes',
-    '/scopri': '/discover',
-    '/storie': '/stories',
-    '/galleria': '/gallery',
-    '/pro-loco': '/pro-loco',
-    '/': ''
-  };
-  const enToIt = Object.fromEntries(Object.entries(itToEn).map(([it, en]) => [en, it]));
-
-  let rawPath = isEn ? (pathname.replace('/en', '') || '/') : pathname;
-  const itPath = isEn ? (enToIt[rawPath] || rawPath) : rawPath;
-  const enPath = `/en${itToEn[itPath] !== undefined ? itToEn[itPath] : itPath}`;
+  const searchParams = useSearchParams();
+  const currentLang = getLang(searchParams);
+  const isEn = currentLang === 'en';
   
   // Assicurati di impostare il dominio corretto per la produzione
   const domain = process.env.NEXT_PUBLIC_SITE_URL || 'https://prolocopietrapertosa.it';
-  const itUrl = `${domain}${itPath}`;
-  const enUrl = `${domain}${enPath}`;
+  const itUrl = `${domain}${withLang(pathname, 'it')}`;
+  const enUrl = `${domain}${withLang(pathname, 'en')}`;
 
   useEffect(() => {
     document.documentElement.lang = isEn ? 'en' : 'it';

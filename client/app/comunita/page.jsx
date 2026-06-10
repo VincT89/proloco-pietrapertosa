@@ -32,16 +32,16 @@ export default async function Comunita({ searchParams }) {
   const { page, realta } = await getPageData(lang);
   const isEn = lang === 'en';
 
-  if (!page) return <div style={{ padding: '100px', textAlign: 'center', color: 'white' }}>{isEn ? "Under maintenance..." : "In manutenzione..."}</div>;
+  if (!page) return <div className="cm-maintenance">{isEn ? "Under maintenance..." : "In manutenzione..."}</div>;
 
   return (
     <StoreProvider>
       <Header />
-      <SectionHero title={page.hero_title} subtitle={page.hero_subtitle} img={page.hero_image_url} />
+      <SectionHero title={page.hero_title} subtitle={page.hero_subtitle} img="/images/pietrapertosaComunita.jpg" />
       
       <PageIntro title={page.intro_title} text={page.intro_text} />
 
-      <section style={{ position: 'relative', background: 'var(--ink)' }}>
+      <section className="cm-sec">
         <style dangerouslySetInnerHTML={{__html: `
           .sticky-split { display: flex; flex-direction: row; border-bottom: 1px solid rgba(255,255,255,0.05); }
           .sticky-text { 
@@ -91,28 +91,28 @@ export default async function Comunita({ searchParams }) {
           return (
             <div key={asso.id} className="sticky-split">
               <div className="sticky-text">
-                <span style={{ color: 'var(--gold)', textTransform: 'uppercase', letterSpacing: '3px', fontSize: '0.85rem', fontWeight: 600, display: 'inline-block', marginBottom: '24px' }}>
+                <span className="cm-subtitle">
                   {asso.subtitle}
                 </span>
-                <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(2.5rem, 4vw, 4.5rem)', color: 'var(--paper)', margin: '0 0 30px', lineHeight: 1.1 }}>
+                <h3 className="cm-title">
                   {asso.title}
                 </h3>
-                <p style={{ color: 'rgba(244,239,229,0.85)', fontSize: '1.15rem', lineHeight: 1.8, margin: 0, whiteSpace: 'pre-wrap' }}>
+                <p className="cm-desc">
                   {asso.description}
                 </p>
-                {asso.contact_info && <div style={{ fontSize: '0.85rem', color: 'var(--stone)', marginTop: '20px' }}>{isEn ? "Contact:" : "Contatto:"} {asso.contact_info}</div>}
+                {asso.contact_info && <div className="cm-contact">{isEn ? "Contact:" : "Contatto:"} {asso.contact_info}</div>}
               </div>
 
               <div className="sticky-imgs">
                 {gallery.length > 0 ? gallery.map((img, i) => (
                   <div key={i} className="sticky-img-box">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img} alt={`${asso.title} ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, var(--ink) 0%, transparent 15%, transparent 85%, var(--ink) 100%)', pointerEvents: 'none' }} />
+                    <img src={img} alt={`${asso.title} ${i + 1}`} className="cm-img" />
+                    <div className="cm-img-overlay" />
                   </div>
                 )) : (
-                  <div className="sticky-img-box" style={{ background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{color: 'var(--stone)'}}>{isEn ? "No image" : "Nessuna immagine"}</span>
+                  <div className="sticky-img-box cm-img-empty">
+                    <span className="cm-empty-text">{isEn ? "No image" : "Nessuna immagine"}</span>
                   </div>
                 )}
               </div>

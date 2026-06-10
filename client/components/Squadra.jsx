@@ -3,11 +3,13 @@
 import React from "react";
 import { useStore } from "./Store";
 import { proLocoData } from "@/data/pro-loco";
-import { usePathname } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { getLang } from '@/utils/lang';
 
 export default function Squadra() {
-  const pathname = usePathname() || '';
-  const isEn = pathname.startsWith('/en');
+  const searchParams = useSearchParams();
+  const lang = getLang(searchParams);
+  const isEn = lang === 'en';
   const data = isEn ? proLocoData.en : proLocoData.it;
   const s = data.squadra;
   const { openLightbox } = useStore();
@@ -19,31 +21,31 @@ export default function Squadra() {
           <span className="lbl">{isEn ? "the faces of Pro Loco" : "le facce della Pro Loco"}</span>
         </div>
 
-        <h2 className="wr" style={{ marginBottom: "clamp(36px,5vw,60px)" }}>
-          Quelli che montano <em>il palco</em>
+        <h2 className="wr" style={{ marginBottom: "clamp(36px,5vw,60px)" }} dangerouslySetInnerHTML={{ __html: s.titolo.replace('il palco', '<em>il palco</em>').replace('the stage', '<em>the stage</em>') }}>
         </h2>
 
         <div className="team-due">
           <figure className="team-foto cur in" id="teamPhoto">
             <img
-              src="/images/squadra1.jpg"
-              onClick={() => openLightbox("/images/squadra1.jpg", "Il direttivo")}
+              src={s.img}
+              onClick={() => openLightbox(s.img, s.sottotitolo)}
               style={{
                 width: "100%",
                 cursor: "zoom-in",
                 marginBottom: "12px",
               }}
-              alt="Il direttivo"
+              alt={s.sottotitolo}
             />
-            <figcaption>La squadra al completo — i volontari della Pro Loco</figcaption>
+            <figcaption>{isEn ? "The complete team — Pro Loco volunteers" : "La squadra al completo — i volontari della Pro Loco"}</figcaption>
           </figure>
 
           <div className="team-lista">
-            <div className="riga-m fad"><span className="ruolo">Presidente</span><span className="nome-m">Laraia Marinella</span></div>
-            <div className="riga-m fad"><span className="ruolo">Vicepresidente</span><span className="nome-m">Lucia Zottarelli</span></div>
-            <div className="riga-m fad"><span className="ruolo">Segretario</span><span className="nome-m">Marilina Giannotta</span></div>
-            <div className="riga-m fad"><span className="ruolo">Tesoriere</span><span className="nome-m">Marianna Giannotta</span></div>
-            <div className="riga-m fad"><span className="ruolo">Consigliere</span><span className="nome-m">Marinella Pellettiere</span></div>
+            {s.membri.map((m, i) => (
+              <div className="riga-m fad" key={i}>
+                <span className="ruolo">{m.ruolo}</span>
+                <span className="nome-m">{m.nome}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

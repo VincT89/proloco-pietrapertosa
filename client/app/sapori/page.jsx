@@ -57,7 +57,7 @@ export default async function Sapori({ searchParams }) {
   const isEn = lang === 'en';
 
   if (!page) {
-    return <div style={{ padding: '100px', textAlign: 'center', color: 'white' }}>{isEn ? "Page under maintenance..." : "Pagina in manutenzione..."}</div>;
+    return <div className="sapori-maintenance">{isEn ? "Page under maintenance..." : "Pagina in manutenzione..."}</div>;
   }
 
   return (
@@ -67,8 +67,8 @@ export default async function Sapori({ searchParams }) {
       
       <PageIntro title={page.intro_title} text={page.intro_text} />
 
-      <section className="wrap" style={{ paddingBottom: '80px', paddingTop: '40px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <section className="wrap sapori-section">
+        <div className="sapori-list">
           {sapori.map((sapore, i) => (
             <ExperienceCard key={sapore.id} esperienza={sapore} reverse={i % 2 !== 0} />
           ))}

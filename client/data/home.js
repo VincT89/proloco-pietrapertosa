@@ -2,7 +2,7 @@ const homeDataIt = {
   hero: {
     title: "Pietrapertosa vive tutto l'anno",
     subtitle: "Eventi, tradizioni, associazioni, persone e iniziative che animano il paese.",
-    img: "/images/arabata.jpeg",
+    img: "/images/immaginePaese.jpg",
     source: "Pro Loco Pietrapertosa",
     status: "verified"
   },
@@ -70,7 +70,7 @@ const homeDataEn = {
   hero: {
     title: "Pietrapertosa is alive all year round",
     subtitle: "Events, traditions, associations, people and initiatives that animate the village.",
-    img: "/images/arabata.jpeg",
+    img: "/images/immaginePaese.jpg",
     source: "Pro Loco Pietrapertosa",
     status: "verified"
   },

@@ -6,11 +6,11 @@ VALUES ('Amministratore', 'admin@prolocopietrapertosa.it', '$2b$10$hL7P3Jz55t95b
 ON DUPLICATE KEY UPDATE id=id;
 
 -- Inserimento Pagine di base
-INSERT INTO pages (slug, title, description) VALUES
+INSERT INTO page_settings (page_slug, hero_title, intro_title) VALUES
 ('home', 'Home Page', 'La pagina principale del sito'),
 ('pro-loco', 'Pro Loco', 'Informazioni sull\'associazione'),
 ('comunita', 'Comunità', 'Le associazioni e i volontari'),
 ('territorio', 'Territorio', 'Il paese e i dintorni'),
 ('sapori', 'Sapori', 'Enogastronomia locale'),
 ('scopri', 'Scopri & Vivi', 'Luoghi di interesse turistico')
-ON DUPLICATE KEY UPDATE id=id;
+ON DUPLICATE KEY UPDATE hero_title=VALUES(hero_title);

@@ -28,7 +28,7 @@ export default function Sidebar() {
     { name: 'Notizie', path: '/admin/news', icon: <FileText size={20} /> },
     { name: 'Eventi', path: '/admin/events', icon: <Calendar size={20} /> },
     { name: 'Testi Pagine', path: '/admin/pages', icon: <FileText size={20} /> },
-    { name: 'Attività (Directory)', path: '/admin/directory', icon: <LayoutDashboard size={20} /> },
+    { name: 'Attività e Territorio', path: '/admin/directory', icon: <LayoutDashboard size={20} /> },
   ];
 
   return (
@@ -63,22 +63,22 @@ export default function Sidebar() {
           <FileText size={18} /> Testi Pagine
         </Link>
         <Link href="/admin/directory?category=eventi_annuali" className={`admin-nav-item ${pathname.includes('/directory') && pathname.includes('eventi_annuali') ? 'active' : ''}`}>
-          <span style={{width: 18, textAlign: 'center'}}>•</span> Eventi Annuali
+          <span className="sidebar-bullet"></span> Eventi Annuali
         </Link>
         <Link href="/admin/directory?category=comunita" className={`admin-nav-item ${pathname.includes('/directory') && pathname.includes('comunita') ? 'active' : ''}`}>
-          <span style={{width: 18, textAlign: 'center'}}>•</span> Le Associazioni
+          <span className="sidebar-bullet"></span> Le Associazioni
         </Link>
         <Link href="/admin/directory?category=territorio_aziende" className={`admin-nav-item ${pathname.includes('/directory') && pathname.includes('territorio_aziende') ? 'active' : ''}`}>
-          <span style={{width: 18, textAlign: 'center'}}>•</span> Aziende Agricole
+          <span className="sidebar-bullet"></span> Aziende Agricole
         </Link>
         <Link href="/admin/directory?category=territorio_foodtruck" className={`admin-nav-item ${pathname.includes('/directory') && pathname.includes('territorio_foodtruck') ? 'active' : ''}`}>
-          <span style={{width: 18, textAlign: 'center'}}>•</span> Food Truck
+          <span className="sidebar-bullet"></span> Food Truck
         </Link>
         <Link href="/admin/directory?category=territorio_artigiani" className={`admin-nav-item ${pathname.includes('/directory') && pathname.includes('territorio_artigiani') ? 'active' : ''}`}>
-          <span style={{width: 18, textAlign: 'center'}}>•</span> Gli Artigiani
+          <span className="sidebar-bullet"></span> Gli Artigiani
         </Link>
         <Link href="/admin/directory?category=sapori_piatti" className={`admin-nav-item ${pathname.includes('/directory') && pathname.includes('sapori_piatti') ? 'active' : ''}`}>
-          <span style={{width: 18, textAlign: 'center'}}>•</span> Piatti Tipici
+          <span className="sidebar-bullet"></span> Piatti Tipici
         </Link>
         <Link href="/admin/gallery" className={`admin-nav-item ${pathname.includes('/admin/gallery') ? 'active' : ''}`}>
           <ImageIcon size={18} /> Gestione Galleria

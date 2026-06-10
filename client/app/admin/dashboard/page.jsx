@@ -203,7 +203,7 @@ export default function AdminDashboard() {
 
             {/* Ultime Directory */}
             <Card style={{ margin: 0 }}>
-              <h3 style={{ fontSize: '1.1rem', color: 'var(--admin-ink)', marginBottom: '20px', borderBottom: '1px solid var(--admin-border)', paddingBottom: '12px', margin: '-4px -4px 16px' }}>Ultime Attività / Directory</h3>
+              <h3 style={{ fontSize: '1.1rem', color: 'var(--admin-ink)', marginBottom: '20px', borderBottom: '1px solid var(--admin-border)', paddingBottom: '12px', margin: '-4px -4px 16px' }}>Ultime Attività e Territorio</h3>
               {stats.latestDir && stats.latestDir.length > 0 ? (
                 <div className="flex-col" style={{ gap: '16px' }}>
                   {stats.latestDir.map(item => (
