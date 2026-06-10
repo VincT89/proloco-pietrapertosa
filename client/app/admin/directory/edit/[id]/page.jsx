@@ -127,7 +127,7 @@ function DirectoryEditContent({ id }) {
     }
   };
 
-  if (loading) return <div style={{ color: 'var(--admin-muted)' }}>Caricamento in corso...</div>;
+  if (loading) return <div className="admin-loading-text">Caricamento in corso...</div>;
 
   const tabIT = (
     <div className="flex-col">
@@ -152,10 +152,10 @@ function DirectoryEditContent({ id }) {
   );
 
   return (
-    <div style={{ maxWidth: '1000px' }}>
+    <div className="admin-page-container-small">
       <div className="admin-page-header">
-        <div className="flex-row" style={{ gap: '16px' }}>
-          <Link href="/admin/directory" style={{ color: 'var(--admin-muted)' }}>
+        <div className="flex-row">
+          <Link href="/admin/directory" className="admin-loading-text">
             <ArrowLeft size={24} />
           </Link>
           <h1 className="admin-page-title">{isNew ? 'Nuovo Elemento' : 'Modifica Elemento'}</h1>
@@ -165,10 +165,10 @@ function DirectoryEditContent({ id }) {
       <form onSubmit={handleSubmit} className="flex-col">
         <Card>
           <div className="flex-col">
-            <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Categoria</label>
+            <label className="admin-form-label">Categoria</label>
             <select 
               name="category" value={formData.category} onChange={handleChange}
-              style={{ width: '100%', padding: '12px 14px', border: '1px solid var(--admin-border)', borderRadius: '4px', outline: 'none' }}
+              className="admin-form-select"
             >
               {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
@@ -184,40 +184,37 @@ function DirectoryEditContent({ id }) {
 
         <Card>
           <div className="flex-col">
-            <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Immagini Selezionate (Clicca sulla X per rimuovere)</label>
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '24px' }}>
+            <label className="admin-form-label">Immagini Selezionate (Clicca sulla X per rimuovere)</label>
+            <div className="admin-gallery-preview-container">
               {(formData.gallery || []).map((url, i) => (
                 <div 
                   key={i} 
-                  style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '6px', overflow: 'hidden', cursor: 'pointer', border: '2px solid var(--admin-accent)' }}
+                  className="admin-gallery-preview-item"
                   onClick={() => toggleGallery(url)}
                 >
-                  <img src={url} alt="Selected" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  <div style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,0.7)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 'bold', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'red'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.7)'}>&times;</div>
+                  <img src={url} alt="Selected" className="admin-gallery-preview-img" />
+                  <div className="admin-gallery-remove">&times;</div>
                 </div>
               ))}
-              {(formData.gallery || []).length === 0 && <span style={{ color: 'var(--admin-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>Nessuna immagine selezionata</span>}
+              {(formData.gallery || []).length === 0 && <span className="admin-loading-text">Nessuna immagine selezionata</span>}
             </div>
 
-            <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Scegli dalla Libreria Media (Clicca per aggiungere/rimuovere)</label>
+            <label className="admin-form-label">Scegli dalla Libreria Media (Clicca per aggiungere/rimuovere)</label>
             <div className="admin-gallery-grid">
-              {mediaList.length === 0 ? <span style={{color: 'var(--admin-muted)'}}>Nessun media caricato.</span> : mediaList.map(media => {
+              {mediaList.length === 0 ? <span className="admin-loading-text">Nessun media caricato.</span> : mediaList.map(media => {
                 const isSelected = (formData.gallery || []).includes(media.url);
                 return (
                   <div 
                     key={media.id} 
                     onClick={() => toggleGallery(media.url)}
-                    style={{ 
-                      cursor: 'pointer', position: 'relative', aspectRatio: '1', borderRadius: '4px', overflow: 'hidden',
-                      border: isSelected ? '3px solid var(--admin-accent)' : '1px solid var(--admin-border)'
-                    }}
+                    className={`admin-gallery-select-item ${isSelected ? 'selected' : 'unselected'}`}
                   >
                     {media.resource_type === 'video' ? (
-                      <video src={media.url} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isSelected ? 1 : 0.6 }} />
+                      <video src={media.url} className={`admin-gallery-select-img ${isSelected ? 'selected' : 'unselected'}`} />
                     ) : (
-                      <img src={media.url} alt="Media" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isSelected ? 1 : 0.6 }} />
+                      <img src={media.url} alt="Media" className={`admin-gallery-select-img ${isSelected ? 'selected' : 'unselected'}`} />
                     )}
-                    {isSelected && <div style={{ position: 'absolute', top: 5, right: 5, background: 'var(--admin-accent)', color: 'white', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>✓</div>}
+                    {isSelected && <div className="admin-gallery-check">✓</div>}
                   </div>
                 );
               })}
@@ -225,7 +222,7 @@ function DirectoryEditContent({ id }) {
           </div>
         </Card>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+        <div className="admin-form-actions">
           <Button type="submit" disabled={saving} icon={<Save size={16} />}>
             {saving ? 'Salvataggio...' : 'Salva Elemento'}
           </Button>
@@ -238,7 +235,7 @@ function DirectoryEditContent({ id }) {
 export default function DirectoryEdit({ params }) {
   const unwrappedParams = use(params);
   return (
-    <Suspense fallback={<div style={{ color: 'var(--admin-muted)' }}>Caricamento...</div>}>
+    <Suspense fallback={<div className="admin-loading-text">Caricamento...</div>}>
       <DirectoryEditContent id={unwrappedParams.id} />
     </Suspense>
   );

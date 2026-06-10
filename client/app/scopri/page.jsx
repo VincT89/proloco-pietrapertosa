@@ -95,7 +95,7 @@ export default async function Scopri({ searchParams }) {
           {isEn ? "Useful Numbers and Services" : "Numeri e Servizi Utili"}
         </h2>
         <div className="scopri-grid-2">
-          {infoUtili.map(item => (
+          {servizi.map(item => (
             <div key={item.id} className="scopri-info-card">
               <h3 className="scopri-info-card-title">{item.nome}</h3>
               <p className="scopri-info-card-text">{item.info}</p>

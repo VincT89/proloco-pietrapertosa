@@ -41,7 +41,7 @@ export default function Sidebar() {
 
       <div className="admin-sidebar-nav">
         
-        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', marginTop: '10px' }}>Sistema</div>
+        <div className="admin-sidebar-section-title first">Sistema</div>
         <Link href="/admin/dashboard" className={`admin-nav-item ${pathname === '/admin/dashboard' ? 'active' : ''}`}>
           <LayoutDashboard size={18} /> Dashboard
         </Link>
@@ -49,7 +49,7 @@ export default function Sidebar() {
           <ImageIcon size={18} /> Libreria Media
         </Link>
 
-        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', marginTop: '24px' }}>Comunicazione</div>
+        <div className="admin-sidebar-section-title">Comunicazione</div>
         <Link href="/admin/events" className={`admin-nav-item ${pathname === '/admin/events' ? 'active' : ''}`}>
           <Calendar size={18} /> Calendario Eventi
         </Link>
@@ -57,7 +57,7 @@ export default function Sidebar() {
           <FileText size={18} /> Notizie e Avvisi
         </Link>
 
-        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', marginTop: '24px' }}>Contenuti Pagine</div>
+        <div className="admin-sidebar-section-title">Contenuti Pagine</div>
         
         <Link href="/admin/pages" className={`admin-nav-item ${pathname === '/admin/pages' ? 'active' : ''}`}>
           <FileText size={18} /> Testi Pagine
@@ -86,13 +86,13 @@ export default function Sidebar() {
       </div>
 
       <div className="admin-sidebar-footer">
-        {user && <div style={{ marginBottom: '12px', color: 'rgba(255,255,255,0.9)', fontSize: '0.85rem', padding: '0 16px' }}>{user.name}</div>}
+        {user && <div className="admin-sidebar-user">{user.name}</div>}
         
-        <Link href="/admin/settings" className="admin-logout-btn" style={{textDecoration: 'none'}}>
+        <Link href="/admin/settings" className="admin-logout-btn no-underline">
           Impostazioni
         </Link>
 
-        <Link href="/" className="admin-logout-btn" style={{textDecoration: 'none'}}>
+        <Link href="/" className="admin-logout-btn no-underline">
           Torna al Sito
         </Link>
 

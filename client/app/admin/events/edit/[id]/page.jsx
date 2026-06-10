@@ -145,7 +145,7 @@ export default function EventEditor({ params }) {
     ],
   };
 
-  if (loading) return <div style={{ color: 'var(--admin-muted)' }}>Caricamento in corso...</div>;
+  if (loading) return <div className="admin-loading-text">Caricamento in corso...</div>;
 
   const tabIT = (
     <div className="flex-col">
@@ -155,9 +155,9 @@ export default function EventEditor({ params }) {
         <Input label="Categoria (IT)" name="category" value={formData.category} onChange={handleChange} placeholder="Es. Sagra, Cultura, Sport..." />
       </div>
       <div>
-        <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Descrizione Dettagliata (IT)</label>
-        <div style={{ background: 'white', borderRadius: '4px', border: '1px solid var(--admin-border)', overflow: 'hidden' }}>
-          <ReactQuill theme="snow" value={formData.description} onChange={handleEditorChange} modules={modules} style={{ height: '400px' }} />
+        <label className="admin-form-label">Descrizione Dettagliata (IT)</label>
+        <div className="admin-quill-wrap">
+          <ReactQuill theme="snow" value={formData.description} onChange={handleEditorChange} modules={modules} className="admin-quill" />
         </div>
       </div>
     </div>
@@ -171,19 +171,19 @@ export default function EventEditor({ params }) {
         <Input label="Categoria (EN)" name="category_en" value={formData.category_en} onChange={handleChange} placeholder="e.g. Festival, Culture, Sport..." />
       </div>
       <div>
-        <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Descrizione Dettagliata (EN)</label>
-        <div style={{ background: 'white', borderRadius: '4px', border: '1px solid var(--admin-border)', overflow: 'hidden' }}>
-          <ReactQuill theme="snow" value={formData.description_en} onChange={handleEditorChangeEn} modules={modules} style={{ height: '400px' }} />
+        <label className="admin-form-label">Descrizione Dettagliata (EN)</label>
+        <div className="admin-quill-wrap">
+          <ReactQuill theme="snow" value={formData.description_en} onChange={handleEditorChangeEn} modules={modules} className="admin-quill" />
         </div>
       </div>
     </div>
   );
 
   return (
-    <div style={{ maxWidth: '1000px' }}>
+    <div className="admin-page-container-small">
       <div className="admin-page-header">
-        <div className="flex-row" style={{ gap: '16px' }}>
-          <Link href="/admin/events" style={{ color: 'var(--admin-muted)' }}>
+        <div className="flex-row">
+          <Link href="/admin/events" className="admin-loading-text">
             <ArrowLeft size={24} />
           </Link>
           <h1 className="admin-page-title">{isNew ? 'Nuovo Evento' : 'Modifica Evento'}</h1>
@@ -230,27 +230,24 @@ export default function EventEditor({ params }) {
             />
           </div>
 
-          <div className="flex-col" style={{ marginTop: '24px' }}>
-            <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Galleria di Immagini e Video</label>
+          <div className="flex-col mt-24px">
+            <label className="admin-form-label">Galleria di Immagini e Video</label>
             <div className="admin-gallery-grid">
-              {mediaList.length === 0 ? <span style={{color: 'var(--admin-muted)'}}>Nessun media caricato.</span> : mediaList.map(media => {
+              {mediaList.length === 0 ? <span className="admin-loading-text">Nessun media caricato.</span> : mediaList.map(media => {
                 const isSelected = (formData.gallery || []).includes(media.url);
                 return (
                   <div 
                     key={media.id} 
                     onClick={() => toggleGallery(media.url)}
-                    style={{ 
-                      cursor: 'pointer', position: 'relative', aspectRatio: '1', borderRadius: '4px', overflow: 'hidden',
-                      border: isSelected ? '3px solid var(--admin-accent)' : '1px solid var(--admin-border)'
-                    }}
+                    className={`admin-gallery-select-item ${isSelected ? 'selected' : 'unselected'}`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {media.resource_type === 'video' ? (
-                      <video src={media.url} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isSelected ? 1 : 0.6 }} />
+                      <video src={media.url} className={`admin-gallery-select-img ${isSelected ? 'selected' : 'unselected'}`} />
                     ) : (
-                      <img src={media.url} alt="Media" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isSelected ? 1 : 0.6 }} />
+                      <img src={media.url} alt="Media" className={`admin-gallery-select-img ${isSelected ? 'selected' : 'unselected'}`} />
                     )}
-                    {isSelected && <div style={{ position: 'absolute', top: 5, right: 5, background: 'var(--admin-accent)', color: 'white', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>✓</div>}
+                    {isSelected && <div className="admin-gallery-check">✓</div>}
                   </div>
                 );
               })}
@@ -258,7 +255,7 @@ export default function EventEditor({ params }) {
           </div>
         </Card>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+        <div className="admin-form-actions">
           <Button type="submit" disabled={saving} icon={<Save size={16} />}>
             {saving ? 'Salvataggio...' : 'Salva Evento'}
           </Button>

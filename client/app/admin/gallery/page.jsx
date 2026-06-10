@@ -49,16 +49,16 @@ export default function AdminGallery() {
     }
   };
 
-  if (loading) return <div style={{ padding: '40px', color: 'white' }}>Caricamento...</div>;
+  if (loading) return <div className="admin-loading-text">Caricamento...</div>;
 
   return (
-    <div style={{ width: '100%' }}>
+    <div className="admin-page-container-small">
       <div className="admin-page-header">
         <div>
           <h1 className="admin-page-title">Gestione Galleria</h1>
-          <p style={{ color: 'var(--admin-muted)', marginTop: '8px' }}>Crea sezioni (album) e aggiungi immagini dalla libreria.</p>
+          <p className="admin-page-subtitle mt-8px">Crea sezioni (album) e aggiungi immagini dalla libreria.</p>
         </div>
-        <Link href="/admin/gallery/edit/new" style={{ textDecoration: 'none' }}>
+        <Link href="/admin/gallery/edit/new" className="no-underline">
           <Button icon={<Plus size={16} />}>Crea Sezione</Button>
         </Link>
       </div>
@@ -72,13 +72,13 @@ export default function AdminGallery() {
               <th>Titolo Sezione (IT)</th>
               <th>Numero Media</th>
               <th>Data</th>
-              <th className="actions-col" style={{ textAlign: 'right' }}>Azioni</th>
+              <th className="actions-col text-right">Azioni</th>
             </tr>
           </thead>
           <tbody>
             {items.length === 0 ? (
               <tr>
-                <td colSpan="4" style={{ textAlign: 'center', padding: '30px', color: 'var(--admin-muted)' }}>
+                <td colSpan="4" className="admin-table-empty">
                   Nessuna sezione presente nella galleria. Clicca su "Crea Sezione" per iniziare.
                 </td>
               </tr>
@@ -90,12 +90,12 @@ export default function AdminGallery() {
 
                 return (
                   <tr key={item.id}>
-                    <td style={{ fontWeight: '500' }}>{item.title || 'Senza Titolo'}</td>
+                    <td className="font-medium">{item.title || 'Senza Titolo'}</td>
                     <td>{mediaCount} {mediaCount === 1 ? 'Foto' : 'Foto'}</td>
                     <td>{formattedDate}</td>
-                    <td className="actions-cell" style={{ textAlign: 'right' }}>
-                      <div className="flex-row" style={{ justifyContent: 'flex-end', gap: '8px' }}>
-                        <Link href={`/admin/gallery/edit/${item.id}`} style={{ textDecoration: 'none' }} title="Modifica">
+                    <td className="actions-cell text-right">
+                      <div className="flex-row justify-end gap-8px">
+                        <Link href={`/admin/gallery/edit/${item.id}`} className="no-underline" title="Modifica">
                           <Button variant="ghost" icon={<Edit2 size={16} />} />
                         </Link>
                         <Button variant="ghost" icon={<Trash2 size={16} color="#ef4444" />} onClick={() => handleDelete(item.id)} title="Elimina" />

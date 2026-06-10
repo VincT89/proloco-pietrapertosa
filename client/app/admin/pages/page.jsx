@@ -136,10 +136,10 @@ export default function PagesAdmin() {
   ];
 
   return (
-    <div style={{ maxWidth: '1000px' }}>
-      <div className="admin-page-header" style={{ marginBottom: '24px' }}>
+    <div className="max-w-1000px">
+      <div className="admin-page-header mb-24px">
         <h1 className="admin-page-title">Gestione Pagine <span>testi statici</span></h1>
-        <div style={{ width: '250px' }}>
+        <div className="w-250px">
           <Select 
             value={selectedPage} 
             onChange={(e) => setSelectedPage(e.target.value)}
@@ -149,22 +149,22 @@ export default function PagesAdmin() {
       </div>
 
       {loading ? (
-        <div style={{ color: 'var(--admin-muted)' }}>Caricamento dati...</div>
+        <div className="admin-loading-text">Caricamento dati...</div>
       ) : (
         <form onSubmit={handleSubmit} className="flex-col">
           <Card>
             <div className="flex-col">
-              <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '4px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Immagine di Copertina (Hero)</label>
+              <label className="admin-form-label">Immagine di Copertina (Hero)</label>
               <div className="flex-row">
                 <Select 
                   value={mediaList.find(m => m.url === formData.hero_image_url) ? formData.hero_image_url : ''}
                   onChange={(e) => setFormData({...formData, hero_image_url: e.target.value})}
                   options={mediaOptions}
-                  style={{ flex: 1 }}
+                  className="flex-1"
                 />
                 <Input 
                   type="text" name="hero_image_url" value={formData.hero_image_url} onChange={handleChange} placeholder="Oppure incolla URL qui"
-                  style={{ flex: 2 }}
+                  className="flex-2"
                 />
               </div>
             </div>
@@ -177,7 +177,7 @@ export default function PagesAdmin() {
             ]} />
           </Card>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+          <div className="admin-form-actions">
             <Button type="submit" disabled={saving} icon={<Save size={16} />}>
               {saving ? 'Salvataggio...' : 'Salva Modifiche Testuali'}
             </Button>

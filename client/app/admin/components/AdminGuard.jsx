@@ -24,7 +24,7 @@ export default function AdminGuard({ children }) {
   }, [pathname, router]);
 
   if (!authorized) {
-    return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--ink)', color: 'var(--gold)' }}>Verifica accessi in corso...</div>;
+    return <div className="admin-guard-loading">Verifica accessi in corso...</div>;
   }
 
   return <>{children}</>;

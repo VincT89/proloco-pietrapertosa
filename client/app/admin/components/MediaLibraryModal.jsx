@@ -44,119 +44,59 @@ export default function MediaLibraryModal({ onClose, onSelect }) {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0, 0, 0, 0.7)',
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px'
-    }}>
-      <div style={{
-        background: 'var(--admin-panel)',
-        borderRadius: '8px',
-        width: '100%',
-        maxWidth: '900px',
-        maxHeight: '90vh',
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)'
-      }}>
+    <div className="admin-modal-overlay">
+      <div className="admin-modal">
         {/* Header */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '20px',
-          borderBottom: '1px solid var(--admin-border)'
-        }}>
+        <div className="admin-modal-header">
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--admin-ink)' }}>Seleziona Immagini</h2>
-            <p style={{ margin: 0, marginTop: '4px', fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
+            <h2 className="admin-modal-title">Seleziona Immagini</h2>
+            <p className="admin-modal-subtitle">
               Seleziona una o più immagini dalla tua libreria
             </p>
           </div>
-          <button 
-            onClick={onClose}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--admin-muted)' }}
-          >
+          <button onClick={onClose} className="admin-modal-close">
             <X size={24} />
           </button>
         </div>
 
         {/* Content */}
-        <div style={{ padding: '20px', overflowY: 'auto', flex: 1 }}>
+        <div className="admin-modal-content">
           {loading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', color: 'var(--admin-muted)' }}>
+            <div className="admin-modal-loading">
               <Loader2 className="animate-spin" size={32} />
-              <span style={{ marginLeft: '10px' }}>Caricamento...</span>
+              <span>Caricamento...</span>
             </div>
           ) : error ? (
-            <div style={{ color: '#ef4444', textAlign: 'center', padding: '20px' }}>
+            <div className="admin-modal-error">
               {error}
             </div>
           ) : media.length === 0 ? (
-            <div style={{ textAlign: 'center', color: 'var(--admin-muted)', padding: '40px' }}>
+            <div className="admin-modal-empty">
               Nessun media presente nella libreria.
             </div>
           ) : (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-              gap: '16px'
-            }}>
+            <div className="admin-modal-grid">
               {media.map((item) => {
                 const isSelected = selectedUrls.includes(item.url);
                 return (
                   <div 
                     key={item.id}
                     onClick={() => toggleSelection(item)}
-                    style={{
-                      position: 'relative',
-                      aspectRatio: '1',
-                      borderRadius: '6px',
-                      overflow: 'hidden',
-                      border: isSelected ? '3px solid var(--admin-accent)' : '1px solid var(--admin-border)',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      opacity: isSelected ? 1 : 0.8
-                    }}
-                    onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.borderColor = 'var(--admin-accent)' }}
-                    onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.borderColor = 'var(--admin-border)' }}
+                    className={`admin-modal-item ${isSelected ? 'selected' : ''}`}
                   >
                     <img 
                       src={item.url} 
                       alt={item.public_id} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                      className="admin-modal-img" 
                     />
                     
                     {isSelected && (
-                      <div style={{
-                        position: 'absolute',
-                        top: 5, right: 5,
-                        background: 'var(--admin-accent)',
-                        color: 'white',
-                        borderRadius: '50%',
-                        width: '24px', height: '24px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
-                      }}>
+                      <div className="admin-modal-check">
                         <Check size={16} />
                       </div>
                     )}
 
-                    <div style={{
-                      position: 'absolute',
-                      bottom: 0, left: 0, right: 0,
-                      background: 'rgba(0,0,0,0.6)',
-                      color: 'white',
-                      padding: '4px 8px',
-                      fontSize: '0.7rem',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis'
-                    }}>
+                    <div className="admin-modal-filename">
                       {item.public_id.split('/').pop()}
                     </div>
                   </div>
@@ -167,13 +107,7 @@ export default function MediaLibraryModal({ onClose, onSelect }) {
         </div>
 
         {/* Footer */}
-        <div style={{
-          padding: '20px',
-          borderTop: '1px solid var(--admin-border)',
-          display: 'flex',
-          justifyContent: 'flex-end',
-          gap: '12px'
-        }}>
+        <div className="admin-modal-footer">
           <Button variant="ghost" onClick={onClose}>Annulla</Button>
           <Button onClick={handleConfirm} disabled={selectedUrls.length === 0}>
             Aggiungi {selectedUrls.length > 0 && `(${selectedUrls.length})`}

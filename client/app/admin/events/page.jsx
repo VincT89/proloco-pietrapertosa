@@ -63,18 +63,18 @@ export default function EventsAdminPage() {
           <h1 className="admin-page-title">Eventi <span>programmazione</span></h1>
         </div>
 
-        <Link href="/admin/events/edit/new" style={{ textDecoration: 'none' }}>
+        <Link href="/admin/events/edit/new" className="no-underline">
           <Button icon={<Plus size={16} />}>Nuovo Evento</Button>
         </Link>
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', color: 'var(--admin-muted)', padding: '40px' }}>Caricamento in corso...</div>
+        <div className="admin-loading-text">Caricamento in corso...</div>
       ) : events.length === 0 ? (
-        <Card style={{ textAlign: 'center', padding: '80px 40px' }}>
-          <Calendar size={48} color="var(--admin-muted)" style={{ margin: '0 auto 16px', opacity: 0.5 }} />
-          <h3 style={{ color: 'var(--admin-ink)', fontSize: '1.2rem', marginBottom: '8px' }}>Nessun evento in programma</h3>
-          <p style={{ color: 'var(--admin-muted)' }}>Clicca su "Nuovo Evento" in alto a destra per iniziare a pianificare.</p>
+        <Card className="admin-media-empty">
+          <Calendar size={48} className="admin-media-empty-icon" />
+          <h3 className="admin-media-empty-title">Nessun evento in programma</h3>
+          <p className="admin-media-empty-text">Clicca su "Nuovo Evento" in alto a destra per iniziare a pianificare.</p>
         </Card>
       ) : (
         <Table
@@ -82,12 +82,12 @@ export default function EventsAdminPage() {
           data={events}
           renderRow={(item) => (
             <tr key={item.id}>
-              <td style={{ width: '100px' }}>
+              <td className="w-100px">
                 {item.cover_image_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.cover_image_url} alt="Cover" style={{ width: '80px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                  <img src={item.cover_image_url} alt="Cover" className="admin-table-thumb" />
                 ) : (
-                  <div style={{ width: '80px', height: '50px', background: 'var(--admin-bg)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="admin-table-thumb-placeholder">
                     <Calendar size={16} color="var(--admin-muted)" />
                   </div>
                 )}
@@ -102,17 +102,13 @@ export default function EventsAdminPage() {
                 {item.location || 'Da definire'}
               </td>
               <td>
-                <span style={{ 
-                  padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold',
-                  background: item.status === 'published' ? '#dcfce7' : '#fef3c7',
-                  color: item.status === 'published' ? '#166534' : '#92400e' 
-                }}>
+                <span className={`admin-badge-status ${item.status === 'published' ? 'published' : 'draft'}`}>
                   {item.status === 'published' ? 'Pubblicato' : 'Bozza'}
                 </span>
               </td>
-              <td style={{ textAlign: 'right' }}>
-                <div className="flex-row" style={{ justifyContent: 'flex-end', gap: '8px' }}>
-                  <Link href={`/admin/events/edit/${item.id}`} style={{ textDecoration: 'none' }}>
+              <td className="text-right">
+                <div className="flex-row justify-end gap-8px">
+                  <Link href={`/admin/events/edit/${item.id}`} className="no-underline">
                     <Button variant="ghost" icon={<Edit2 size={16} />} />
                   </Link>
                   <Button variant="ghost" icon={<Trash2 size={16} color="#ef4444" />} onClick={() => handleDelete(item.id)} />

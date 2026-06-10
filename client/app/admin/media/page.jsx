@@ -102,54 +102,45 @@ export default function MediaLibrary() {
           >
             {uploading ? 'Caricamento...' : 'Carica Immagine'}
           </Button>
-          <input ref={fileInputRef} type="file" multiple style={{ display: 'none' }} accept="image/*" onChange={handleFileUpload} disabled={uploading} />
+          <input ref={fileInputRef} type="file" multiple className="hidden-input" accept="image/*" onChange={handleFileUpload} disabled={uploading} />
         </div>
       </div>
 
       {error && (
-        <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', color: '#b91c1c', padding: '16px', borderRadius: 'var(--admin-radius)', marginBottom: '24px' }}>
+        <div className="admin-media-error">
           {error}
         </div>
       )}
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px', color: 'var(--admin-muted)' }}>Caricamento libreria...</div>
+        <div className="admin-media-loading">Caricamento libreria...</div>
       ) : media.length === 0 ? (
-        <Card style={{ textAlign: 'center', padding: '80px 40px' }}>
-          <ImageIcon size={48} color="var(--admin-muted)" style={{ margin: '0 auto 16px', opacity: 0.5 }} />
-          <h3 style={{ color: 'var(--admin-ink)', fontSize: '1.2rem', marginBottom: '8px' }}>Nessuna immagine presente</h3>
-          <p style={{ color: 'var(--admin-muted)' }}>Usa il pulsante in alto a destra per caricare la tua prima immagine.</p>
+        <Card className="admin-media-empty">
+          <ImageIcon size={48} className="admin-media-empty-icon" />
+          <h3 className="admin-media-empty-title">Nessuna immagine presente</h3>
+          <p className="admin-media-empty-text">Usa il pulsante in alto a destra per caricare la tua prima immagine.</p>
         </Card>
       ) : (
-        <div className="admin-gallery-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
+        <div className="admin-gallery-grid-large">
           {media.map((item) => (
-            <div key={item.id} style={{
-              background: 'var(--admin-panel)', borderRadius: 'var(--admin-radius)', overflow: 'hidden', border: '1px solid var(--admin-border)',
-              position: 'relative', boxShadow: 'var(--admin-shadow)'
-            }}>
-              <div style={{ width: '100%', aspectRatio: '1', position: 'relative' }}>
+            <div key={item.id} className="admin-media-card">
+              <div className="admin-media-thumb-wrap">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 {item.resource_type === 'video' ? (
-                  <video src={item.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <video src={item.url} className="admin-media-thumb" />
                 ) : (
-                  <img src={item.url} alt={item.alt || 'Media'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={item.url} alt={item.alt || 'Media'} className="admin-media-thumb" />
                 )}
                 
                 {/* Overlay actions */}
-                <div style={{
-                  position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  opacity: 0, transition: 'opacity 0.2s'
-                }} className="hover-overlay">
-                  <button onClick={() => handleDelete(item.id)} style={{
-                    background: '#ef4444', color: 'white', border: 'none', padding: '10px', borderRadius: '50%', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                  }}>
+                <div className="admin-media-overlay hover-overlay">
+                  <button onClick={() => handleDelete(item.id)} className="admin-media-delete-btn">
                     <Trash2 size={18} />
                   </button>
                 </div>
               </div>
-              <div style={{ padding: '12px' }}>
-                <div style={{ fontSize: '0.8rem', color: 'var(--admin-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div className="admin-media-info">
+                <div className="admin-media-filename">
                   {item.folder} / {item.public_id.split('/').pop()}
                 </div>
               </div>
@@ -157,10 +148,6 @@ export default function MediaLibrary() {
           ))}
         </div>
       )}
-      <style dangerouslySetInnerHTML={{__html: `
-        .hover-overlay:hover { opacity: 1 !important; }
-        .admin-gallery-grid > div:hover .hover-overlay { opacity: 1 !important; }
-      `}} />
     </div>
   );
 }

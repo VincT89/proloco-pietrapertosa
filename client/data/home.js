@@ -2,7 +2,7 @@ const homeDataIt = {
   hero: {
     title: "Pietrapertosa vive tutto l'anno",
     subtitle: "Eventi, tradizioni, associazioni, persone e iniziative che animano il paese.",
-    img: "/images/immaginePaese.jpg",
+    img: "/images/immaginePaese.png",
     source: "Pro Loco Pietrapertosa",
     status: "verified"
   },

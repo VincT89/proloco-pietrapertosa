@@ -80,16 +80,16 @@ function DirectoryAdminContent() {
     <div>
       <div className="admin-page-header">
         <h1 className="admin-page-title">Attività <span>e Territorio</span></h1>
-        <Link href={`/admin/directory/edit/new?category=${filterCategory}`} style={{ textDecoration: 'none' }}>
+        <Link href={`/admin/directory/edit/new?category=${filterCategory}`} className="no-underline">
           <Button icon={<Plus size={16} />}>Nuovo Elemento</Button>
         </Link>
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
+      <div className="mb-20px">
         <select 
           value={filterCategory} 
           onChange={(e) => setFilterCategory(e.target.value)}
-          style={{ padding: '10px 20px', background: 'var(--admin-bg)', color: 'var(--admin-ink)', border: '1px solid var(--admin-border)', borderRadius: '4px', fontSize: '1rem', outline: 'none' }}
+          className="admin-select"
         >
           <option value="">Tutte le categorie</option>
           {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -97,7 +97,7 @@ function DirectoryAdminContent() {
       </div>
 
       {loading ? (
-        <div style={{ color: 'var(--admin-muted)' }}>Caricamento in corso...</div>
+        <div className="admin-loading-text">Caricamento in corso...</div>
       ) : (
         <Table
           columns={tableColumns}
@@ -106,16 +106,16 @@ function DirectoryAdminContent() {
             <tr key={item.id}>
               <td>
                 <strong>{item.title}</strong>
-                <div style={{ fontSize: '0.85rem', color: 'var(--admin-muted)' }}>{item.subtitle}</div>
+                <div className="admin-list-subtext">{item.subtitle}</div>
               </td>
               <td>
-                <span style={{ background: 'rgba(212, 175, 55, 0.1)', color: 'var(--admin-accent)', padding: '4px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                <span className="admin-badge">
                   {item.category}
                 </span>
               </td>
-              <td style={{ textAlign: 'right' }}>
-                <div className="flex-row" style={{ justifyContent: 'flex-end', gap: '8px' }}>
-                  <Link href={`/admin/directory/edit/${item.id}`} style={{ textDecoration: 'none' }}>
+              <td className="text-right">
+                <div className="flex-row justify-end gap-8px">
+                  <Link href={`/admin/directory/edit/${item.id}`} className="no-underline">
                     <Button variant="ghost" icon={<Edit size={16} />} />
                   </Link>
                   <Button variant="ghost" icon={<Trash2 size={16} color="#ef4444" />} onClick={() => handleDelete(item.id)} />
@@ -131,7 +131,7 @@ function DirectoryAdminContent() {
 
 export default function DirectoryAdmin() {
   return (
-    <Suspense fallback={<div style={{ color: 'var(--admin-muted)' }}>Caricamento...</div>}>
+    <Suspense fallback={<div className="admin-loading-text">Caricamento...</div>}>
       <DirectoryAdminContent />
     </Suspense>
   );

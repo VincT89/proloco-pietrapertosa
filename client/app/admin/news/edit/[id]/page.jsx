@@ -138,16 +138,16 @@ export default function NewsEditor({ params }) {
     ],
   };
 
-  if (loading) return <div style={{ color: 'var(--admin-muted)' }}>Caricamento in corso...</div>;
+  if (loading) return <div className="admin-loading-text">Caricamento in corso...</div>;
 
   const tabIT = (
     <div className="flex-col">
       <Input label="Titolo (IT)" name="title" value={formData.title} onChange={handleChange} required />
       <Textarea label="Estratto (IT)" name="excerpt" value={formData.excerpt} onChange={handleChange} />
       <div>
-        <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contenuto Completo (IT)</label>
-        <div style={{ background: 'white', borderRadius: '4px', border: '1px solid var(--admin-border)', overflow: 'hidden' }}>
-          <ReactQuill theme="snow" value={formData.content} onChange={handleEditorChange} modules={modules} style={{ height: '400px' }} />
+        <label className="admin-form-label">Contenuto Completo (IT)</label>
+        <div className="admin-quill-wrap">
+          <ReactQuill theme="snow" value={formData.content} onChange={handleEditorChange} modules={modules} className="admin-quill" />
         </div>
       </div>
     </div>
@@ -158,19 +158,19 @@ export default function NewsEditor({ params }) {
       <Input label="Titolo (EN)" name="title_en" value={formData.title_en} onChange={handleChange} />
       <Textarea label="Estratto (EN)" name="excerpt_en" value={formData.excerpt_en} onChange={handleChange} />
       <div>
-        <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contenuto Completo (EN)</label>
-        <div style={{ background: 'white', borderRadius: '4px', border: '1px solid var(--admin-border)', overflow: 'hidden' }}>
-          <ReactQuill theme="snow" value={formData.content_en} onChange={handleEditorChangeEn} modules={modules} style={{ height: '400px' }} />
+        <label className="admin-form-label">Contenuto Completo (EN)</label>
+        <div className="admin-quill-wrap">
+          <ReactQuill theme="snow" value={formData.content_en} onChange={handleEditorChangeEn} modules={modules} className="admin-quill" />
         </div>
       </div>
     </div>
   );
 
   return (
-    <div style={{ maxWidth: '1000px' }}>
+    <div className="admin-page-container-small">
       <div className="admin-page-header">
-        <div className="flex-row" style={{ gap: '16px' }}>
-          <Link href="/admin/news" style={{ color: 'var(--admin-muted)' }}>
+        <div className="flex-row">
+          <Link href="/admin/news" className="admin-loading-text">
             <ArrowLeft size={24} />
           </Link>
           <h1 className="admin-page-title">{isNew ? 'Nuova Notizia' : 'Modifica Notizia'}</h1>
@@ -212,26 +212,23 @@ export default function NewsEditor({ params }) {
 
         <Card>
           <div className="flex-col">
-            <label style={{ display: 'block', color: 'var(--admin-muted)', marginBottom: '8px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Galleria Immagini</label>
+            <label className="admin-form-label">Galleria Immagini</label>
             <div className="admin-gallery-grid">
-              {mediaList.length === 0 ? <span style={{color: 'var(--admin-muted)'}}>Nessun media.</span> : mediaList.map(media => {
+              {mediaList.length === 0 ? <span className="admin-loading-text">Nessun media.</span> : mediaList.map(media => {
                 const isSelected = (formData.gallery || []).includes(media.url);
                 return (
                   <div 
                     key={media.id} 
                     onClick={() => toggleGallery(media.url)}
-                    style={{ 
-                      cursor: 'pointer', position: 'relative', aspectRatio: '1', borderRadius: '4px', overflow: 'hidden',
-                      border: isSelected ? '3px solid var(--admin-accent)' : '1px solid var(--admin-border)'
-                    }}
+                    className={`admin-gallery-select-item ${isSelected ? 'selected' : 'unselected'}`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {media.resource_type === 'video' ? (
-                      <video src={media.url} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isSelected ? 1 : 0.6 }} />
+                      <video src={media.url} className={`admin-gallery-select-img ${isSelected ? 'selected' : 'unselected'}`} />
                     ) : (
-                      <img src={media.url} alt="Media" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isSelected ? 1 : 0.6 }} />
+                      <img src={media.url} alt="Media" className={`admin-gallery-select-img ${isSelected ? 'selected' : 'unselected'}`} />
                     )}
-                    {isSelected && <div style={{ position: 'absolute', top: 5, right: 5, background: 'var(--admin-accent)', color: 'white', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>✓</div>}
+                    {isSelected && <div className="admin-gallery-check">✓</div>}
                   </div>
                 );
               })}
@@ -239,7 +236,7 @@ export default function NewsEditor({ params }) {
           </div>
         </Card>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+        <div className="admin-form-actions">
           <Button type="submit" disabled={saving} icon={<Save size={16} />}>
             {saving ? 'Salvataggio...' : 'Salva Notizia'}
           </Button>

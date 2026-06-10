@@ -70,21 +70,21 @@ export default function AdminSettings() {
   };
 
   return (
-    <div style={{ width: '100%' }}>
+    <div className="admin-page-container-small">
       <div className="admin-page-header">
         <div>
           <h1 className="admin-page-title">Impostazioni Account</h1>
-          <p style={{ color: 'var(--admin-muted)', marginTop: '8px' }}>Modifica la tua email o la tua password di accesso.</p>
+          <p className="admin-page-subtitle mt-8px">Modifica la tua email o la tua password di accesso.</p>
         </div>
       </div>
 
-      {error && <div style={{ background: '#fef2f2', color: '#991b1b', padding: '16px', borderRadius: '8px', border: '1px solid #f87171', marginBottom: '24px' }}>{error}</div>}
-      {success && <div style={{ background: '#f0fdf4', color: '#166534', padding: '16px', borderRadius: '8px', border: '1px solid #86efac', marginBottom: '24px' }}>{success}</div>}
+      {error && <div className="admin-media-error">{error}</div>}
+      {success && <div className="admin-media-success">{success}</div>}
 
       <form onSubmit={handleSubmit}>
         <Card>
           <div className="flex-col">
-            <div style={{ paddingBottom: '20px', borderBottom: '1px solid var(--admin-border)', marginBottom: '20px' }}>
+            <div className="admin-form-section">
               <Input 
                 label="Password Attuale *"
                 type="password" 
@@ -94,7 +94,7 @@ export default function AdminSettings() {
                 placeholder="Inserisci la password attuale"
                 required 
               />
-              <p style={{ fontSize: '0.8rem', color: 'var(--admin-muted)', marginTop: '8px' }}>
+              <p className="admin-list-subtext mt-8px">
                 Per motivi di sicurezza, devi inserire la tua password attuale per effettuare qualsiasi modifica.
               </p>
             </div>
@@ -119,7 +119,7 @@ export default function AdminSettings() {
             </div>
 
             {formData.newPassword && (
-              <div style={{ marginTop: '16px', maxWidth: '50%' }}>
+              <div className="mt-16px max-w-50">
                 <Input 
                   label="Conferma Nuova Password"
                   type="password" 
@@ -134,7 +134,7 @@ export default function AdminSettings() {
           </div>
         </Card>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '24px' }}>
+        <div className="flex-row mt-24px">
           <Button type="submit" disabled={loading || !formData.currentPassword} icon={<Save size={18} />}>
             {loading ? 'Salvataggio...' : 'Salva Impostazioni'}
           </Button>

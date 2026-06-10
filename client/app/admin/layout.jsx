@@ -14,7 +14,7 @@ export default function AdminLayout({ children }) {
   if (isLoginPage) {
     return (
       <div className="admin-body admin-layout">
-        <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <main className="admin-login-main">
           {children}
         </main>
       </div>

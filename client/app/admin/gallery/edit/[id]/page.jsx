@@ -130,20 +130,20 @@ export default function GalleryEdit() {
     }
   };
 
-  if (fetching) return <div style={{ padding: '40px', color: 'var(--admin-muted)' }}>Caricamento...</div>;
+  if (fetching) return <div className="admin-loading-text">Caricamento...</div>;
 
   return (
-    <div style={{ width: '100%' }}>
+    <div className="admin-page-container-small">
       <div className="admin-page-header">
-        <div className="flex-row" style={{ gap: '16px' }}>
-          <Link href="/admin/gallery" style={{ color: 'var(--admin-muted)' }}>
+        <div className="flex-row">
+          <Link href="/admin/gallery" className="admin-loading-text">
             <ArrowLeft size={24} />
           </Link>
           <h1 className="admin-page-title">{isNew ? 'Crea Sezione' : 'Modifica Sezione'}</h1>
         </div>
       </div>
 
-      {error && <div style={{ background: '#fef2f2', color: '#991b1b', padding: '16px', borderRadius: '8px', border: '1px solid #f87171', marginBottom: '24px' }}>{error}</div>}
+      {error && <div className="admin-media-error">{error}</div>}
 
       <form onSubmit={handleSubmit} className="flex-col">
         <Card>
@@ -167,7 +167,7 @@ export default function GalleryEdit() {
             />
           </div>
 
-          <div className="grid-2" style={{ marginTop: '20px' }}>
+          <div className="grid-2">
             <Input 
               label="Data di Riferimento (Per ordinamento)"
               type="date" 
@@ -187,28 +187,28 @@ export default function GalleryEdit() {
 
         <Card>
           <div className="flex-col">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label style={{ display: 'block', color: 'var(--admin-muted)', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div className="flex-row items-center justify-between">
+              <label className="admin-form-label mb-0">
                 Immagini della Sezione ({formData.media_urls.length})
               </label>
-              <Button type="button" icon={<Plus size={14} />} onClick={() => setIsMediaModalOpen(true)} style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+              <Button type="button" icon={<Plus size={14} />} onClick={() => setIsMediaModalOpen(true)}>
                 Aggiungi dalla Libreria
               </Button>
             </div>
             
-            <div className="admin-gallery-grid" style={{ background: 'var(--admin-bg)', padding: '20px', borderRadius: '8px', border: '1px solid var(--admin-border)' }}>
+            <div className="admin-gallery-grid p-5 rounded-lg border border-admin-border bg-admin-panel">
               {formData.media_urls.length === 0 ? (
-                <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: 'var(--admin-muted)', padding: '20px' }}>
+                <div className="admin-modal-empty col-span-full">
                   Nessuna immagine aggiunta. Clicca su "Aggiungi dalla Libreria".
                 </div>
               ) : (
                 formData.media_urls.map((url, idx) => (
-                  <div key={idx} style={{ position: 'relative', aspectRatio: '1', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--admin-border)' }}>
-                    <img src={url} alt="Media" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div key={idx} className="admin-modal-item">
+                    <img src={url} alt="Media" className="admin-modal-img" />
                     <button 
                       type="button" 
                       onClick={() => removeMedia(idx)}
-                      style={{ position: 'absolute', top: '5px', right: '5px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                      className="admin-gallery-remove"
                       title="Rimuovi"
                     >
                       <X size={14} />
@@ -220,7 +220,7 @@ export default function GalleryEdit() {
           </div>
         </Card>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+        <div className="admin-form-actions">
           <Button type="submit" disabled={loading} icon={<Save size={18} />}>
             {loading ? 'Salvataggio...' : 'Salva Sezione'}
           </Button>

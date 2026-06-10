@@ -69,154 +69,154 @@ export default function AdminDashboard() {
     fetchStats();
   }, [router]);
 
-  if (!user) return <div style={{ color: 'var(--admin-muted)' }}>Caricamento...</div>;
+  if (!user) return <div className="admin-loading-text">Caricamento...</div>;
 
   return (
-    <div style={{ maxWidth: '1400px' }}>
+    <div className="admin-page-container">
       
       <div className="admin-page-header">
         <div>
-          <h1 className="admin-page-title" style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '2.5rem' }}>
+          <h1 className="admin-page-title admin-dashboard-title">
             Benvenuto, <span>{user.name}</span>
           </h1>
-          <p style={{ color: 'var(--admin-muted)', marginTop: '8px' }}>
+          <p className="admin-page-subtitle">
             Pannello di controllo ufficiale della Pro Loco di Pietrapertosa.
           </p>
         </div>
       </div>
 
       {loading ? (
-        <div style={{ color: 'var(--admin-muted)' }}>Calcolo statistiche in corso...</div>
+        <div className="admin-loading-text">Calcolo statistiche in corso...</div>
       ) : (
         <>
-          <h2 style={{ fontSize: '1rem', color: 'var(--admin-muted)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <h2 className="admin-section-title">
             Riepilogo Contenuti
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '40px' }}>
+          <div className="admin-stats-grid">
             
-            <Card style={{ margin: 0 }}>
-              <div className="flex-row" style={{ gap: '20px' }}>
-                <div style={{ background: 'rgba(184, 135, 70, 0.1)', padding: '16px', borderRadius: '50%', color: 'var(--admin-accent)' }}>
+            <Card className="admin-list-card">
+              <div className="flex-row">
+                <div className="admin-stat-icon">
                   <FileText size={28} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '2.2rem', fontWeight: 'bold', color: 'var(--admin-ink)', lineHeight: 1 }}>{stats.news}</div>
-                  <div style={{ color: 'var(--admin-muted)', fontSize: '0.85rem', marginTop: '4px' }}>Notizie Pubblicate</div>
+                  <div className="admin-stat-value">{stats.news}</div>
+                  <div className="admin-stat-label">Notizie Pubblicate</div>
                 </div>
               </div>
             </Card>
 
-            <Card style={{ margin: 0 }}>
-              <div className="flex-row" style={{ gap: '20px' }}>
-                <div style={{ background: 'rgba(184, 135, 70, 0.1)', padding: '16px', borderRadius: '50%', color: 'var(--admin-accent)' }}>
+            <Card className="admin-list-card">
+              <div className="flex-row">
+                <div className="admin-stat-icon">
                   <Calendar size={28} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '2.2rem', fontWeight: 'bold', color: 'var(--admin-ink)', lineHeight: 1 }}>{stats.events}</div>
-                  <div style={{ color: 'var(--admin-muted)', fontSize: '0.85rem', marginTop: '4px' }}>Eventi in Calendario</div>
+                  <div className="admin-stat-value">{stats.events}</div>
+                  <div className="admin-stat-label">Eventi in Calendario</div>
                 </div>
               </div>
             </Card>
 
-            <Card style={{ margin: 0 }}>
-              <div className="flex-row" style={{ gap: '20px' }}>
-                <div style={{ background: 'rgba(184, 135, 70, 0.1)', padding: '16px', borderRadius: '50%', color: 'var(--admin-accent)' }}>
+            <Card className="admin-list-card">
+              <div className="flex-row">
+                <div className="admin-stat-icon">
                   <LayoutDashboard size={28} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '2.2rem', fontWeight: 'bold', color: 'var(--admin-ink)', lineHeight: 1 }}>{stats.directory}</div>
-                  <div style={{ color: 'var(--admin-muted)', fontSize: '0.85rem', marginTop: '4px' }}>Attività e Associazioni</div>
+                  <div className="admin-stat-value">{stats.directory}</div>
+                  <div className="admin-stat-label">Attività e Associazioni</div>
                 </div>
               </div>
             </Card>
 
-            <Card style={{ margin: 0 }}>
-              <div className="flex-row" style={{ gap: '20px' }}>
-                <div style={{ background: 'rgba(184, 135, 70, 0.1)', padding: '16px', borderRadius: '50%', color: 'var(--admin-accent)' }}>
+            <Card className="admin-list-card">
+              <div className="flex-row">
+                <div className="admin-stat-icon">
                   <ImageIcon size={28} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '2.2rem', fontWeight: 'bold', color: 'var(--admin-ink)', lineHeight: 1 }}>{stats.media}</div>
-                  <div style={{ color: 'var(--admin-muted)', fontSize: '0.85rem', marginTop: '4px' }}>Foto/Video in Cloud</div>
+                  <div className="admin-stat-value">{stats.media}</div>
+                  <div className="admin-stat-label">Foto/Video in Cloud</div>
                 </div>
               </div>
             </Card>
 
           </div>
 
-          <h2 style={{ fontSize: '1rem', color: 'var(--admin-muted)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <h2 className="admin-section-title">
             Azioni Rapide
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '40px' }}>
+          <div className="admin-actions-grid">
             
-            <Link href="/admin/news/edit/new" style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'var(--admin-accent)', color: 'white', padding: '20px', borderRadius: 'var(--admin-radius)', textDecoration: 'none', fontWeight: 'bold', transition: 'transform 0.2s', boxShadow: 'var(--admin-shadow)' }}>
-              <div style={{ background: 'rgba(0,0,0,0.1)', padding: '10px', borderRadius: '50%' }}><Plus size={24} /></div>
+            <Link href="/admin/news/edit/new" className="admin-action-card primary">
+              <div className="icon-wrap"><Plus size={24} /></div>
               <span>Scrivi un Avviso / Notizia</span>
             </Link>
 
-            <Link href="/admin/events/edit/new" style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'var(--admin-panel)', border: '1px solid var(--admin-border)', color: 'var(--admin-accent)', padding: '20px', borderRadius: 'var(--admin-radius)', textDecoration: 'none', fontWeight: 'bold', transition: 'transform 0.2s', boxShadow: 'var(--admin-shadow)' }}>
-              <div style={{ background: 'rgba(184, 135, 70, 0.1)', padding: '10px', borderRadius: '50%' }}><Plus size={24} /></div>
+            <Link href="/admin/events/edit/new" className="admin-action-card secondary">
+              <div className="icon-wrap"><Plus size={24} /></div>
               <span>Programma un Evento</span>
             </Link>
 
-            <Link href="/admin/media" style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'var(--admin-panel)', border: '1px solid var(--admin-border)', color: 'var(--admin-ink)', padding: '20px', borderRadius: 'var(--admin-radius)', textDecoration: 'none', fontWeight: 'bold', transition: 'transform 0.2s', boxShadow: 'var(--admin-shadow)' }}>
-              <div style={{ background: 'var(--admin-bg)', padding: '10px', borderRadius: '50%' }}><ImageIcon size={24} /></div>
+            <Link href="/admin/media" className="admin-action-card tertiary">
+              <div className="icon-wrap"><ImageIcon size={24} /></div>
               <span>Carica Foto nella Libreria</span>
             </Link>
 
           </div>
 
-          <h2 style={{ fontSize: '1rem', color: 'var(--admin-muted)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <h2 className="admin-section-title">
             Ultimi Elementi Inseriti
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px' }}>
+          <div className="admin-lists-grid">
             
             {/* Ultime Notizie */}
-            <Card style={{ margin: 0 }}>
-              <h3 style={{ fontSize: '1.1rem', color: 'var(--admin-ink)', marginBottom: '20px', borderBottom: '1px solid var(--admin-border)', paddingBottom: '12px', margin: '-4px -4px 16px' }}>Ultime Notizie</h3>
+            <Card className="admin-list-card">
+              <h3 className="admin-list-title">Ultime Notizie</h3>
               {stats.latestNews && stats.latestNews.length > 0 ? (
-                <div className="flex-col" style={{ gap: '16px' }}>
+                <div className="flex-col">
                   {stats.latestNews.map(item => (
-                    <div key={item.id} className="flex-row" style={{ justifyContent: 'space-between' }}>
-                      <span style={{ color: 'var(--admin-ink)', fontSize: '0.95rem' }}>{item.title}</span>
-                      <Link href={`/admin/news/edit/${item.id}`} style={{ color: 'var(--admin-accent)', fontSize: '0.8rem', textDecoration: 'none', fontWeight: 600 }}>Modifica</Link>
+                    <div key={item.id} className="admin-list-row">
+                      <span className="admin-list-text">{item.title}</span>
+                      <Link href={`/admin/news/edit/${item.id}`} className="admin-list-link">Modifica</Link>
                     </div>
                   ))}
                 </div>
-              ) : <div style={{ color: 'var(--admin-muted)' }}>Nessuna notizia</div>}
+              ) : <div className="admin-loading-text">Nessuna notizia</div>}
             </Card>
 
             {/* Ultimi Eventi */}
-            <Card style={{ margin: 0 }}>
-              <h3 style={{ fontSize: '1.1rem', color: 'var(--admin-ink)', marginBottom: '20px', borderBottom: '1px solid var(--admin-border)', paddingBottom: '12px', margin: '-4px -4px 16px' }}>Ultimi Eventi</h3>
+            <Card className="admin-list-card">
+              <h3 className="admin-list-title">Ultimi Eventi</h3>
               {stats.latestEvents && stats.latestEvents.length > 0 ? (
-                <div className="flex-col" style={{ gap: '16px' }}>
+                <div className="flex-col">
                   {stats.latestEvents.map(item => (
-                    <div key={item.id} className="flex-row" style={{ justifyContent: 'space-between' }}>
-                      <span style={{ color: 'var(--admin-ink)', fontSize: '0.95rem' }}>{item.title}</span>
-                      <Link href={`/admin/events/edit/${item.id}`} style={{ color: 'var(--admin-accent)', fontSize: '0.8rem', textDecoration: 'none', fontWeight: 600 }}>Modifica</Link>
+                    <div key={item.id} className="admin-list-row">
+                      <span className="admin-list-text">{item.title}</span>
+                      <Link href={`/admin/events/edit/${item.id}`} className="admin-list-link">Modifica</Link>
                     </div>
                   ))}
                 </div>
-              ) : <div style={{ color: 'var(--admin-muted)' }}>Nessun evento</div>}
+              ) : <div className="admin-loading-text">Nessun evento</div>}
             </Card>
 
             {/* Ultime Directory */}
-            <Card style={{ margin: 0 }}>
-              <h3 style={{ fontSize: '1.1rem', color: 'var(--admin-ink)', marginBottom: '20px', borderBottom: '1px solid var(--admin-border)', paddingBottom: '12px', margin: '-4px -4px 16px' }}>Ultime Attività e Territorio</h3>
+            <Card className="admin-list-card">
+              <h3 className="admin-list-title">Ultime Attività e Territorio</h3>
               {stats.latestDir && stats.latestDir.length > 0 ? (
-                <div className="flex-col" style={{ gap: '16px' }}>
+                <div className="flex-col">
                   {stats.latestDir.map(item => (
-                    <div key={item.id} className="flex-row" style={{ justifyContent: 'space-between' }}>
-                      <div className="flex-col" style={{ gap: '2px' }}>
-                        <span style={{ color: 'var(--admin-ink)', fontSize: '0.95rem' }}>{item.title}</span>
-                        <span style={{ color: 'var(--admin-muted)', fontSize: '0.75rem' }}>{item.category.replace('_', ' ')}</span>
+                    <div key={item.id} className="admin-list-row">
+                      <div className="flex-col gap-2px">
+                        <span className="admin-list-text">{item.title}</span>
+                        <span className="admin-list-subtext">{item.category.replace('_', ' ')}</span>
                       </div>
-                      <Link href={`/admin/directory/edit/${item.id}`} style={{ color: 'var(--admin-accent)', fontSize: '0.8rem', textDecoration: 'none', fontWeight: 600 }}>Modifica</Link>
+                      <Link href={`/admin/directory/edit/${item.id}`} className="admin-list-link">Modifica</Link>
                     </div>
                   ))}
                 </div>
-              ) : <div style={{ color: 'var(--admin-muted)' }}>Nessuna attività</div>}
+              ) : <div className="admin-loading-text">Nessuna attività</div>}
             </Card>
 
           </div>
