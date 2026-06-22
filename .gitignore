@@ -1,27 +1,61 @@
-*.log
-.DS_Store
-.env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
+# Laravel
+/vendor
 /node_modules
-/public/build
 /public/hot
 /public/storage
 /storage/*.key
-/storage/pail
-/vendor
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+/bootstrap/cache/*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDEs & Editors
+/.idea
+/.vscode
+/.fleet
+/.zed
+/.nova
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# PHPUnit & Testing
+.phpunit.result.cache
+.phpunit.cache
+coverage/
+
+# PHP Tools
+.phpactor.json
+
+# Database
+/database/database.sqlite
+
+# Composer
+/auth.json
+
+# Laravel Herd / Valet / Homestead
 Homestead.json
 Homestead.yaml
-Thumbs.db
-/storage/logs/*.log
-/database/database.sqlite
-/bootstrap/cache/*.php
+
+# Build artifacts
+/public/build
+mix-manifest.json
+
+# Misc
+*.swp
+*.swo
+*~
