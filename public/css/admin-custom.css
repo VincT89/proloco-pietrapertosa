@@ -1,0 +1,54 @@
+body, .fi-layout {
+    background-color: #fcf9f2 !important;
+}
+.fi-sidebar {
+    background-color: #1a1c1d !important; /* Colore scuro, elegante (Ink) */
+    box-shadow: 2px 0 24px rgba(0, 0, 0, 0.15) !important;
+    border-right: none !important;
+    z-index: 40 !important;
+}
+
+/* Nascondi la barra di ricerca globale nella sidebar */
+.fi-sidebar form,
+.fi-sidebar [action*="search"],
+.fi-sidebar input[type="search"] {
+    display: none !important;
+}
+
+/* Colore Oro (#b88746) per tutti i testi, icone e profilo utente della sidebar */
+.fi-sidebar .fi-sidebar-item-label,
+.fi-sidebar .text-gray-700,
+.fi-sidebar .text-gray-500,
+.fi-sidebar .fi-sidebar-header span,
+.fi-sidebar .fi-sidebar-item-icon,
+.fi-sidebar .fi-icon-btn-icon,
+.fi-sidebar .fi-logo,
+.fi-sidebar span,
+.fi-sidebar div,
+.fi-sidebar svg {
+    color: #b88746 !important;
+}
+
+/* Fix Avatar admin in basso (se ha uno sfondo) */
+.fi-sidebar .fi-avatar,
+.fi-sidebar .h-10.w-10.rounded-full {
+    background-color: rgba(184, 135, 70, 0.15) !important;
+    color: #b88746 !important;
+}
+
+/* Rimuovi l'incoerenza del bianco sull'elemento attivo: tutto deve rimanere oro, cambia solo lo sfondo */
+.fi-sidebar .fi-sidebar-item-active .fi-sidebar-item-button,
+.fi-sidebar .fi-sidebar-item-active > a {
+    background-color: rgba(184, 135, 70, 0.15) !important;
+}
+
+/* Hover sugli elementi non attivi */
+.fi-sidebar .fi-sidebar-item-button:hover,
+.fi-sidebar .fi-sidebar-item > a:hover {
+    background-color: rgba(184, 135, 70, 0.08) !important;
+}
+
+/* Bordo inferiore header sidebar */
+.fi-sidebar-header {
+    border-bottom: 1px solid rgba(184, 135, 70, 0.2) !important;
+}

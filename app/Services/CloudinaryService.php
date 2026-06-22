@@ -1,0 +1,87 @@
+<?php
+
+namespace App\Services;
+
+use Cloudinary\Cloudinary;
+use Illuminate\Http\UploadedFile;
+
+class CloudinaryService
+{
+    protected Cloudinary $cloudinary;
+
+    public function __construct()
+    {
+        $this->cloudinary = new Cloudinary([
+            'cloud' => [
+                'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                'api_key' => env('CLOUDINARY_API_KEY'),
+                'api_secret' => env('CLOUDINARY_API_SECRET'),
+            ],
+            'url' => [
+                'secure' => true,
+            ],
+        ]);
+    }
+
+    /**
+     * Upload an image or video to Cloudinary and return details
+     */
+    public function uploadMedia(UploadedFile $file, string $folder = 'proloco_pietrapertosana')
+    {
+        $mime = $file->getMimeType();
+        $isDocument = preg_match('/application\/(pdf|msword|vnd\.openxmlformats-officedocument|zip|rar)/i', $mime);
+        
+        $response = $this->cloudinary->uploadApi()->upload($file->getRealPath(), [
+            'folder' => $folder,
+            'resource_type' => $isDocument ? 'raw' : 'auto',
+            'type' => 'upload',
+            'access_mode' => 'public',
+        ]);
+
+        return [
+            'public_id' => $response['public_id'],
+            'url' => $response['secure_url'],
+            'resource_type' => $response['resource_type'] ?? 'image',
+            'duration' => $response['duration'] ?? null,
+            'format' => $response['format'] ?? null,
+        ];
+    }
+
+    /**
+     * Delete a media from Cloudinary by its public ID
+     */
+    public function deleteMedia(string $publicId, string $resourceType = 'image')
+    {
+        return $this->cloudinary->uploadApi()->destroy($publicId, ['resource_type' => $resourceType]);
+    }
+
+    /**
+     * Delete a media from Cloudinary by its secure URL
+     */
+    public function deleteMediaByUrl(string $url, string $resourceType = 'image')
+    {
+        // Example: https://res.cloudinary.com/dn8nhmtch/image/upload/v1780898352/proloco_pietrapertosana/hisednzzwaiholpvdikm.jpg
+        // Extracts: proloco_pietrapertosana/hisednzzwaiholpvdikm
+        if (preg_match('/upload\/(?:v\d+\/)?([^\.]+)/', $url, $matches)) {
+            $publicId = $matches[1];
+
+            return $this->deleteMedia($publicId, $resourceType);
+        }
+
+        return false;
+    }
+
+    /**
+     * Delete a temporary upload from Cloudinary
+     */
+    public function cleanupTemporaryUpload(string $url)
+    {
+        $cached = \Illuminate\Support\Facades\Cache::get('last_upload_'.$url);
+        if ($cached && isset($cached['public_id'])) {
+            $this->deleteMedia($cached['public_id'], $cached['resource_type'] ?? 'image');
+            \Illuminate\Support\Facades\Cache::forget('last_upload_'.$url);
+            return true;
+        }
+        return false;
+    }
+}

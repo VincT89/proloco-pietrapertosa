@@ -1,0 +1,1 @@
+<?php $res = file_get_contents("https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F964200032983536&show_text=false"); echo strpos($res, "video") !== false ? "OK" : "FAIL";
