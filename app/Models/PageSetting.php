@@ -40,20 +40,29 @@ class PageSetting extends Model
             'notizie' => 'Notizie',
             'eventi' => 'Eventi',
             'galleria' => 'Galleria',
+            'ringraziamenti-fotografici' => 'Ringraziamenti fotografici',
         ];
     }
 
     public static function ensureDefaultPages(): void
     {
         foreach (self::defaultPages() as $slug => $label) {
+            $defaults = [
+                'hero_title' => $label,
+                'hero_title_en' => $label,
+                'translation_status' => 'missing',
+                'hero_overlay_opacity' => 0.4,
+            ];
+
+            if ($slug === 'ringraziamenti-fotografici') {
+                $defaults['hero_title_en'] = 'Photo acknowledgements';
+                $defaults['hero_subtitle'] = 'Un grazie a chi ha contribuito con immagini e materiali visivi.';
+                $defaults['hero_subtitle_en'] = 'Thanks to those who contributed images and visual materials.';
+            }
+
             self::firstOrCreate(
                 ['page_slug' => $slug],
-                [
-                    'hero_title' => $label,
-                    'hero_title_en' => $label,
-                    'translation_status' => 'missing',
-                    'hero_overlay_opacity' => 0.4,
-                ]
+                $defaults
             );
         }
     }

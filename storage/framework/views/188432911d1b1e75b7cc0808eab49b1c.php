@@ -11,8 +11,8 @@
     <a href="<?php echo e(url("/" . app()->getLocale() . "")); ?>" class="brand">
         <img src="<?php echo e(asset('images/logo.png')); ?>" alt="Logo Associazione Pro Loco Pietrapertosana" />
         <span class="t">
-            <b>Pietrapertosa</b>
-            <small>Pro Loco &middot; Dolomiti Lucane</small>
+            <b>Proloco Pietrapertosana</b>
+            <small>Dolomiti Lucane</small>
         </span>
     </a>
     <div class="nav-right">

@@ -32,47 +32,14 @@ class MediaForm
                     ->live()
                     ->required(),
 
-                FileUpload::make('url')
-                    ->label('File')
-                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'])
-                    ->maxSize(102400)
-                    ->required()
-                    ->getUploadedFileUsing(function (string $file): ?array {
-                        return [
-                            'name' => basename($file),
-                            'size' => 0,
-                            'type' => preg_match('/\.(mp4|webm|mov)$/i', $file) ? 'video/mp4' : 'application/octet-stream',
-                            'url' => $file,
-                        ];
-                    })
-                    ->saveUploadedFileUsing(function (UploadedFile $file, callable $set) {
-                        $upload = app(\App\Services\CloudinaryService::class)->uploadMedia($file);
-                        
-                        $set('public_id', $upload['public_id']);
-                        $set('resource_type', $upload['resource_type'] ?? 'image');
-                        $set('provider', 'cloudinary');
-                        
-                        $type = ($upload['resource_type'] ?? '') === 'raw' ? 'document' : 'image';
-                        if ($type === 'image' && str_starts_with($file->getMimeType(), 'video/')) {
-                            $type = 'video';
+                \Filament\Forms\Components\Placeholder::make('url_display')
+                    ->label('File Attuale')
+                    ->content(function ($record) {
+                        if (!$record) return '-';
+                        if ($record->type === 'video') {
+                            return new \Illuminate\Support\HtmlString('<video src="'.$record->optimizedVideoUrl().'" controls style="max-height: 200px; border-radius: 8px;"></video>');
                         }
-                        $set('type', $type);
-                        
-                        $set('metadata', [
-                            'original_name' => $file->getClientOriginalName(),
-                            'mime_type' => $file->getMimeType(),
-                            'size' => $file->getSize(),
-                            'format' => $upload['format'] ?? $file->getClientOriginalExtension(),
-                        ]);
-
-                        return $upload['url'];
-                    })
-                    ->deleteUploadedFileUsing(function (string $file, callable $get) {
-                        $publicId = $get('public_id');
-                        $resourceType = $get('resource_type') ?? 'image';
-                        if ($publicId) {
-                            app(\App\Services\CloudinaryService::class)->deleteMedia($publicId, $resourceType);
-                        }
+                        return new \Illuminate\Support\HtmlString('<img src="'.$record->optimizedUrl('card').'" style="max-height: 200px; border-radius: 8px;" />');
                     }),
                 TextInput::make('alt')->label('Testo Alternativo')
                     ->default(null),

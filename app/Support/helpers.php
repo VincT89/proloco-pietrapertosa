@@ -20,11 +20,16 @@ if (! function_exists('localized_route')) {
             'eventi' => 'events',
             'notizie' => 'news',
             'galleria' => 'gallery',
-            'contatti' => 'contact',
+            'contatti' => 'contacts',
             'comunita' => 'community',
             'territorio' => 'territory',
             'sapori' => 'tastes',
             'scopri' => 'discover',
+            'pro-loco' => 'pro-loco',
+            'storie' => 'stories',
+            'il-borgo' => 'the-village',
+            'cookie' => 'cookies',
+            'ringraziamenti-fotografici' => 'photo-thanks',
         ];
 
         $mapEnToIt = array_flip($mapItToEn);

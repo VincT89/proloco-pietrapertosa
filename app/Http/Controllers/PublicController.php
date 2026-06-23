@@ -23,7 +23,7 @@ class PublicController extends Controller
             ->orderBy('start_date', 'asc')
             ->take(3)
             ->get();
-        $news = News::where('status', 'published')->orderBy('published_at', 'desc')->take(3)->get();
+        $news = News::with('cover')->where('status', 'published')->orderBy('published_at', 'desc')->take(3)->get();
 
         return view('pages.home', compact('page', 'events', 'news'));
     }
@@ -38,7 +38,7 @@ class PublicController extends Controller
     public function community()
     {
         $page = PageSetting::where('page_slug', 'comunita')->first();
-        $realta = DirectoryItem::where('category', 'comunita')->get();
+        $realta = DirectoryItem::with('galleryMedia')->where('category', 'comunita')->get();
 
         return view('pages.community', compact('page', 'realta'));
     }
@@ -46,9 +46,9 @@ class PublicController extends Controller
     public function territory()
     {
         $page = PageSetting::where('page_slug', 'territorio')->first();
-        $aziende = DirectoryItem::where('category', 'territorio_aziende')->get();
-        $foodtruck = DirectoryItem::where('category', 'territorio_foodtruck')->get();
-        $artigiani = DirectoryItem::where('category', 'territorio_artigiani')->get();
+        $aziende = DirectoryItem::with('galleryMedia', 'externalMedia')->where('category', 'territorio_aziende')->get();
+        $foodtruck = DirectoryItem::with('galleryMedia', 'externalMedia')->where('category', 'territorio_foodtruck')->get();
+        $artigiani = DirectoryItem::with('galleryMedia', 'externalMedia')->where('category', 'territorio_artigiani')->get();
 
         return view('pages.territory', compact('page', 'aziende', 'foodtruck', 'artigiani'));
     }
@@ -56,7 +56,7 @@ class PublicController extends Controller
     public function tastes()
     {
         $page = PageSetting::where('page_slug', 'sapori')->first();
-        $piatti = DirectoryItem::where('category', 'sapori_piatti')->get();
+        $piatti = DirectoryItem::with('galleryMedia')->where('category', 'sapori_piatti')->get();
 
         return view('pages.tastes', compact('page', 'piatti'));
     }
@@ -139,5 +139,14 @@ class PublicController extends Controller
     public function cookie()
     {
         return view('pages.cookie');
+    }
+
+    public function photoThanks()
+    {
+        $page = PageSetting::where('page_slug', 'ringraziamenti-fotografici')
+            ->with('heroMedia')
+            ->firstOrFail();
+
+        return view('pages.photo-thanks', compact('page'));
     }
 }

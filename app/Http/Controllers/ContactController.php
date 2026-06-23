@@ -18,21 +18,23 @@ class ContactController extends Controller
 
         $data = $request->validated();
         
-        $toAddress = config('services.proloco.contact_email');
-        if (empty($toAddress)) {
-            $toAddress = 'info@prolocopietrapertosana.it';
+        $toAddress = config('mail.proloco_contact_email');
+
+        if (blank($toAddress)) {
+            \Illuminate\Support\Facades\Log::error('PROLOCO_CONTACT_EMAIL non configurato');
+            return back()->with('error', __('messages.contact_error'))->withInput();
         }
 
         try {
             Mail::to($toAddress)->send(new ContactMessage($data));
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Contact form email failed: ' . $e->getMessage());
-            if (app()->environment('testing')) {
-                throw $e;
-            }
-            // Generic anti-enumeration response
-        }
 
-        return back()->with('success', 'Il tuo messaggio è stato inviato con successo. Ti risponderemo il prima possibile.');
+            return back()->with('success', __('messages.contact_success'));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Errore invio form Pro Loco', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', __('messages.contact_error'))->withInput();
+        }
     }
 }

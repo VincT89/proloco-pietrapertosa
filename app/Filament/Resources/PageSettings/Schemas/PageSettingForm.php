@@ -56,45 +56,69 @@ class PageSettingForm
                             TextInput::make('data.discover_title_en')->label('Titolo Scopri (EN)')->default('Discover Pietrapertosa'),
                             Textarea::make('data.discover_text')->label('Testo Scopri')->default('Dall\'Arabata al Castello Normanno-Svevo, fino all\'emozionante Volo dell\'Angelo. Scopri i luoghi che rendono unico il nostro borgo.')->columnSpanFull(),
                             Textarea::make('data.discover_text_en')->label('Testo Scopri (EN)')->columnSpanFull(),
+                            TextInput::make('data.discover_cta_text')->label('Testo Pulsante Scopri')->default('Borgo Racconta'),
+                            TextInput::make('data.discover_cta_text_en')->label('Testo Pulsante Scopri (EN)')->default('Borgo Racconta'),
+                            TextInput::make('data.discover_cta_url')->label('URL Pulsante Scopri')->default('https://www.borgoracconta.it/citta/pietrapertosa/'),
                         ]),
                         \Filament\Forms\Components\Repeater::make('data.discover_items')->label('Elementi Scopri Pietrapertosa')->schema([
                             TextInput::make('nome')->label('Titolo')->required(),
                             TextInput::make('nome_en')->label('Titolo (EN)'),
-                            \Filament\Forms\Components\Hidden::make('img_media_id'),
-                            FileUpload::make('img')->label('Immagine (Cloudinary)')
-                                ->image()
-                                ->saveUploadedFileUsing(function (UploadedFile $file, callable $set) {
-                                    $media = app(\App\Services\MediaManager::class)->upload($file);
-                                    $set('img_media_id', $media->id);
-                                    \Illuminate\Support\Facades\Cache::put('last_upload_'.$media->url, $media->id, 300);
-                                    return $media->url;
+                            Select::make('img_media_id')->label('Immagine (Libreria)')
+                                ->options(function () {
+                                    return \App\Models\Media::where('type', 'image')->get()->mapWithKeys(function ($media) {
+                                        $url = $media->thumbnail_url ?: ($media->type === 'image' ? $media->optimizedUrl('small') : null);
+                                        $preview = $url ? '<img src="' . (str_starts_with($url, 'http') ? $url : asset($url)) . '" style="height: 30px; width: 30px; object-fit: cover; border-radius: 4px; display: inline-block; margin-right: 8px; vertical-align: middle;" />' : '';
+                                        $name = $media->alt ?: ($media->name ?: "Media #{$media->id}");
+                                        return [$media->id => '<div style="display: flex; align-items: center;">' . $preview . '<span>' . e($name) . '</span></div>'];
+                                    });
                                 })
-                                ->deleteUploadedFileUsing(function (string $file, callable $set) {
-                                    $mediaId = \Illuminate\Support\Facades\Cache::get('last_upload_'.$file);
-                                    if (! $mediaId) {
-                                        $media = \App\Models\Media::where('url', $file)->first();
-                                        if ($media) $mediaId = $media->id;
+                                ->allowHtml()
+                                ->createOptionForm([
+                                    FileUpload::make('file')->label('Carica Immagine')->image()->storeFiles(false)->required(),
+                                    TextInput::make('alt')->label('Testo Alternativo'),
+                                ])
+                                ->createOptionUsing(function (array $data) {
+                                    $media = app(\App\Services\MediaManager::class)->upload($data['file']);
+                                    if (!empty($data['alt'])) {
+                                        $media->update(['alt' => $data['alt']]);
                                     }
-                                    $set('img_media_id', null);
-                                    if ($mediaId) {
-                                        $media = \App\Models\Media::find($mediaId);
-                                        if ($media) {
-                                            app(\App\Services\MediaManager::class)->delete($media);
-                                        }
-                                    }
-                                    \Illuminate\Support\Facades\Cache::forget('last_upload_'.$file);
+                                    return $media->id;
                                 })
-                                ->getUploadedFileUsing(function (string $file): ?array {
-                                    return [
-                                        'name' => basename($file),
-                                        'size' => 0,
-                                        'type' => 'image/jpeg',
-                                        'url' => $file,
-                                    ];
-                                })
+                                ->searchable(),
                         ])->columns(2)->collapsible()
                     ])
                 ])->visible(fn ($record) => $record?->page_slug === 'home')->columnSpanFull(),
+                Tabs::make('Ringraziamenti Fotografici')->tabs([
+                    Tab::make('Contributori fotografici')->schema([
+                        \Filament\Forms\Components\Repeater::make('data.photo_contributors')->label('Fornitori e Contributori')->schema([
+                            TextInput::make('name')->label('Nome fornitore/contributore')->required(),
+                            Textarea::make('description')->label('Descrizione / nota')->required(),
+                            Textarea::make('description_en')->label('Descrizione / nota (EN)'),
+                            TextInput::make('website_url')->label('Sito web / link')->url(),
+                            Select::make('logo_media_id')->label('Logo Fornitore')
+                                ->options(function () {
+                                    return \App\Models\Media::where('type', 'image')->get()->mapWithKeys(function ($media) {
+                                        $url = $media->thumbnail_url ?: ($media->type === 'image' ? $media->optimizedUrl('small') : null);
+                                        $preview = $url ? '<img src="' . (str_starts_with($url, 'http') ? $url : asset($url)) . '" style="height: 30px; width: 30px; object-fit: contain; border-radius: 4px; display: inline-block; margin-right: 8px; vertical-align: middle; filter: brightness(0) invert(1);" />' : '';
+                                        $name = $media->alt ?: ($media->name ?: "Media #{$media->id}");
+                                        return [$media->id => '<div style="display: flex; align-items: center; background: #222; padding: 2px;">' . $preview . '<span>' . e($name) . '</span></div>'];
+                                    });
+                                })
+                                ->allowHtml()
+                                ->createOptionForm([
+                                    FileUpload::make('file')->label('Carica Logo')->image()->storeFiles(false)->required(),
+                                    TextInput::make('alt')->label('Testo Alternativo'),
+                                ])
+                                ->createOptionUsing(function (array $data) {
+                                    $media = app(\App\Services\MediaManager::class)->upload($data['file']);
+                                    if (!empty($data['alt'])) {
+                                        $media->update(['alt' => $data['alt']]);
+                                    }
+                                    return $media->id;
+                                })
+                        ])->columns(1)->collapsible()
+                    ])
+                ])->visible(fn ($record) => $record?->page_slug === 'ringraziamenti-fotografici')->columnSpanFull(),
                 Grid::make(2)->schema([
                     Select::make('page_slug')
                         ->label('Pagina')
@@ -111,51 +135,32 @@ class PageSettingForm
                             'notizie' => 'Notizie',
                             'eventi' => 'Eventi',
                             'galleria' => 'Galleria',
+                            'ringraziamenti-fotografici' => 'Ringraziamenti fotografici',
                         ])
                         ->required()
                         ->unique(ignoreRecord: true),
-                    \Filament\Forms\Components\Hidden::make('hero_media_id'),
-                    FileUpload::make('hero_media_upload')->label('Immagine Hero')
-                        ->image()
-                        ->maxSize(10240)
-                        ->getUploadedFileUsing(function (string $file): ?array {
-                            return [
-                                'name' => basename($file),
-                                'size' => 0,
-                                'type' => 'image/jpeg',
-                                'url' => $file,
-                            ];
+                    Select::make('hero_media_id')->label('Immagine Hero')
+                        ->relationship('heroMedia', 'name', fn ($query) => $query->where('type', 'image'))
+                        ->allowHtml()
+                        ->getOptionLabelFromRecordUsing(function (\App\Models\Media $record) {
+                            $url = $record->thumbnail_url ?: ($record->type === 'image' ? $record->optimizedUrl('small') : null);
+                            $preview = $url ? '<img src="' . (str_starts_with($url, 'http') ? $url : asset($url)) . '" style="height: 30px; width: 30px; object-fit: cover; border-radius: 4px; display: inline-block; margin-right: 8px; vertical-align: middle;" />' : '';
+                            $name = $record->alt ?: ($record->name ?: "Media #{$record->id}");
+                            return '<div style="display: flex; align-items: center;">' . $preview . '<span>' . e($name) . '</span></div>';
                         })
-                        ->saveUploadedFileUsing(function (UploadedFile $file, callable $set) {
-                            $media = app(\App\Services\MediaManager::class)->upload($file);
-                            $set('hero_media_id', $media->id);
-                            \Illuminate\Support\Facades\Cache::put('last_upload_'.$media->url, $media->id, 300);
-                            return $media->url;
-                        })
-                        ->deleteUploadedFileUsing(function (string $file, callable $set) {
-                            $mediaId = \Illuminate\Support\Facades\Cache::get('last_upload_'.$file);
-                            if (! $mediaId) {
-                                // Try fallback by url if editing
-                                $media = Media::where('url', $file)->first();
-                                if ($media) $mediaId = $media->id;
+                        ->createOptionForm([
+                            FileUpload::make('file')->label('Carica File')->image()->storeFiles(false)->required(),
+                            TextInput::make('alt')->label('Testo Alternativo'),
+                        ])
+                        ->createOptionUsing(function (array $data) {
+                            $media = app(\App\Services\MediaManager::class)->upload($data['file']);
+                            if (!empty($data['alt'])) {
+                                $media->update(['alt' => $data['alt']]);
                             }
-                            
-                            $set('hero_media_id', null);
-
-                            if ($mediaId) {
-                                $media = Media::find($mediaId);
-                                if ($media && \Illuminate\Support\Facades\DB::table('mediables')->where('media_id', $media->id)->count() === 0) {
-                                    app(\App\Services\MediaManager::class)->delete($media);
-                                }
-                            }
-                            \Illuminate\Support\Facades\Cache::forget('last_upload_'.$file);
+                            return $media->getKey();
                         })
-                        ->afterStateHydrated(function ($component, $record) {
-                            if ($record && $record->heroMedia) {
-                                $component->state($record->heroMedia->url);
-                            }
-                        })
-                        ->dehydrated(false),
+                        ->searchable()
+                        ->preload(),
                     TextInput::make('hero_overlay_opacity')->label('Opacità Sfondo Hero')
                         ->numeric()
                         ->default(0.4)

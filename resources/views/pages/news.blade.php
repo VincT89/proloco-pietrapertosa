@@ -49,7 +49,7 @@
                                         {{ $notizia->getTranslation('title') }}
                                     </h3>
                                     <p class="ev-card-desc">
-                                        {!! clean(($notizia->getTranslation('excerpt') ?: preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', html_entity_decode(strip_tags($notizia->getTranslation('content'))))) ?? '') !!}
+                                        {{ Str::limit(strip_tags(html_entity_decode($notizia->getTranslation('excerpt') ?: $notizia->getTranslation('content'))), 150) }}
                                     </p>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@
                                         <h4 class="nw-gal-title" style="color: var(--paper); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 20px;">@lang('news.gallery_title')</h4>
                                         <div class="nw-gal-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;">
                                             @foreach($allGalleryMedia as $idx => $media)
-                                                <div class="cur fad gal-img-wrap pos-rel" onclick="openGallery({{ $allGalleryMedia->map(fn($m) => ['type' => $m->type, 'provider' => $m->provider, 'url' => $m->type === 'image' ? $m->optimizedUrl('large') : $m->url, 'embed_url' => $m->embed_url])->toJson() }}, {{ $idx }})" style="aspect-ratio: 1; border-radius: 4px; overflow: hidden; position: relative;">
+                                                <div class="cur fad gal-img-wrap pos-rel" onclick="openGallery({{ $allGalleryMedia->map(fn($m) => ['type' => $m->type, 'provider' => $m->provider, 'url' => $m->type === 'image' ? $m->optimizedUrl('large') : ($m->type === 'video' ? $m->optimizedVideoUrl() : $m->url), 'embed_url' => $m->embed_url])->toJson() }}, {{ $idx }})" style="aspect-ratio: 1; border-radius: 4px; overflow: hidden; position: relative;">
                                                     <x-media-renderer :media="$media" class="gal-img" style="width: 100%; height: 100%; object-fit: cover;" />
                                                 </div>
                                             @endforeach

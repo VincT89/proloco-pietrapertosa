@@ -13,7 +13,17 @@ class EditMedia extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->using(function (\App\Models\Media $record, DeleteAction $action) {
+                    if (! app(\App\Services\MediaManager::class)->delete($record)) {
+                        \Filament\Notifications\Notification::make()
+                            ->danger()
+                            ->title('Impossibile eliminare')
+                            ->body('Il media è in uso e non può essere cancellato.')
+                            ->send();
+                        $action->halt();
+                    }
+                }),
         ];
     }
 }

@@ -31,7 +31,7 @@
                     <h3 class="cm-title">
                         {{ $asso->getTranslation('title') }}
                     </h3>
-                    <p class="cm-desc">{!! preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', html_entity_decode(strip_tags($asso->getTranslation('description')))) !!}</p>
+                    <div class="cm-desc">{!! clean($asso->getTranslation('description')) !!}</div>
                     @if($asso->contact_info)
                         <div class="cm-contact">{{ (app()->getLocale() === 'en') ? "Contact:" : "Contatto:" }} {{ $asso->contact_info }}</div>
                     @endif

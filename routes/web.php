@@ -22,6 +22,7 @@ Route::middleware(['setLocale'])->group(function () {
         Route::get('/notizie', [PublicController::class, 'news'])->name('news.it');
         Route::get('/eventi', [PublicController::class, 'events'])->name('events.it');
         Route::get('/galleria', [PublicController::class, 'gallery'])->name('gallery.it');
+        Route::get('/ringraziamenti-fotografici', [PublicController::class, 'photoThanks'])->name('photo-thanks.it');
         Route::post('/pro-loco/contact', [ContactController::class, 'send'])
             ->name('contact.send.it')
             ->middleware('throttle:5,1');
@@ -42,6 +43,7 @@ Route::middleware(['setLocale'])->group(function () {
         Route::get('/news', [PublicController::class, 'news'])->name('news.en');
         Route::get('/events', [PublicController::class, 'events'])->name('events.en');
         Route::get('/gallery', [PublicController::class, 'gallery'])->name('gallery.en');
+        Route::get('/photo-thanks', [PublicController::class, 'photoThanks'])->name('photo-thanks.en');
         Route::post('/pro-loco/contact', [ContactController::class, 'send'])
             ->name('contact.send.en')
             ->middleware('throttle:5,1');

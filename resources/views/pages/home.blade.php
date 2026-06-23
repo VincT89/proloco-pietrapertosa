@@ -3,46 +3,36 @@
 @section('title', 'Proloco Pietrapertosana')
 
 @php
-    
-
-    // Dati fallback presi dal React data/home.js in caso DB vuoto
-    if ($events->isEmpty()) {
-        $fallbackEvents = [
-            (object)['id' => 1, 'title' => 'Sapori d\'Autunno', 'title_en' => 'Tastes of Autumn', 'cover_url' => asset('images/sapori_hero.png'), 'start_date' => null, 'fallback_date' => (app()->getLocale() === 'en') ? 'November' : 'Novembre'],
-            (object)['id' => 2, 'title' => 'Sulle Tracce degli Arabi', 'title_en' => 'On the Traces of Arabs', 'cover_url' => asset('images/arabata.jpeg'), 'start_date' => null, 'fallback_date' => (app()->getLocale() === 'en') ? 'August' : 'Agosto'],
-            (object)['id' => 3, 'title' => 'Borgo Festival', 'title_en' => 'Village Festival', 'cover_url' => asset('images/PietrapertosaEventi.png'), 'start_date' => null, 'fallback_date' => (app()->getLocale() === 'en') ? 'July' : 'Luglio']
+    $eventsToDisplay = $events->map(function($ev) {
+        return (object)[
+            'id' => $ev->id,
+            'title' => $ev->title,
+            'title_en' => $ev->title_en,
+            'cover_url' => $ev->cover ? $ev->cover->optimizedUrl('card') : null,
+            'start_date' => $ev->start_date,
+            'fallback_date' => null
         ];
-        $eventsToDisplay = $fallbackEvents;
-    } else {
-        $eventsToDisplay = $events->map(function($ev) {
-            return (object)[
-                'id' => $ev->id,
-                'title' => $ev->title,
-                'title_en' => $ev->title_en,
-                'cover_url' => $ev->cover ? $ev->cover->optimizedUrl('card') : null,
-                'start_date' => $ev->start_date,
-                'fallback_date' => null
-            ];
-        });
-    }
+    });
 
     $scopriData = $page?->data['discover_items'] ?? null;
+    $fallbackScopri = [];
     if ($scopriData && is_array($scopriData) && count($scopriData) > 0) {
         $fallbackScopri = collect($scopriData)->map(function ($item, $key) {
+            $imgUrl = '';
+            if (!empty($item['img_media_id'])) {
+                $media = \App\Models\Media::find($item['img_media_id']);
+                if ($media) $imgUrl = $media->url;
+            } else if (!empty($item['img'])) {
+                $imgUrl = $item['img'];
+            }
+            
             return (object)[
                 'id' => $key + 1,
                 'nome' => $item['nome'] ?? '',
                 'nome_en' => $item['nome_en'] ?? '',
-                'img' => $item['img'] ?? ''
+                'img' => $imgUrl
             ];
         })->toArray();
-    } else {
-        $fallbackScopri = [
-            (object)['id' => 1, 'nome' => 'L\'Arabata', 'nome_en' => 'The Arabata', 'img' => asset('images/arabata01.jpg')],
-            (object)['id' => 2, 'nome' => 'Castello Normanno-Svevo', 'nome_en' => 'Norman-Swabian Castle', 'img' => asset('images/castello.jpg')],
-            (object)['id' => 3, 'nome' => 'Sentiero delle Sette Pietre', 'nome_en' => 'Path of the Seven Stones', 'img' => asset('images/percorsi.jpg')],
-            (object)['id' => 4, 'nome' => 'Volo dell\'Angelo', 'nome_en' => 'Flight of the Angel', 'img' => asset('images/voloAngelo.jpg')]
-        ];
     }
 @endphp
 
@@ -50,17 +40,19 @@
     <header class="hero" id="top">
         <div class="hero-media" id="heroMedia">
             <div class="h-bg">
-                <img src="{{ $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/immaginePaese.jpg') }}" alt="" class="home-hero-bg" />
+                @if($page?->heroMedia)
+                    <img src="{{ $page->heroMedia->optimizedUrl('hero') }}" alt="" class="home-hero-bg" />
+                @endif
                 <div class="home-hero-gradient" style="background: rgba(0,0,0,{{ $page?->hero_overlay_opacity ?? 0.4 }});"></div>
             </div>
         </div>
         <div class="hero-in">
             <h1 class="hero-h1">
                 <span class="ln">
-                    <span>{!! $page?->getTranslation('hero_title') ?? __('home.hero_title_1') !!}</span>
+                    <span>{!! clean($page?->getTranslation('hero_title') ?? __('home.hero_title_1')) !!}</span>
                 </span>
                 <span class="ln">
-                    <span>{!! $page?->getTranslation('hero_subtitle') ?? __('home.hero_title_2') !!}</span>
+                    <span>{!! clean($page?->getTranslation('hero_subtitle') ?? __('home.hero_title_2')) !!}</span>
                 </span>
             </h1>
             <div class="hero-foot">
@@ -180,11 +172,19 @@
                         @endforeach
                     </ul>
 
+                    @php
+                        $discoverCtaUrl = $page?->data['discover_cta_url'] ?? 'https://www.borgoracconta.it/citta/pietrapertosa/';
+                        $discoverCtaText = !empty($page?->data['discover_cta_text' . (app()->getLocale() === 'en' ? '_en' : '')]) 
+                            ? $page->data['discover_cta_text' . (app()->getLocale() === 'en' ? '_en' : '')] 
+                            : __('home.go_to_borgo');
+                    @endphp
+                    @if($discoverCtaUrl)
                     <div>
-                        <a href="https://www.borgoracconta.it/citta/pietrapertosa/" target="_blank" rel="noopener noreferrer" class="ed-btn ed-btn-gold">
-                            @lang('home.go_to_borgo')
+                        <a href="{{ $discoverCtaUrl }}" target="_blank" rel="noopener noreferrer" class="ed-btn ed-btn-gold">
+                            {{ $discoverCtaText }}
                         </a>
                     </div>
+                    @endif
                 </div>
 
                 <div class="borgo-imgs">

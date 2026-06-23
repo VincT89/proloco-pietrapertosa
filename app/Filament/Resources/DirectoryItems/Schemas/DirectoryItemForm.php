@@ -52,6 +52,17 @@ class DirectoryItemForm
                         ])
                         ->searchable()
                         ->required(),
+                    Select::make('galleryMedia')->label('Scegli Immagini da Libreria Esistente')
+                        ->relationship('galleryMedia', 'name')
+                        ->multiple()
+                        ->preload()
+                        ->allowHtml()
+                        ->getOptionLabelFromRecordUsing(function (\App\Models\Media $record) {
+                            $url = $record->thumbnail_url ?: ($record->type === 'image' ? $record->optimizedUrl('small') : null);
+                            $preview = $url ? '<img src="' . (str_starts_with($url, 'http') ? $url : asset($url)) . '" style="height: 30px; width: 30px; object-fit: cover; border-radius: 4px; display: inline-block; margin-right: 8px; vertical-align: middle;" />' : '';
+                            $name = $record->alt ?: ($record->name ?: "Media #{$record->id}");
+                            return '<div style="display: flex; align-items: center;">' . $preview . '<span>' . e($name) . '</span></div>';
+                        }),
                     FileUpload::make('gallery_files')->label('Galleria Immagini/Video (File Locali)')
                         ->multiple()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'])

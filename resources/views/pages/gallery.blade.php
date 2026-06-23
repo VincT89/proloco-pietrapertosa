@@ -39,7 +39,7 @@
                             <div class="gal-grid mb-60">
                                 @foreach($allGalleryMedia as $idx => $media)
                                     <div class="cur fad gal-img-wrap pos-rel"
-                                         onclick="openGallery({{ $allGalleryMedia->map(fn($m) => ['type' => $m->type, 'provider' => $m->provider, 'url' => $m->type === 'image' ? $m->optimizedUrl('large') : $m->url, 'embed_url' => $m->embed_url])->toJson() }}, {{ $idx }})"
+                                         onclick="openGallery({{ $allGalleryMedia->map(fn($m) => ['type' => $m->type, 'provider' => $m->provider, 'url' => $m->type === 'image' ? $m->optimizedUrl('large') : ($m->type === 'video' ? $m->optimizedVideoUrl() : $m->url), 'embed_url' => $m->embed_url])->toJson() }}, {{ $idx }})"
                                          onmouseenter="this.querySelector('.gal-overlay').style.opacity = '1'"
                                          onmouseleave="this.querySelector('.gal-overlay').style.opacity = '0'">
                                         

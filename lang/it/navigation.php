@@ -14,5 +14,5 @@ return [
     'follow_us' => 'Seguici',
     'restricted_access' => 'Accesso Riservato',
     'made_with_heart' => 'fatto con il cuore, a 1.088 metri',
-    'association_desc' => 'Associazione no profit per la promozione turistica e culturale del borgo, nel Parco delle Piccole Dolomiti Lucane.',
+    'association_desc' => 'Associazione no profit per la promozione turistica e culturale del borgo, nel Parco delle Dolomiti Lucane.',
 ];

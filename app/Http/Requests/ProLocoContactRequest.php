@@ -32,11 +32,11 @@ class ProLocoContactRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'subject' => 'nullable|string|max:255',
-            'message' => 'required|string|max:2000',
-            'website' => 'nullable|string',
+            'name' => ['required', 'string', 'max:120'],
+            'email' => ['required', 'email:rfc,dns', 'max:190'],
+            'subject' => ['nullable', 'string', 'max:120'],
+            'message' => ['required', 'string', 'max:3000'],
+            'website' => ['nullable', 'max:0'],
         ];
     }
 }

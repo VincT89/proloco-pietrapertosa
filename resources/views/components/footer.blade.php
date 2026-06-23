@@ -65,6 +65,9 @@
         <span class="f-bot-links">
             <a href="{{ url('/' . app()->getLocale() . '/privacy') }}">Privacy Policy</a>
             <a href="{{ url('/' . app()->getLocale() . '/' . ((app()->getLocale() === 'en') ? 'cookies' : 'cookie')) }}">Cookie Policy</a>
+            <a href="{{ localized_route(request()->path(), app()->getLocale()) === url('/') ? url('/' . app()->getLocale() . '/' . ((app()->getLocale() === 'en') ? 'photo-thanks' : 'ringraziamenti-fotografici')) : url('/' . app()->getLocale() . '/' . ((app()->getLocale() === 'en') ? 'photo-thanks' : 'ringraziamenti-fotografici')) }}" style="color: var(--gold-soft); font-size: 0.75rem; font-weight: 500;">
+                {{ app()->getLocale() === 'it' ? 'Ringraziamenti fotografici' : 'Photo acknowledgements' }}
+            </a>
         </span>
         <span>
             <i class="footer-credit">@lang('navigation.made_with_heart')</i>

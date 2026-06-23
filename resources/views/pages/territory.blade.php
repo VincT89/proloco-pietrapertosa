@@ -29,7 +29,7 @@
                         <div class="terr-text-reset">
                             <span class="lbl-mut terr-item-subtitle">{{ $az->getTranslation('subtitle') }}</span>
                             <h3 class="terr-item-title">{{ $az->getTranslation('title') }}</h3>
-                            <p class="terr-item-desc">{!! preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', html_entity_decode(strip_tags($az->getTranslation('description')))) !!}</p>
+                            <div class="terr-item-desc">{!! clean($az->getTranslation('description')) !!}</div>
                             @if($az->contact_info)
                                 <div class="terr-item-contact">{{ (app()->getLocale() === 'en') ? "Contact:" : "Contatto:" }} {{ $az->contact_info }}</div>
                             @endif
@@ -53,7 +53,7 @@
                         <div class="terr-text-reset">
                             <span class="lbl-mut terr-item-subtitle">{{ $ft->getTranslation('subtitle') }}</span>
                             <h3 class="terr-item-title">{{ $ft->getTranslation('title') }}</h3>
-                            <p class="terr-item-desc">{!! preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', html_entity_decode(strip_tags($ft->getTranslation('description')))) !!}</p>
+                            <div class="terr-item-desc">{!! clean($ft->getTranslation('description')) !!}</div>
                             @if($ft->contact_info)
                                 <div class="terr-item-contact">{{ (app()->getLocale() === 'en') ? "Contact:" : "Contatto:" }} {{ $ft->contact_info }}</div>
                             @endif
@@ -77,7 +77,7 @@
                         <div class="terr-text-reset">
                             <span class="lbl-mut terr-item-subtitle">{{ $art->getTranslation('subtitle') }}</span>
                             <h3 class="terr-item-title">{{ $art->getTranslation('title') }}</h3>
-                            <p class="terr-item-desc">{!! preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', html_entity_decode(strip_tags($art->getTranslation('description')))) !!}</p>
+                            <div class="terr-item-desc">{!! clean($art->getTranslation('description')) !!}</div>
                             @if($art->contact_info)
                                 <div class="terr-item-contact">{{ (app()->getLocale() === 'en') ? "Contact:" : "Contatto:" }} {{ $art->contact_info }}</div>
                             @endif

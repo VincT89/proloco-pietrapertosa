@@ -19,7 +19,12 @@
         <div class="ev-card-grid">
             @foreach($annualEvents as $ev)
                 @php
-                    $galleryLarge = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('large'))->toArray();
+                    $galleryLarge = $ev->galleryMedia->map(fn($m) => [
+                        'type' => $m->type, 
+                        'provider' => $m->provider, 
+                        'url' => $m->type === 'image' ? $m->optimizedUrl('large') : ($m->type === 'video' ? $m->optimizedVideoUrl() : $m->url), 
+                        'embed_url' => $m->embed_url
+                    ])->toArray();
                     $galleryThumb = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('card'))->toArray();
                 @endphp
                 <div class="ev-card-giant {{ count($galleryThumb) > 0 ? 'is-clickable' : '' }}" @if(count($galleryLarge) > 0) onclick='openGallery(@json($galleryLarge))' @endif>
@@ -39,7 +44,7 @@
                             <h3 class="ev-card-title">
                                 {{ $ev->getTranslation('title') }}
                             </h3>
-                            <p class="ev-card-desc">{!! preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', html_entity_decode(strip_tags($ev->getTranslation('description')))) !!}</p>
+                            <p class="ev-card-desc">{{ Str::limit(strip_tags(html_entity_decode($ev->getTranslation('description'))), 150) }}</p>
                         </div>
                     </div>
                 </div>
@@ -62,7 +67,12 @@
             <div class="ev-grid-cards">
                 @foreach($events as $ev)
                     @php
-                        $galleryLarge = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('large'))->toArray();
+                    $galleryLarge = $ev->galleryMedia->map(fn($m) => [
+                        'type' => $m->type, 
+                        'provider' => $m->provider, 
+                        'url' => $m->type === 'image' ? $m->optimizedUrl('large') : ($m->type === 'video' ? $m->optimizedVideoUrl() : $m->url), 
+                        'embed_url' => $m->embed_url
+                    ])->toArray();
                         $galleryThumb = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('card'))->toArray();
                     @endphp
                     <div class="ev-card-normal {{ count($galleryThumb) > 0 ? 'is-clickable' : '' }}" @if(count($galleryLarge) > 0) onclick='openGallery(@json($galleryLarge))' @endif>
@@ -134,7 +144,7 @@
                                             $galleryJsonData = $allGalleryMedia->map(fn($m) => [
                                                 'type' => $m->type,
                                                 'provider' => $m->provider,
-                                                'url' => $m->type === 'image' ? $m->optimizedUrl('large') : $m->url,
+                                                'url' => $m->type === 'image' ? $m->optimizedUrl('large') : ($m->type === 'video' ? $m->optimizedVideoUrl() : $m->url),
                                                 'embed_url' => $m->embed_url
                                             ]);
                                         @endphp

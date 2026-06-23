@@ -76,6 +76,13 @@ class MediaManager
         }
 
         try {
+            // Delete from Cloudinary first
+            if ($media->public_id) {
+                $this->cloudinary->deleteMedia($media->public_id, $media->resource_type ?? 'image');
+            } elseif ($media->url && $media->provider === 'cloudinary') {
+                $this->cloudinary->deleteMediaByUrl($media->url, $media->resource_type ?? 'image');
+            }
+
             DB::transaction(function () use ($media) {
                 // Delete relations first (though Laravel might handle this if cascade is set, but better safe)
                 DB::table('mediables')->where('media_id', $media->id)->delete();
@@ -83,13 +90,6 @@ class MediaManager
                 // Usually cover_media_id is set to null on delete (set null).
                 $media->delete();
             });
-
-            // If DB deletion succeeds, remove from Cloudinary
-            if ($media->public_id) {
-                $this->cloudinary->deleteMedia($media->public_id, $media->resource_type ?? 'image');
-            } elseif ($media->url && $media->provider === 'cloudinary') {
-                $this->cloudinary->deleteMediaByUrl($media->url, $media->resource_type ?? 'image');
-            }
 
             return true;
         } catch (\Exception $e) {

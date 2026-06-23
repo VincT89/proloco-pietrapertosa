@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make($password),
         ]);
 
+        \App\Models\PageSetting::ensureDefaultPages();
+
         // $this->call([
         //     ContentSeeder::class,
         //     GalleryAlbumSeeder::class,

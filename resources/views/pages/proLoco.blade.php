@@ -70,6 +70,12 @@
                         </div>
                     @endif
 
+                    @if(session('error'))
+                        <div class="form-error-msg" style="margin-bottom: 15px;">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <div class="proloco-form-grid">
                         <input type="text" name="name" required placeholder="{{ (app()->getLocale() === 'en') ? 'Full Name' : 'Nome e Cognome' }}" class="ed-input" value="{{ old('name') }}" />
                         <input type="email" name="email" required placeholder="Email" class="ed-input" value="{{ old('email') }}" />
