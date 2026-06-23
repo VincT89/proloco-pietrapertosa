@@ -60,11 +60,29 @@ class PageSettingForm
                         \Filament\Forms\Components\Repeater::make('data.discover_items')->label('Elementi Scopri Pietrapertosa')->schema([
                             TextInput::make('nome')->label('Titolo')->required(),
                             TextInput::make('nome_en')->label('Titolo (EN)'),
+                            \Filament\Forms\Components\Hidden::make('img_media_id'),
                             FileUpload::make('img')->label('Immagine (Cloudinary)')
                                 ->image()
-                                ->saveUploadedFileUsing(function (UploadedFile $file) {
-                                    $upload = app(\App\Services\CloudinaryService::class)->uploadMedia($file);
-                                    return $upload['url'];
+                                ->saveUploadedFileUsing(function (UploadedFile $file, callable $set) {
+                                    $media = app(\App\Services\MediaManager::class)->upload($file);
+                                    $set('img_media_id', $media->id);
+                                    \Illuminate\Support\Facades\Cache::put('last_upload_'.$media->url, $media->id, 300);
+                                    return $media->url;
+                                })
+                                ->deleteUploadedFileUsing(function (string $file, callable $set) {
+                                    $mediaId = \Illuminate\Support\Facades\Cache::get('last_upload_'.$file);
+                                    if (! $mediaId) {
+                                        $media = \App\Models\Media::where('url', $file)->first();
+                                        if ($media) $mediaId = $media->id;
+                                    }
+                                    $set('img_media_id', null);
+                                    if ($mediaId) {
+                                        $media = \App\Models\Media::find($mediaId);
+                                        if ($media) {
+                                            app(\App\Services\MediaManager::class)->delete($media);
+                                        }
+                                    }
+                                    \Illuminate\Support\Facades\Cache::forget('last_upload_'.$file);
                                 })
                                 ->getUploadedFileUsing(function (string $file): ?array {
                                     return [

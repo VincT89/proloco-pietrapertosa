@@ -57,10 +57,10 @@
         <div class="hero-in">
             <h1 class="hero-h1">
                 <span class="ln">
-                    <span>{{ $page?->getTranslation('hero_title') ?? __('home.hero_title_1') }}</span>
+                    <span>{!! $page?->getTranslation('hero_title') ?? __('home.hero_title_1') !!}</span>
                 </span>
                 <span class="ln">
-                    <span class="gold">{!! clean($page?->getTranslation('hero_subtitle') ?? __('home.hero_title_2')) !!}</span>
+                    <span>{!! $page?->getTranslation('hero_subtitle') ?? __('home.hero_title_2') !!}</span>
                 </span>
             </h1>
             <div class="hero-foot">

@@ -5,8 +5,8 @@
         <img src="{{ $media->optimizedUrl($preset) }}" alt="{{ $media->alt ?? '' }}" class="{{ $class }}">
     @elseif($media->type === 'video')
         @if($media->provider === 'cloudinary')
-            <video controls preload="metadata" poster="{{ $media->thumbnail_url ?? '' }}" class="w-full h-auto {{ $class }}">
-                <source src="{{ $media->url }}" type="video/mp4">
+            <video controls preload="metadata" poster="{{ $media->thumbnail_url ?? $media->videoThumbnailUrl('card') }}" class="w-full h-auto {{ $class }}">
+                <source src="{{ $media->optimizedVideoUrl() }}" type="{{ $media->metadata['mime_type'] ?? 'video/mp4' }}">
                 Il tuo browser non supporta il tag video.
             </video>
         @elseif($media->provider === 'facebook')

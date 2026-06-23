@@ -16,10 +16,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $password = env('ADMIN_PASSWORD');
+
+        if (! $password) {
+            throw new \RuntimeException('ADMIN_PASSWORD non impostata nel file .env.');
+        }
+
         User::factory()->create([
             'name' => 'Admin',
-            'email' => 'admin@prolocopietrapertosana.it',
-            'password' => Hash::make('password'),
+            'email' => env('ADMIN_EMAIL', 'admin@prolocopietrapertosana.it'),
+            'password' => Hash::make($password),
         ]);
 
         // $this->call([

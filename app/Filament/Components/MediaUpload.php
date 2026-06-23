@@ -18,7 +18,7 @@ class MediaUpload
         return FileUpload::make($name)
             ->multiple()
             ->acceptedFileTypes($acceptedTypes)
-            ->maxSize(10240)
+            ->maxSize(102400)
             ->getUploadedFileUsing(function (string $file): ?array {
                 return [
                     'name' => basename($file),
@@ -44,7 +44,7 @@ class MediaUpload
 
                 $media = Media::find($mediaId);
 
-                if ($media && \Illuminate\Support\Facades\DB::table('mediables')->where('media_id', $media->id)->count() === 0) {
+                if ($media) {
                     app(MediaManager::class)->delete($media);
                 }
 

@@ -55,7 +55,7 @@ class DirectoryItemForm
                     FileUpload::make('gallery_files')->label('Galleria Immagini/Video (File Locali)')
                         ->multiple()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'])
-                        ->maxSize(10240)
+                        ->maxSize(102400)
                         ->getUploadedFileUsing(function (string $file): ?array {
                             return [
                                 'name' => basename($file),
@@ -74,7 +74,7 @@ class DirectoryItemForm
                             if (! $mediaId) return;
 
                             $media = Media::find($mediaId);
-                            if ($media && \Illuminate\Support\Facades\DB::table('mediables')->where('media_id', $media->id)->count() === 0) {
+                            if ($media) {
                                 app(\App\Services\MediaManager::class)->delete($media);
                             }
                             \Illuminate\Support\Facades\Cache::forget('last_upload_'.$file);

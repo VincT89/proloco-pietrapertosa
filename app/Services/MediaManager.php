@@ -29,15 +29,18 @@ class MediaManager
             
             // 2. DB Transaction
             return DB::transaction(function () use ($upload, $file) {
+                $isVideo = ($upload['resource_type'] ?? null) === 'video';
+                
                 return Media::create([
-                    'type' => ($upload['resource_type'] ?? '') === 'raw'
-                        ? 'document'
-                        : ($upload['resource_type'] ?? 'image'),
+                    'type' => $isVideo ? 'video' : (($upload['resource_type'] ?? '') === 'raw' ? 'document' : 'image'),
                     'provider' => 'cloudinary',
                     'resource_type' => $upload['resource_type'] ?? 'image',
-                    'url' => $upload['url'],
+                    'url' => $upload['secure_url'] ?? $upload['url'],
                     'public_id' => $upload['public_id'],
                     'alt' => $file->getClientOriginalName(),
+                    'thumbnail_url' => $isVideo 
+                        ? str_replace('/video/upload/', '/video/upload/so_1,w_600,h_400,c_fill,f_jpg/', $upload['secure_url'] ?? $upload['url']) 
+                        : null,
                     'metadata' => [
                         'original_name' => $file->getClientOriginalName(),
                         'mime_type' => $file->getMimeType(),
@@ -68,6 +71,10 @@ class MediaManager
      */
     public function delete(Media $media): bool
     {
+        if ($media->isInUse()) {
+            return false;
+        }
+
         try {
             DB::transaction(function () use ($media) {
                 // Delete relations first (though Laravel might handle this if cascade is set, but better safe)

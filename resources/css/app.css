@@ -610,6 +610,7 @@ img{display:block;max-width:100%}
 .ico{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .lbl{font-family:var(--font-cormorant),serif;font-style:italic;font-size:1.15rem;font-weight:500;letter-spacing:.02em;color:var(--gold-soft)}
 .lbl-mut{font-size:.62rem;font-weight:500;letter-spacing:.34em;text-transform:uppercase;color:var(--stone)}
+.gold{color:var(--gold-soft) !important; display:inline !important;}
 
 /* ============ PRELOADER ============ */
 @keyframes lup{to{transform:none}}

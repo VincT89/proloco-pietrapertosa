@@ -21,8 +21,8 @@ class PopulatePageSettings extends Command
 
         $pagesData = [
             'home' => [
-                'hero_title' => 'Pietrapertosa vive', 'hero_title_en' => 'Pietrapertosa lives',
-                'hero_subtitle' => 'tutto l\'anno', 'hero_subtitle_en' => 'all year round',
+                'hero_title' => '<span class="gold">Pietrapertosa</span> vive', 'hero_title_en' => '<span class="gold">Pietrapertosa</span> lives',
+                'hero_subtitle' => 'tutto l\'<span class="gold">anno</span>', 'hero_subtitle_en' => 'all year <span class="gold">round</span>',
                 'intro_text' => '<p>' . __('home.hero_desc', [], 'it') . '</p>',
                 'intro_text_en' => '<p>' . __('home.hero_desc', [], 'en') . '</p>',
                 'hero_image' => 'immaginePaese.jpg',

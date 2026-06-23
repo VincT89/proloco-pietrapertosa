@@ -35,13 +35,13 @@ class MediaForm
                 FileUpload::make('url')
                     ->label('File')
                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'])
-                    ->maxSize(10240)
+                    ->maxSize(102400)
                     ->required()
                     ->getUploadedFileUsing(function (string $file): ?array {
                         return [
                             'name' => basename($file),
                             'size' => 0,
-                            'type' => 'application/octet-stream',
+                            'type' => preg_match('/\.(mp4|webm|mov)$/i', $file) ? 'video/mp4' : 'application/octet-stream',
                             'url' => $file,
                         ];
                     })
