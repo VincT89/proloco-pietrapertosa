@@ -10,7 +10,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? 'Traditional Tastes' : 'I Sapori della Tradizione'),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? 'Pietrapertosa at the table' : 'Pietrapertosa a tavola'),
-        'img' => $page?->heroMedia?->url ?? asset('images/sapori_hero.png')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/sapori_hero.png')
     ])
     
     @include('components.page-intro', [

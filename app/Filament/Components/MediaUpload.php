@@ -18,6 +18,7 @@ class MediaUpload
         return FileUpload::make($name)
             ->multiple()
             ->acceptedFileTypes($acceptedTypes)
+            ->maxSize(10240)
             ->getUploadedFileUsing(function (string $file): ?array {
                 return [
                     'name' => basename($file),
@@ -36,18 +37,18 @@ class MediaUpload
             })
             ->deleteUploadedFileUsing(function (string $file) {
                 $mediaId = Cache::get('last_upload_'.$file);
-                if ($mediaId) {
-                    $media = Media::find($mediaId);
-                    if ($media) {
-                        app(MediaManager::class)->delete($media);
-                    }
-                    Cache::forget('last_upload_'.$file);
-                } else {
-                    $media = Media::where('url', $file)->first();
-                    if ($media) {
-                        app(MediaManager::class)->delete($media);
-                    }
+
+                if (! $mediaId) {
+                    return;
                 }
+
+                $media = Media::find($mediaId);
+
+                if ($media && \Illuminate\Support\Facades\DB::table('mediables')->where('media_id', $media->id)->count() === 0) {
+                    app(MediaManager::class)->delete($media);
+                }
+
+                Cache::forget('last_upload_'.$file);
             })
             ->afterStateHydrated(function ($component, $record) use ($collection) {
                 if ($record) {

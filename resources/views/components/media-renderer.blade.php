@@ -1,8 +1,8 @@
-@props(['media', 'class' => ''])
+@props(['media', 'class' => '', 'preset' => 'thumb'])
 
 @if($media)
     @if($media->type === 'image')
-        <img src="{{ $media->url }}" alt="{{ $media->alt ?? '' }}" class="{{ $class }}">
+        <img src="{{ $media->optimizedUrl($preset) }}" alt="{{ $media->alt ?? '' }}" class="{{ $class }}">
     @elseif($media->type === 'video')
         @if($media->provider === 'cloudinary')
             <video controls preload="metadata" poster="{{ $media->thumbnail_url ?? '' }}" class="w-full h-auto {{ $class }}">

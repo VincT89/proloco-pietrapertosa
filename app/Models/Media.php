@@ -16,4 +16,9 @@ class Media extends Model
     protected $casts = [
         'metadata' => 'json',
     ];
+
+    public function optimizedUrl(string $preset = 'default'): ?string
+    {
+        return cloudinary_url($this->url, $preset);
+    }
 }

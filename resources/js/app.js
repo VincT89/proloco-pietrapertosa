@@ -266,7 +266,8 @@ const initApp = () => {
         const d = new Date();
         d.setTime(d.getTime() + (180*24*60*60*1000)); // 6 months
         document.cookie = "proloco_cookie_consent=" + value + ";expires=" + d.toUTCString() + ";path=/;SameSite=Lax;Secure";
-        document.getElementById('cookieBanner').classList.add('is-hidden');
+        const banner = document.getElementById('cookieBanner');
+        if (banner) banner.classList.add('is-hidden');
         if (value === 'external_accepted') {
             window.loadExternalEmbeds();
         }
@@ -293,7 +294,8 @@ const initApp = () => {
     };
 
     window.manageCookiePreferences = function() {
-        document.getElementById('cookieBanner').classList.remove('is-hidden');
+        const banner = document.getElementById('cookieBanner');
+        if (banner) banner.classList.remove('is-hidden');
     };
 
     const cookieBanner = document.getElementById('cookieBanner');

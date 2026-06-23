@@ -1,2 +1,0 @@
-<link rel="stylesheet" href="<?php echo e(asset('css/admin-custom.css')); ?>">
-<?php /**PATH C:\Users\vince\OneDrive\Desktop\proloco-pietrapertosa\proloco-pietrapertosana\resources\views/filament/hooks/admin-styles.blade.php ENDPATH**/ ?>

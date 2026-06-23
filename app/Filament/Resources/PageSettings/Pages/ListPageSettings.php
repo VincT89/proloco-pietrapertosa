@@ -10,6 +10,13 @@ class ListPageSettings extends ListRecords
 {
     protected static string $resource = PageSettingResource::class;
 
+    public function mount(): void
+    {
+        \App\Models\PageSetting::ensureDefaultPages();
+
+        parent::mount();
+    }
+
     protected function getHeaderActions(): array
     {
         return [

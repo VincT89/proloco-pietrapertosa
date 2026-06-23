@@ -10,7 +10,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? 'Explore the territory' : 'Esplora il Territorio'),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? 'Farms, Artisans and Taste' : 'Aziende Agricole, Artigiani e Sapori'),
-        'img' => $page?->heroMedia?->url ?? asset('images/pietrapertosaTerritorio.png'),
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaTerritorio.png'),
         'bgPosition' => 'center 30%'
     ])
     

@@ -10,7 +10,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? 'The Community in the Foreground' : 'La Comunità in Primo Piano'),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? 'Associations and Local Groups' : 'Associazioni e Gruppi Locali'),
-        'img' => $page?->heroMedia?->url ?? asset('images/pietrapertosaComunita.jpg')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaComunita.jpg')
     ])
     
     @include('components.page-intro', [

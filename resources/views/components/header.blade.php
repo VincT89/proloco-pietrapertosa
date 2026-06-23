@@ -32,9 +32,15 @@
             <a href="{{ url("/" . app()->getLocale() . "/pro-loco") }}" class="{{ request()->is("*/pro-loco") ? 'active' : '' }}">@lang('navigation.pro_loco')</a>
             
             <div class="lang-switcher">
-                <a href="{{ url('/it' . substr(request()->getRequestUri(), 3)) }}" class="lang-link {{ !(app()->getLocale() === 'en') ? 'active' : '' }}">IT</a>
+                @php
+                    $path = request()->path();
+                    $segments = explode('/', $path);
+                    array_shift($segments);
+                    $rest = implode('/', $segments);
+                @endphp
+                <a href="{{ url('/it' . ($rest ? '/' . $rest : '')) }}" class="lang-link {{ !(app()->getLocale() === 'en') ? 'active' : '' }}">IT</a>
                 <span class="lang-sep">|</span>
-                <a href="{{ url('/en' . substr(request()->getRequestUri(), 3)) }}" class="lang-link {{ (app()->getLocale() === 'en') ? 'active' : '' }}">EN</a>
+                <a href="{{ url('/en' . ($rest ? '/' . $rest : '')) }}" class="lang-link {{ (app()->getLocale() === 'en') ? 'active' : '' }}">EN</a>
             </div>
         </div>
 

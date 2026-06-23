@@ -6,9 +6,9 @@
     // Dati fallback presi dal React data/home.js in caso DB vuoto
     if ($events->isEmpty()) {
         $fallbackEvents = [
-            (object)['id' => 1, 'title' => 'Sapori d\'Autunno', 'title_en' => 'Tastes of Autumn', 'cover_image_url' => asset('images/sapori_hero.png'), 'start_date' => null, 'fallback_date' => (app()->getLocale() === 'en') ? 'November' : 'Novembre'],
-            (object)['id' => 2, 'title' => 'Sulle Tracce degli Arabi', 'title_en' => 'On the Traces of Arabs', 'cover_image_url' => asset('images/arabata.jpeg'), 'start_date' => null, 'fallback_date' => (app()->getLocale() === 'en') ? 'August' : 'Agosto'],
-            (object)['id' => 3, 'title' => 'Borgo Festival', 'title_en' => 'Village Festival', 'cover_image_url' => asset('images/PietrapertosaEventi.png'), 'start_date' => null, 'fallback_date' => (app()->getLocale() === 'en') ? 'July' : 'Luglio']
+            (object)['id' => 1, 'title' => 'Sapori d\'Autunno', 'title_en' => 'Tastes of Autumn', 'cover_url' => asset('images/sapori_hero.png'), 'start_date' => null, 'fallback_date' => (app()->getLocale() === 'en') ? 'November' : 'Novembre'],
+            (object)['id' => 2, 'title' => 'Sulle Tracce degli Arabi', 'title_en' => 'On the Traces of Arabs', 'cover_url' => asset('images/arabata.jpeg'), 'start_date' => null, 'fallback_date' => (app()->getLocale() === 'en') ? 'August' : 'Agosto'],
+            (object)['id' => 3, 'title' => 'Borgo Festival', 'title_en' => 'Village Festival', 'cover_url' => asset('images/PietrapertosaEventi.png'), 'start_date' => null, 'fallback_date' => (app()->getLocale() === 'en') ? 'July' : 'Luglio']
         ];
         $eventsToDisplay = $fallbackEvents;
     } else {
@@ -17,40 +17,67 @@
                 'id' => $ev->id,
                 'title' => $ev->title,
                 'title_en' => $ev->title_en,
-                'cover_image_url' => $ev->cover ? $ev->cover->url : null,
+                'cover_url' => $ev->cover ? $ev->cover->optimizedUrl('card') : null,
                 'start_date' => $ev->start_date,
                 'fallback_date' => null
             ];
         });
     }
 
-    $fallbackScopri = [
-        (object)['id' => 1, 'nome' => 'L\'Arabata', 'nome_en' => 'The Arabata', 'img' => asset('images/arabata01.jpg')],
-        (object)['id' => 2, 'nome' => 'Castello Normanno-Svevo', 'nome_en' => 'Norman-Swabian Castle', 'img' => asset('images/castello.jpg')],
-        (object)['id' => 3, 'nome' => 'Sentiero delle Sette Pietre', 'nome_en' => 'Path of the Seven Stones', 'img' => asset('images/percorsi.jpg')],
-        (object)['id' => 4, 'nome' => 'Volo dell\'Angelo', 'nome_en' => 'Flight of the Angel', 'img' => asset('images/voloAngelo.jpg')]
-    ];
+    $scopriData = $page?->data['discover_items'] ?? null;
+    if ($scopriData && is_array($scopriData) && count($scopriData) > 0) {
+        $fallbackScopri = collect($scopriData)->map(function ($item, $key) {
+            return (object)[
+                'id' => $key + 1,
+                'nome' => $item['nome'] ?? '',
+                'nome_en' => $item['nome_en'] ?? '',
+                'img' => $item['img'] ?? ''
+            ];
+        })->toArray();
+    } else {
+        $fallbackScopri = [
+            (object)['id' => 1, 'nome' => 'L\'Arabata', 'nome_en' => 'The Arabata', 'img' => asset('images/arabata01.jpg')],
+            (object)['id' => 2, 'nome' => 'Castello Normanno-Svevo', 'nome_en' => 'Norman-Swabian Castle', 'img' => asset('images/castello.jpg')],
+            (object)['id' => 3, 'nome' => 'Sentiero delle Sette Pietre', 'nome_en' => 'Path of the Seven Stones', 'img' => asset('images/percorsi.jpg')],
+            (object)['id' => 4, 'nome' => 'Volo dell\'Angelo', 'nome_en' => 'Flight of the Angel', 'img' => asset('images/voloAngelo.jpg')]
+        ];
+    }
 ?>
 
 <?php $__env->startSection('content'); ?>
     <header class="hero" id="top">
         <div class="hero-media" id="heroMedia">
             <div class="h-bg">
-                <img src="<?php echo e($page?->heroMedia?->url ?? asset('images/immaginePaese.jpg')); ?>" alt="" class="home-hero-bg" />
-                <div class="home-hero-gradient"></div>
+                <img src="<?php echo e($page?->heroMedia?->optimizedUrl('hero') ?? asset('images/immaginePaese.jpg')); ?>" alt="" class="home-hero-bg" />
+                <div class="home-hero-gradient" style="background: rgba(0,0,0,<?php echo e($page?->hero_overlay_opacity ?? 0.4); ?>);"></div>
             </div>
         </div>
         <div class="hero-in">
             <h1 class="hero-h1">
                 <span class="ln">
-                    <span><?php echo e($page?->hero_title ?? __('home.hero_title_1')); ?></span>
+                    <span><?php echo e($page?->getTranslation('hero_title') ?? __('home.hero_title_1')); ?></span>
                 </span>
                 <span class="ln">
-                    <span><?php echo clean($page?->hero_subtitle ?? __('home.hero_title_2')); ?></span>
+                    <span class="gold"><?php echo clean($page?->getTranslation('hero_subtitle') ?? __('home.hero_title_2')); ?></span>
                 </span>
             </h1>
             <div class="hero-foot">
-                <p class="hero-desc"><?php echo e($page?->intro_text ?? __('home.hero_desc')); ?></p>
+                <?php
+                    $introHtml = $page?->getTranslation('intro_text');
+                    if (empty(trim(strip_tags($introHtml)))) {
+                        $introHtml = null;
+                    }
+                ?>
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($introHtml): ?>
+                    <div class="hero-desc"><?php echo clean($introHtml); ?></div>
+                <?php else: ?>
+                    <p class="hero-desc"><?php echo e(__('home.hero_desc')); ?></p>
+                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($page?->getTranslation('hero_cta_text') && $page?->hero_cta_url): ?>
+                    <div style="margin-top: 30px;">
+                        <a href="<?php echo e($page->hero_cta_url); ?>" class="ed-btn ed-btn-gold" style="font-size: 1.1rem; padding: 12px 30px;"><?php echo e($page->getTranslation('hero_cta_text')); ?></a>
+                    </div>
+                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
             </div>
         </div>
         <div class="hero-scroll"><i></i></div>
@@ -63,7 +90,7 @@
                     <div>
                         <span class="ed-subtitle"><?php echo app('translator')->get('home.calendar'); ?></span>
                         <a href="<?php echo e(url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'events' : 'eventi'))); ?>" class="ed-link-clean">
-                            <h2 class="ed-title ed-title-no-margin"><?php echo app('translator')->get('home.upcoming_events'); ?></h2>
+                            <h2 class="ed-title ed-title-no-margin"><?php echo e(!empty($page?->data['events_title' . (app()->getLocale() === 'en' ? '_en' : '')]) ? $page->data['events_title' . (app()->getLocale() === 'en' ? '_en' : '')] : __('home.upcoming_events')); ?></h2>
                         </a>
                     </div>
                     <a href="<?php echo e(url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'events' : 'eventi'))); ?>" class="ed-link-more"><?php echo app('translator')->get('home.see_all'); ?></a>
@@ -74,7 +101,7 @@
                         <a href="<?php echo e(url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'events' : 'eventi'))); ?>" class="ed-link-clean">
                             <div class="ed-card">
                                 <div class="ed-img-box tall">
-                                    <img src="<?php echo e($ev->cover_image_url ?? 'https://placehold.co/400x600/14181f/d9aa63?text=Locandina'); ?>" alt="<?php echo e(app()->getLocale() === 'en' && !empty($ev->title_en) ? $ev->title_en : $ev->title); ?>" />
+                                    <img src="<?php echo e($ev->cover_url ?? 'https://placehold.co/400x600/14181f/d9aa63?text=Locandina'); ?>" alt="<?php echo e(app()->getLocale() === 'en' && !empty($ev->title_en) ? $ev->title_en : $ev->title); ?>" />
                                 </div>
                                 <div class="ed-glass-cap">
                                     <span>
@@ -101,7 +128,7 @@
             <div class="ed-section-header">
                 <div>
                     <span class="ed-subtitle"><?php echo app('translator')->get('home.featured_updates'); ?></span>
-                    <h2 class="ed-title ed-title-no-margin"><?php echo app('translator')->get('home.latest_news'); ?></h2>
+                    <h2 class="ed-title ed-title-no-margin"><?php echo e(!empty($page?->data['news_title' . (app()->getLocale() === 'en' ? '_en' : '')]) ? $page->data['news_title' . (app()->getLocale() === 'en' ? '_en' : '')] : __('home.latest_news')); ?></h2>
                 </div>
             </div>
             
@@ -143,9 +170,9 @@
         <div class="ed-wrap">
             <div class="ed-split ed-split-center">
                 <div class="ed-col-center">
-                    <span class="ed-subtitle"><?php echo app('translator')->get('home.explore_territory'); ?></span>
-                    <h2 class="ed-title ed-title-large"><?php echo app('translator')->get('home.discover_pietrapertosa'); ?></h2>
-                    <p class="ed-desc-text"><?php echo app('translator')->get('home.discover_desc'); ?></p>
+                    <span class="ed-subtitle"><?php echo e(!empty($page?->data['discover_subtitle' . (app()->getLocale() === 'en' ? '_en' : '')]) ? $page->data['discover_subtitle' . (app()->getLocale() === 'en' ? '_en' : '')] : __('home.explore_territory')); ?></span>
+                    <h2 class="ed-title ed-title-large"><?php echo e(!empty($page?->data['discover_title' . (app()->getLocale() === 'en' ? '_en' : '')]) ? $page->data['discover_title' . (app()->getLocale() === 'en' ? '_en' : '')] : __('home.discover_pietrapertosa')); ?></h2>
+                    <p class="ed-desc-text"><?php echo e(!empty($page?->data['discover_text' . (app()->getLocale() === 'en' ? '_en' : '')]) ? $page->data['discover_text' . (app()->getLocale() === 'en' ? '_en' : '')] : __('home.discover_desc')); ?></p>
                     
                     <ul class="ed-ul-clean">
                         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $fallbackScopri; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $scopri): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -164,9 +191,15 @@
                 </div>
 
                 <div class="borgo-imgs">
-                    <div class="bi1"><img src="<?php echo e($fallbackScopri[0]->img); ?>" alt="<?php echo e($fallbackScopri[0]->nome); ?>" /></div>
-                    <div class="bi2"><img src="<?php echo e($fallbackScopri[1]->img); ?>" alt="<?php echo e($fallbackScopri[1]->nome); ?>" /></div>
-                    <div class="bi3"><img src="<?php echo e($fallbackScopri[2]->img); ?>" alt="<?php echo e($fallbackScopri[2]->nome); ?>" /></div>
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(isset($fallbackScopri[0])): ?>
+                        <div class="bi1"><img src="<?php echo e($fallbackScopri[0]->img ?? ''); ?>" alt="<?php echo e($fallbackScopri[0]->nome ?? ''); ?>" /></div>
+                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(isset($fallbackScopri[1])): ?>
+                        <div class="bi2"><img src="<?php echo e($fallbackScopri[1]->img ?? ''); ?>" alt="<?php echo e($fallbackScopri[1]->nome ?? ''); ?>" /></div>
+                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(isset($fallbackScopri[2])): ?>
+                        <div class="bi3"><img src="<?php echo e($fallbackScopri[2]->img ?? ''); ?>" alt="<?php echo e($fallbackScopri[2]->nome ?? ''); ?>" /></div>
+                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                 </div>
             </div>
         </div>

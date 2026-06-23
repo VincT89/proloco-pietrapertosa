@@ -11,7 +11,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? "The Pro Loco" : "La Pro Loco"),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? "THE ENGINE OF OUR COMMUNITY" : "MOTORE DELLA NOSTRA COMUNITÀ"),
-        'img' => $page?->heroMedia?->url ?? asset('images/pietrapertosaProloco.png')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaProloco.png')
     ])
     
     @include('components.page-intro', [

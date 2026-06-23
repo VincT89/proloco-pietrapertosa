@@ -10,7 +10,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? __('news.hero_title'),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? __('news.hero_subtitle'),
-        'img' => $page?->heroMedia?->url ?? asset('images/pietrapertosaBacheca.png'),
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaBacheca.png'),
         'bgPosition' => 'center 30%'
     ])
     
@@ -30,11 +30,11 @@
                     @foreach($news as $notizia)
                         <div class="ev-card-giant is-clickable" onclick="document.getElementById('news-modal-{{ $notizia->id }}').style.display='flex'">
                             <div class="ev-card-bg">
-                                @if($notizia->cover_media_id || $notizia->cover_image_url)
+                                @if($notizia->cover)
                                     <div class="ev-card-normal-bg-inner">
-                                        <img src="{{ $notizia->cover ? $notizia->cover->url : $notizia->cover_image_url }}" alt="{{ $notizia->getTranslation('title') }}" class="ev-card-normal-blur" />
+                                        <img src="{{ $notizia->cover->optimizedUrl('card') }}" alt="{{ $notizia->getTranslation('title') }}" class="ev-card-normal-blur" />
                                     </div>
-                                    <img src="{{ $notizia->cover ? $notizia->cover->url : $notizia->cover_image_url }}" alt="{{ $notizia->getTranslation('title') }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2;" />
+                                    <img src="{{ $notizia->cover->optimizedUrl('card') }}" alt="{{ $notizia->getTranslation('title') }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2;" />
                                 @else
                                     <div class="ev-card-placeholder"></div>
                                 @endif
@@ -63,9 +63,9 @@
                                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
                                 </button>
                                 
-                                @if($notizia->cover_media_id || $notizia->cover_image_url)
+                                @if($notizia->cover)
                                     <div style="width: 100%; border-radius: 8px; margin-bottom: 30px; display: flex; justify-content: center; background: var(--ink-2); overflow: hidden;">
-                                        <img src="{{ $notizia->cover ? $notizia->cover->url : $notizia->cover_image_url }}" alt="{{ $notizia->getTranslation('title') }}" style="width: 100%; max-height: 400px; object-fit: contain;" />
+                                        <img src="{{ $notizia->cover->optimizedUrl('large') }}" alt="{{ $notizia->getTranslation('title') }}" style="width: 100%; max-height: 400px; object-fit: contain;" />
                                     </div>
                                 @endif
 
@@ -103,7 +103,7 @@
                                         <h4 class="nw-gal-title" style="color: var(--paper); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 20px;">@lang('news.gallery_title')</h4>
                                         <div class="nw-gal-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;">
                                             @foreach($allGalleryMedia as $idx => $media)
-                                                <div class="cur fad gal-img-wrap pos-rel" onclick="openGallery({{ $allGalleryMedia->map(fn($m) => ['type' => $m->type, 'provider' => $m->provider, 'url' => $m->url, 'embed_url' => $m->embed_url])->toJson() }}, {{ $idx }})" style="aspect-ratio: 1; border-radius: 4px; overflow: hidden; position: relative;">
+                                                <div class="cur fad gal-img-wrap pos-rel" onclick="openGallery({{ $allGalleryMedia->map(fn($m) => ['type' => $m->type, 'provider' => $m->provider, 'url' => $m->type === 'image' ? $m->optimizedUrl('large') : $m->url, 'embed_url' => $m->embed_url])->toJson() }}, {{ $idx }})" style="aspect-ratio: 1; border-radius: 4px; overflow: hidden; position: relative;">
                                                     <x-media-renderer :media="$media" class="gal-img" style="width: 100%; height: 100%; object-fit: cover;" />
                                                 </div>
                                             @endforeach

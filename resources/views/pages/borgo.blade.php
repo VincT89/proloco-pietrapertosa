@@ -40,7 +40,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? "The Village of Pietrapertosa" : "Il Borgo di Pietrapertosa"),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? "A village suspended between sky and rock" : "Un paese sospeso tra cielo e roccia"),
-        'img' => $page?->heroMedia?->url ?? asset('images/immaginePaese.jpg')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/immaginePaese.jpg')
     ])
     
     <div class="wrap borgo-stats-wrap">

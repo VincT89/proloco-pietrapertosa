@@ -9,8 +9,8 @@ body, .fi-layout {
 }
 
 /* Nascondi la barra di ricerca globale nella sidebar */
-.fi-sidebar form,
-.fi-sidebar [action*="search"],
+.fi-sidebar form[action*="search"],
+.fi-sidebar .fi-global-search,
 .fi-sidebar input[type="search"] {
     display: none !important;
 }

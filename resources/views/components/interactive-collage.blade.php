@@ -9,7 +9,7 @@
                 return [
                     'type' => $m->type ?? 'image',
                     'provider' => $m->provider ?? '',
-                    'url' => $m->url ?? '',
+                    'url' => (isset($m->type) && $m->type === 'image') ? $m->optimizedUrl('large') : ($m->url ?? ''),
                     'embed_url' => $m->embed_url ?? ''
                 ];
             })->toJson();
@@ -22,7 +22,7 @@
     @foreach($displayImages as $idx => $mediaItem)
         @php 
             $isObj = is_object($mediaItem);
-            $imgUrl = $isObj ? $mediaItem->url : $mediaItem;
+            $imgUrl = $isObj ? $mediaItem->optimizedUrl('card') : $mediaItem;
         @endphp
         <div 
             class="borgo-img-wrap collage-item"

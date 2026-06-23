@@ -10,7 +10,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? "Photo Archive" : "Archivio Fotografico"),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? "Pietrapertosa in pictures" : "Pietrapertosa in immagini"),
-        'img' => $page?->heroMedia?->url ?? asset('images/pietrapertosaGalleria.png')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaGalleria.png')
     ])
     
     <section class="wrap pb-80 pt-40">
@@ -39,7 +39,7 @@
                             <div class="gal-grid mb-60">
                                 @foreach($allGalleryMedia as $idx => $media)
                                     <div class="cur fad gal-img-wrap pos-rel"
-                                         onclick="openGallery({{ $allGalleryMedia->map(fn($m) => ['type' => $m->type, 'provider' => $m->provider, 'url' => $m->url, 'embed_url' => $m->embed_url])->toJson() }}, {{ $idx }})"
+                                         onclick="openGallery({{ $allGalleryMedia->map(fn($m) => ['type' => $m->type, 'provider' => $m->provider, 'url' => $m->type === 'image' ? $m->optimizedUrl('large') : $m->url, 'embed_url' => $m->embed_url])->toJson() }}, {{ $idx }})"
                                          onmouseenter="this.querySelector('.gal-overlay').style.opacity = '1'"
                                          onmouseleave="this.querySelector('.gal-overlay').style.opacity = '0'">
                                         

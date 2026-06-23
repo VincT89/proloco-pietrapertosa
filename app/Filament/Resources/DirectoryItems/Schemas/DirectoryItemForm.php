@@ -55,6 +55,7 @@ class DirectoryItemForm
                     FileUpload::make('gallery_files')->label('Galleria Immagini/Video (File Locali)')
                         ->multiple()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'])
+                        ->maxSize(10240)
                         ->getUploadedFileUsing(function (string $file): ?array {
                             return [
                                 'name' => basename($file),
@@ -64,27 +65,19 @@ class DirectoryItemForm
                             ];
                         })
                         ->saveUploadedFileUsing(function (UploadedFile $file) {
-                            $cloudinary = app(CloudinaryService::class);
-                            $upload = $cloudinary->uploadMedia($file);
-                            $media = Media::create([
-                                'type' => $upload['resource_type'] ?? 'image',
-                                'provider' => 'cloudinary',
-                                'url' => $upload['url'],
-                                'public_id' => $upload['public_id'],
-                                'alt' => $file->getClientOriginalName(),
-                            ]);
-                            \Illuminate\Support\Facades\Cache::put('last_upload_'.$upload['url'], [
-                                'public_id' => $upload['public_id'],
-                                'resource_type' => $upload['resource_type'] ?? 'image',
-                            ], 300);
-
-                            return $upload['url'];
+                            $media = app(\App\Services\MediaManager::class)->upload($file);
+                            \Illuminate\Support\Facades\Cache::put('last_upload_'.$media->url, $media->id, 300);
+                            return $media->url;
                         })
                         ->deleteUploadedFileUsing(function (string $file) {
-                            if (\Illuminate\Support\Facades\Cache::get('last_upload_'.$file)) {
-                                Media::where('url', $file)->delete();
-                                \Illuminate\Support\Facades\Cache::forget('last_upload_'.$file);
+                            $mediaId = \Illuminate\Support\Facades\Cache::get('last_upload_'.$file);
+                            if (! $mediaId) return;
+
+                            $media = Media::find($mediaId);
+                            if ($media && \Illuminate\Support\Facades\DB::table('mediables')->where('media_id', $media->id)->count() === 0) {
+                                app(\App\Services\MediaManager::class)->delete($media);
                             }
+                            \Illuminate\Support\Facades\Cache::forget('last_upload_'.$file);
                         })
                         ->afterStateHydrated(function ($component, $record) {
                             if ($record) {

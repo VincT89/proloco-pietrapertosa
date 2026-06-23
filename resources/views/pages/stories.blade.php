@@ -31,7 +31,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? "Our Stories" : "Le Nostre Storie"),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? "Pietrapertosa told by those who live it" : "Pietrapertosa raccontata da chi la vive"),
-        'img' => $page?->heroMedia?->url ?? asset('images/arabata01.jpg')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/arabata01.jpg')
     ])
     
     @include('components.page-intro', [

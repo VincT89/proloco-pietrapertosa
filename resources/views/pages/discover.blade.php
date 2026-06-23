@@ -23,7 +23,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? "Discover and Live" : "Scopri e Vivi"),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? "A journey through the Lucanian Dolomites" : "Un viaggio tra le Dolomiti Lucane"),
-        'img' => $page?->heroMedia?->url ?? asset('images/PietrapertosaScopri.jpg')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/PietrapertosaScopri.jpg')
     ])
     
     @include('components.page-intro', [

@@ -10,7 +10,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? "Contacts" : "Contatti"),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? "COME AND VISIT US" : "VIENI A TROVARCI"),
-        'img' => $page?->heroMedia?->url ?? asset('images/panorama.jpg')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/panorama.jpg')
     ])
     
     @include('components.page-intro', [

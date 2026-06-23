@@ -32,9 +32,15 @@
             <a href="<?php echo e(url("/" . app()->getLocale() . "/pro-loco")); ?>" class="<?php echo e(request()->is("*/pro-loco") ? 'active' : ''); ?>"><?php echo app('translator')->get('navigation.pro_loco'); ?></a>
             
             <div class="lang-switcher">
-                <a href="<?php echo e(url('/it' . substr(request()->getRequestUri(), 3))); ?>" class="lang-link <?php echo e(!(app()->getLocale() === 'en') ? 'active' : ''); ?>">IT</a>
+                <?php
+                    $path = request()->path();
+                    $segments = explode('/', $path);
+                    array_shift($segments);
+                    $rest = implode('/', $segments);
+                ?>
+                <a href="<?php echo e(url('/it' . ($rest ? '/' . $rest : ''))); ?>" class="lang-link <?php echo e(!(app()->getLocale() === 'en') ? 'active' : ''); ?>">IT</a>
                 <span class="lang-sep">|</span>
-                <a href="<?php echo e(url('/en' . substr(request()->getRequestUri(), 3))); ?>" class="lang-link <?php echo e((app()->getLocale() === 'en') ? 'active' : ''); ?>">EN</a>
+                <a href="<?php echo e(url('/en' . ($rest ? '/' . $rest : ''))); ?>" class="lang-link <?php echo e((app()->getLocale() === 'en') ? 'active' : ''); ?>">EN</a>
             </div>
         </div>
 

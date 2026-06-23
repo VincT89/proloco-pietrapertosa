@@ -22,9 +22,9 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        $this->call([
-            ContentSeeder::class,
-            GalleryAlbumSeeder::class,
-        ]);
+        // $this->call([
+        //     ContentSeeder::class,
+        //     GalleryAlbumSeeder::class,
+        // ]);
     }
 }

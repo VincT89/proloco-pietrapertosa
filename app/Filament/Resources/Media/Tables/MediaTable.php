@@ -17,7 +17,7 @@ class MediaTable
             ->columns([
                 ImageColumn::make('preview')
                     ->label('Anteprima')
-                    ->getStateUsing(fn ($record) => $record->thumbnail_url ?: ($record->type === 'image' ? $record->url : null)),
+                    ->getStateUsing(fn ($record) => $record->thumbnail_url ?: ($record->type === 'image' ? $record->optimizedUrl('small') : null)),
                 TextColumn::make('type')->label('Tipo')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {

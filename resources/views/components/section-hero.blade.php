@@ -1,7 +1,7 @@
 <div class="section-hero">
     <div class="section-hero-bg">
         <img class="bgi-img" src="{{ $img }}" alt="" class="object-{{ $bgPosition ?? 'center' }}" />
-        <div class="hero-gradient"></div>
+        <div class="hero-gradient" style="background: rgba(0,0,0,{{ $page?->hero_overlay_opacity ?? 0.4 }});"></div>
     </div>
     <div class="section-hero-content fad">
         @if(isset($subtitle) && $subtitle)
@@ -10,5 +10,10 @@
         <h1 class="wr section-hero-title">
             {{ $title }}
         </h1>
+        @if(isset($page) && $page?->getTranslation('hero_cta_text') && $page?->hero_cta_url)
+            <div style="margin-top: 30px;">
+                <a href="{{ $page->hero_cta_url }}" class="ed-btn ed-btn-gold">{{ $page->getTranslation('hero_cta_text') }}</a>
+            </div>
+        @endif
     </div>
 </div>

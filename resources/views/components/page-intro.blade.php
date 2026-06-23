@@ -7,8 +7,8 @@
         <h2 class="wr page-intro-title">
             {{ $title }}
         </h2>
-        <p class="page-intro-text">
-            {{ $text }}
-        </p>
+        <div class="page-intro-text">
+            {!! clean($text) !!}
+        </div>
     </div>
 </div>

@@ -1,26 +1,12 @@
 @extends('layouts.app')
 
-@php
-    
-    
-    $today = \Carbon\Carbon::today();
-    $futuri = $events->filter(function($e) use ($today) {
-        return !$e->start_date || \Carbon\Carbon::parse($e->start_date)->gte($today);
-    });
-    // Ordinamento
-    $futuri = $futuri->sortBy(function($a) {
-        return $a->start_date ? \Carbon\Carbon::parse($a->start_date)->timestamp : PHP_INT_MAX;
-    });
-
-@endphp
-
 @section('title', ($page?->getTranslation('hero_title') ?? __('events.hero_title')) . ' · Proloco Pietrapertosana')
 
 @section('content')
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? __('events.hero_title'),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? __('events.hero_subtitle'),
-        'img' => $page?->heroMedia?->url ?? asset('images/PietrapertosaEventi.jpeg')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/PietrapertosaEventi.jpeg')
     ])
     
     <!-- Eventi Annuali -->
@@ -33,12 +19,13 @@
         <div class="ev-card-grid">
             @foreach($annualEvents as $ev)
                 @php
-                    $gallery = $ev->galleryMedia->pluck('url')->toArray();
+                    $galleryLarge = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('large'))->toArray();
+                    $galleryThumb = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('card'))->toArray();
                 @endphp
-                <div class="ev-card-giant {{ count($gallery) > 0 ? 'is-clickable' : '' }}" @if(count($gallery) > 0) onclick='openGallery(@json($gallery))' @endif>
+                <div class="ev-card-giant {{ count($galleryThumb) > 0 ? 'is-clickable' : '' }}" @if(count($galleryLarge) > 0) onclick='openGallery(@json($galleryLarge))' @endif>
                     <div class="ev-card-bg">
-                        @if(count($gallery) > 0)
-                            @include('components.auto-carousel', ['images' => $gallery, 'interval' => 3000 + $loop->index * 500])
+                        @if(count($galleryThumb) > 0)
+                            @include('components.auto-carousel', ['images' => $galleryThumb, 'interval' => 3000 + $loop->index * 500])
                         @else
                             <div class="ev-card-placeholder"></div>
                         @endif
@@ -67,28 +54,29 @@
             <h2 class="ed-title ev-title-nomargin">{{ __('events.upcoming_title', ['year' => date('Y')]) }}</h2>
         </div>
         
-        @if($futuri->isEmpty())
+        @if($events->isEmpty())
             <div class="ev-empty-msg-2">
                 <p class="ev-empty-italic">@lang('events.no_events_upcoming')</p>
             </div>
         @else
             <div class="ev-grid-cards">
-                @foreach($futuri as $ev)
+                @foreach($events as $ev)
                     @php
-                        $gallery = $ev->galleryMedia->pluck('url')->toArray();
+                        $galleryLarge = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('large'))->toArray();
+                        $galleryThumb = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('card'))->toArray();
                     @endphp
-                    <div class="ev-card-normal {{ count($gallery) > 0 ? 'is-clickable' : '' }}" @if(count($gallery) > 0) onclick='openGallery(@json($gallery))' @endif>
+                    <div class="ev-card-normal {{ count($galleryThumb) > 0 ? 'is-clickable' : '' }}" @if(count($galleryLarge) > 0) onclick='openGallery(@json($galleryLarge))' @endif>
                         <div class="ev-card-normal-bg">
-                            @if(count($gallery) > 0)
+                            @if(count($galleryThumb) > 0)
                                 <div class="ev-card-normal-bg-inner">
-                                    <img src="{{ $gallery[0] }}" alt="" class="ev-card-normal-blur" />
+                                    <img src="{{ $galleryThumb[0] }}" alt="" class="ev-card-normal-blur" />
                                 </div>
-                                @include('components.auto-carousel', ['images' => $gallery, 'interval' => 3000 + $loop->index * 500, 'objectFit' => 'contain'])
+                                @include('components.auto-carousel', ['images' => $galleryThumb, 'interval' => 3000 + $loop->index * 500, 'objectFit' => 'contain'])
                             @elseif($ev->cover)
                                 <div class="ev-card-normal-bg-inner">
-                                    <img src="{{ $ev->cover->url }}" alt="" class="ev-card-normal-blur" />
+                                    <img src="{{ $ev->cover->optimizedUrl('card') }}" alt="" class="ev-card-normal-blur" />
                                 </div>
-                                <img src="{{ $ev->cover->url }}" class="pos-abs-cover object-contain" />
+                                <img src="{{ $ev->cover->optimizedUrl('card') }}" class="pos-abs-cover object-contain" />
                             @else
                                 <div class="ev-card-placeholder"></div>
                             @endif
@@ -127,7 +115,7 @@
                 <div>
                     <span class="ed-subtitle">@lang('events.calendar_subtitle')</span>
                     <h2 class="ed-title ev-cal-title">@lang('events.calendar_title')</h2>
-                    @if($futuri->isEmpty())
+                    @if($events->isEmpty())
                         <p class="ev-empty-msg-2 ev-empty-italic">@lang('events.no_events_calendar')</p>
                     @else
                         <div class="ev-cal-table-wrap">
@@ -139,14 +127,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($futuri as $cal)
+                                    @foreach($events as $cal)
                                         @php
                                             $galleryList = $cal->galleryMedia->pluck('url')->toArray();
                                             $allGalleryMedia = $cal->galleryMedia->concat($cal->externalMedia);
                                             $galleryJsonData = $allGalleryMedia->map(fn($m) => [
                                                 'type' => $m->type,
                                                 'provider' => $m->provider,
-                                                'url' => $m->url,
+                                                'url' => $m->type === 'image' ? $m->optimizedUrl('large') : $m->url,
                                                 'embed_url' => $m->embed_url
                                             ]);
                                         @endphp

@@ -20,6 +20,8 @@ class MediaForm
             ->components([
                 Hidden::make('public_id'),
                 Hidden::make('resource_type')->default('image'),
+                Hidden::make('provider')->default('cloudinary'),
+                Hidden::make('metadata'),
                 Select::make('type')
                     ->label('Tipo Media')
                     ->options([
@@ -33,6 +35,7 @@ class MediaForm
                 FileUpload::make('url')
                     ->label('File')
                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'])
+                    ->maxSize(10240)
                     ->required()
                     ->getUploadedFileUsing(function (string $file): ?array {
                         return [
@@ -42,20 +45,34 @@ class MediaForm
                             'url' => $file,
                         ];
                     })
-                    ->saveUploadedFileUsing(function (UploadedFile $file) {
-                        $cloudinary = app(CloudinaryService::class);
-                        $upload = $cloudinary->uploadMedia($file);
-
-                        Cache::put('last_upload_'.$upload['url'], [
-                            'public_id' => $upload['public_id'],
-                            'resource_type' => $upload['resource_type'],
-                        ], 300);
+                    ->saveUploadedFileUsing(function (UploadedFile $file, callable $set) {
+                        $upload = app(\App\Services\CloudinaryService::class)->uploadMedia($file);
+                        
+                        $set('public_id', $upload['public_id']);
+                        $set('resource_type', $upload['resource_type'] ?? 'image');
+                        $set('provider', 'cloudinary');
+                        
+                        $type = ($upload['resource_type'] ?? '') === 'raw' ? 'document' : 'image';
+                        if ($type === 'image' && str_starts_with($file->getMimeType(), 'video/')) {
+                            $type = 'video';
+                        }
+                        $set('type', $type);
+                        
+                        $set('metadata', [
+                            'original_name' => $file->getClientOriginalName(),
+                            'mime_type' => $file->getMimeType(),
+                            'size' => $file->getSize(),
+                            'format' => $upload['format'] ?? $file->getClientOriginalExtension(),
+                        ]);
 
                         return $upload['url'];
                     })
-                    ->deleteUploadedFileUsing(function (string $file) {
-                        $cloudinary = app(CloudinaryService::class);
-                        $cloudinary->cleanupTemporaryUpload($file);
+                    ->deleteUploadedFileUsing(function (string $file, callable $get) {
+                        $publicId = $get('public_id');
+                        $resourceType = $get('resource_type') ?? 'image';
+                        if ($publicId) {
+                            app(\App\Services\CloudinaryService::class)->deleteMedia($publicId, $resourceType);
+                        }
                     }),
                 TextInput::make('alt')->label('Testo Alternativo')
                     ->default(null),
