@@ -27,7 +27,7 @@ class EventForm
                     Tab::make('Italiano')->schema([
                         TextInput::make('title')->label('Titolo')->required()
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function ($state, \Filament\Forms\Set $set, \Filament\Forms\Get $get) {
+                            ->afterStateUpdated(function ($state, \Filament\Schemas\Components\Utilities\Set $set, \Filament\Schemas\Components\Utilities\Get $get) {
                                 if (empty($get('slug')) || $get('slug') === \Illuminate\Support\Str::slug($state)) {
                                     $set('slug', \Illuminate\Support\Str::slug($state));
                                 }
@@ -54,14 +54,24 @@ class EventForm
                     DateTimePicker::make('start_date')->label('Data Inizio')->required(),
                     DateTimePicker::make('end_date')->label('Data Fine'),
                     Select::make('cover_media_id')->label('Copertina')
-                        ->relationship('cover', 'name', fn ($query) => $query->where('type', 'image'))
-                        ->allowHtml()
-                        ->getOptionLabelFromRecordUsing(function (\App\Models\Media $record) {
-                            $url = $record->thumbnail_url ?: ($record->type === 'image' ? $record->optimizedUrl('small') : null);
-                            $preview = $url ? '<img src="' . (str_starts_with($url, 'http') ? $url : asset($url)) . '" style="height: 30px; width: 30px; object-fit: cover; border-radius: 4px; display: inline-block; margin-right: 8px; vertical-align: middle;" />' : '';
-                            $name = $record->alt ?: ($record->name ?: "Media #{$record->id}");
-                            return '<div style="display: flex; align-items: center;">' . $preview . '<span>' . e($name) . '</span></div>';
-                        })
+                        ->searchable()
+                        ->getSearchResultsUsing(fn (string $search) =>
+                            \App\Models\Media::query()
+                                ->where('type', 'image')
+                                ->where(function ($q) use ($search) {
+                                    $q->where('alt', 'like', "%{$search}%")
+                                      ->orWhere('public_id', 'like', "%{$search}%");
+                                })
+                                ->limit(20)
+                                ->get()
+                                ->mapWithKeys(fn ($media) => [$media->id => $media->alt ?: "Media #{$media->id}"])
+                                ->toArray()
+                        )
+                        ->getOptionLabelUsing(fn ($value) => 
+                            ($media = \App\Models\Media::find($value)) 
+                                ? ($media->alt ?: "Media #{$media->id}") 
+                                : "Media"
+                        )
                         ->createOptionForm([
                             FileUpload::make('file')->label('Carica File')->image()->storeFiles(false)->required(),
                             TextInput::make('alt')->label('Testo Alternativo'),
@@ -71,10 +81,17 @@ class EventForm
                             if (!empty($data['alt'])) {
                                 $media->update(['alt' => $data['alt']]);
                             }
-                            return $media->getKey();
-                        })
-                        ->searchable()
-                        ->preload(),
+                            return $media->id;
+                        })->reactive(),
+                    \Filament\Forms\Components\Placeholder::make('cover_preview')
+                        ->label('Anteprima Copertina')
+                        ->content(function (\Filament\Schemas\Components\Utilities\Get $get) {
+                            $mediaId = $get('cover_media_id');
+                            if (!$mediaId) return null;
+                            $m = \App\Models\Media::find($mediaId);
+                            if (!$m) return null;
+                            return new \Illuminate\Support\HtmlString('<img src="'.$m->optimizedUrl('small').'" style="max-height: 150px; border-radius: 8px; object-fit: contain;">');
+                        }),
                     \App\Filament\Components\MediaUpload::make('gallery_files', 'gallery')
                         ->label('Galleria Immagini/Video (File Locali)')
                         ->columnSpanFull(),

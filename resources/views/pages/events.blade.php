@@ -78,15 +78,9 @@
                     <div class="ev-card-normal {{ count($galleryThumb) > 0 ? 'is-clickable' : '' }}" @if(count($galleryLarge) > 0) onclick='openGallery(@json($galleryLarge))' @endif>
                         <div class="ev-card-normal-bg">
                             @if(count($galleryThumb) > 0)
-                                <div class="ev-card-normal-bg-inner">
-                                    <img src="{{ $galleryThumb[0] }}" alt="" class="ev-card-normal-blur" />
-                                </div>
                                 @include('components.auto-carousel', ['images' => $galleryThumb, 'interval' => 3000 + $loop->index * 500, 'objectFit' => 'contain'])
                             @elseif($ev->cover)
-                                <div class="ev-card-normal-bg-inner">
-                                    <img src="{{ $ev->cover->optimizedUrl('card') }}" alt="" class="ev-card-normal-blur" />
-                                </div>
-                                <img src="{{ $ev->cover->optimizedUrl('card') }}" class="pos-abs-cover object-contain" />
+                                <img src="{{ $ev->cover->optimizedUrl('card') }}" class="pos-abs-cover object-contain" loading="lazy" decoding="async" />
                             @else
                                 <div class="ev-card-placeholder"></div>
                             @endif

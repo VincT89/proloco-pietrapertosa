@@ -1,6 +1,6 @@
 <div class="section-hero">
     <div class="section-hero-bg">
-        <img class="bgi-img" src="{{ $img }}" alt="" class="object-{{ $bgPosition ?? 'center' }}" />
+        <img class="bgi-img object-{{ $bgPosition ?? 'center' }}" src="{{ $img }}" alt="" fetchpriority="high" loading="eager" decoding="async" />
         <div class="hero-gradient" style="background: rgba(0,0,0,{{ $page?->hero_overlay_opacity ?? 0.4 }});"></div>
     </div>
     <div class="section-hero-content fad">

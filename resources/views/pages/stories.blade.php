@@ -14,7 +14,7 @@
             'id' => 2,
             'title' => (app()->getLocale() === 'en') ? "Agricultural Work Archive" : "Archivio Lavori Agricoli",
             'desc' => (app()->getLocale() === 'en') ? "Section under construction." : "Sezione in fase di allestimento.",
-            'imgs' => [asset('images/sapori_hero.png'), asset('images/percorsi.jpg')]
+            'imgs' => [asset('images/sapori_hero.jpg'), asset('images/percorsi.jpg')]
         ],
         [
             'id' => 3,
@@ -78,3 +78,4 @@
     ])
 
 @endsection
+

@@ -55,13 +55,33 @@ class DirectoryItemForm
                     Select::make('galleryMedia')->label('Scegli Immagini da Libreria Esistente')
                         ->relationship('galleryMedia', 'name')
                         ->multiple()
-                        ->preload()
-                        ->allowHtml()
-                        ->getOptionLabelFromRecordUsing(function (\App\Models\Media $record) {
-                            $url = $record->thumbnail_url ?: ($record->type === 'image' ? $record->optimizedUrl('small') : null);
-                            $preview = $url ? '<img src="' . (str_starts_with($url, 'http') ? $url : asset($url)) . '" style="height: 30px; width: 30px; object-fit: cover; border-radius: 4px; display: inline-block; margin-right: 8px; vertical-align: middle;" />' : '';
-                            $name = $record->alt ?: ($record->name ?: "Media #{$record->id}");
-                            return '<div style="display: flex; align-items: center;">' . $preview . '<span>' . e($name) . '</span></div>';
+                        ->searchable()
+                        ->getOptionLabelFromRecordUsing(fn (\App\Models\Media $record) => $record->alt ?: "Media #{$record->id}")
+                        ->getSearchResultsUsing(fn (string $search) =>
+                            \App\Models\Media::query()
+                                ->where('type', 'image')
+                                ->where(function ($q) use ($search) {
+                                    $q->where('alt', 'like', "%{$search}%")
+                                      ->orWhere('public_id', 'like', "%{$search}%");
+                                })
+                                ->limit(20)
+                                ->get()
+                                ->mapWithKeys(fn ($media) => [$media->id => $media->alt ?: "Media #{$media->id}"])
+                                ->toArray()
+                        )
+                        ->reactive(),
+                    \Filament\Forms\Components\Placeholder::make('galleryMedia_preview')
+                        ->label('Anteprima Selezionati')
+                        ->content(function (\Filament\Schemas\Components\Utilities\Get $get) {
+                            $mediaIds = $get('galleryMedia');
+                            if (!$mediaIds || !is_array($mediaIds) || count($mediaIds) === 0) return null;
+                            $media = \App\Models\Media::whereIn('id', $mediaIds)->get();
+                            $html = '<div style="display: flex; gap: 10px; flex-wrap: wrap;">';
+                            foreach ($media as $m) {
+                                $html .= '<img src="'.$m->optimizedUrl('small').'" style="max-height: 80px; border-radius: 4px; object-fit: cover;">';
+                            }
+                            $html .= '</div>';
+                            return new \Illuminate\Support\HtmlString($html);
                         }),
                     FileUpload::make('gallery_files')->label('Galleria Immagini/Video (File Locali)')
                         ->multiple()

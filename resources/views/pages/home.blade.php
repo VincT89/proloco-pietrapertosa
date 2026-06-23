@@ -8,7 +8,7 @@
             'id' => $ev->id,
             'title' => $ev->title,
             'title_en' => $ev->title_en,
-            'cover_url' => $ev->cover ? $ev->cover->optimizedUrl('card') : null,
+            'cover_url' => $ev->cover ? asset($ev->cover->optimizedUrl('card')) : null,
             'start_date' => $ev->start_date,
             'fallback_date' => null
         ];
@@ -21,7 +21,7 @@
             $imgUrl = '';
             if (!empty($item['img_media_id'])) {
                 $media = \App\Models\Media::find($item['img_media_id']);
-                if ($media) $imgUrl = $media->url;
+                if ($media) $imgUrl = $media->optimizedUrl('card');
             } else if (!empty($item['img'])) {
                 $imgUrl = $item['img'];
             }
@@ -30,7 +30,7 @@
                 'id' => $key + 1,
                 'nome' => $item['nome'] ?? '',
                 'nome_en' => $item['nome_en'] ?? '',
-                'img' => $imgUrl
+                'img' => asset($imgUrl)
             ];
         })->toArray();
     }
@@ -95,7 +95,7 @@
                         <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'events' : 'eventi')) }}" class="ed-link-clean">
                             <div class="ed-card">
                                 <div class="ed-img-box tall">
-                                    <img src="{{ $ev->cover_url ?? 'https://placehold.co/400x600/14181f/d9aa63?text=Locandina' }}" alt="{{ app()->getLocale() === 'en' && !empty($ev->title_en) ? $ev->title_en : $ev->title }}" />
+                                    <img src="{{ $ev->cover_url ?? 'https://placehold.co/400x600/14181f/d9aa63?text=Locandina' }}" alt="{{ app()->getLocale() === 'en' && !empty($ev->title_en) ? $ev->title_en : $ev->title }}" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="ed-glass-cap">
                                     <span>
@@ -189,13 +189,13 @@
 
                 <div class="borgo-imgs">
                     @if(isset($fallbackScopri[0]))
-                        <div class="bi1"><img src="{{ $fallbackScopri[0]->img ?? '' }}" alt="{{ $fallbackScopri[0]->nome ?? '' }}" /></div>
+                        <div class="bi1"><img src="{{ $fallbackScopri[0]->img ?? '' }}" alt="{{ $fallbackScopri[0]->nome ?? '' }}" loading="lazy" decoding="async" /></div>
                     @endif
                     @if(isset($fallbackScopri[1]))
-                        <div class="bi2"><img src="{{ $fallbackScopri[1]->img ?? '' }}" alt="{{ $fallbackScopri[1]->nome ?? '' }}" /></div>
+                        <div class="bi2"><img src="{{ $fallbackScopri[1]->img ?? '' }}" alt="{{ $fallbackScopri[1]->nome ?? '' }}" loading="lazy" decoding="async" /></div>
                     @endif
                     @if(isset($fallbackScopri[2]))
-                        <div class="bi3"><img src="{{ $fallbackScopri[2]->img ?? '' }}" alt="{{ $fallbackScopri[2]->nome ?? '' }}" /></div>
+                        <div class="bi3"><img src="{{ $fallbackScopri[2]->img ?? '' }}" alt="{{ $fallbackScopri[2]->nome ?? '' }}" loading="lazy" decoding="async" /></div>
                     @endif
                 </div>
             </div>

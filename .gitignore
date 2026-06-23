@@ -58,4 +58,5 @@ mix-manifest.json
 # Misc
 *.swp
 *.swo
-*~
+*~/public/hot
+/n/public/hot

@@ -21,8 +21,9 @@ class NewsTable
                     ->searchable(),
                 TextColumn::make('slug')->label('Slug')
                     ->searchable(),
-                ImageColumn::make('cover.url')
-                    ->label('Copertina'),
+                ImageColumn::make('cover_preview')
+                    ->label('Copertina')
+                    ->getStateUsing(fn ($record) => $record->cover ? $record->cover->optimizedUrl('thumb') : null),
                 TextColumn::make('status')->label('Stato')
                     ->badge(),
                 TextColumn::make('translation_status')->label('Stato Traduzione')

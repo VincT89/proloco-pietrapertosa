@@ -41,7 +41,7 @@
                     @if(count($gallery) > 0)
                         @foreach($gallery as $i => $img)
                             <div class="sticky-img-box cur" onclick='openGallery(@json($gallery), {{ $i }})'>
-                                <img src="{{ $img }}" alt="{{ $asso->title }} {{ $i + 1 }}" class="cm-img" />
+                                <img src="{{ asset($img) }}" alt="{{ $asso->title }} {{ $i + 1 }}" class="cm-img" />
                                 <div class="cm-img-overlay"></div>
                             </div>
                         @endforeach

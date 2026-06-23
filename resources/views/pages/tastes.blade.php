@@ -10,7 +10,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? 'Traditional Tastes' : 'I Sapori della Tradizione'),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? 'Pietrapertosa at the table' : 'Pietrapertosa a tavola'),
-        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/sapori_hero.png')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/sapori_hero.jpg')
     ])
     
     @include('components.page-intro', [
@@ -23,7 +23,7 @@
             @foreach($piatti ?? [] as $i => $sapore)
                 @php
                     $gallery = $sapore->galleryMedia->pluck('url')->toArray();
-                    $img = count($gallery) > 0 ? $gallery[0] : asset('images/pietrapertosaBacheca.png');
+                    $img = count($gallery) > 0 ? $gallery[0] : asset('images/pietrapertosaBacheca.jpg');
                 @endphp
                 @include('components.experience-card', [
                     'reverse' => $i % 2 !== 0,
@@ -46,3 +46,4 @@
         'bgImage' => asset('images/sfondo_cta.jpeg')
     ])
 @endsection
+

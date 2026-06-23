@@ -64,15 +64,24 @@ class PageSettingForm
                             TextInput::make('nome')->label('Titolo')->required(),
                             TextInput::make('nome_en')->label('Titolo (EN)'),
                             Select::make('img_media_id')->label('Immagine (Libreria)')
-                                ->options(function () {
-                                    return \App\Models\Media::where('type', 'image')->get()->mapWithKeys(function ($media) {
-                                        $url = $media->thumbnail_url ?: ($media->type === 'image' ? $media->optimizedUrl('small') : null);
-                                        $preview = $url ? '<img src="' . (str_starts_with($url, 'http') ? $url : asset($url)) . '" style="height: 30px; width: 30px; object-fit: cover; border-radius: 4px; display: inline-block; margin-right: 8px; vertical-align: middle;" />' : '';
-                                        $name = $media->alt ?: ($media->name ?: "Media #{$media->id}");
-                                        return [$media->id => '<div style="display: flex; align-items: center;">' . $preview . '<span>' . e($name) . '</span></div>'];
-                                    });
-                                })
-                                ->allowHtml()
+                                ->searchable()
+                                ->getSearchResultsUsing(fn (string $search) =>
+                                    \App\Models\Media::query()
+                                        ->where('type', 'image')
+                                        ->where(function ($q) use ($search) {
+                                            $q->where('alt', 'like', "%{$search}%")
+                                              ->orWhere('public_id', 'like', "%{$search}%");
+                                        })
+                                        ->limit(20)
+                                        ->get()
+                                        ->mapWithKeys(fn ($media) => [$media->id => $media->alt ?: "Media #{$media->id}"])
+                                        ->toArray()
+                                )
+                                ->getOptionLabelUsing(fn ($value) => 
+                                    ($media = \App\Models\Media::find($value)) 
+                                        ? ($media->alt ?: "Media #{$media->id}") 
+                                        : "Media"
+                                )
                                 ->createOptionForm([
                                     FileUpload::make('file')->label('Carica Immagine')->image()->storeFiles(false)->required(),
                                     TextInput::make('alt')->label('Testo Alternativo'),
@@ -83,8 +92,16 @@ class PageSettingForm
                                         $media->update(['alt' => $data['alt']]);
                                     }
                                     return $media->id;
-                                })
-                                ->searchable(),
+                                })->reactive(),
+                            \Filament\Forms\Components\Placeholder::make('img_preview')
+                                ->label('Anteprima Immagine')
+                                ->content(function (\Filament\Schemas\Components\Utilities\Get $get) {
+                                    $mediaId = $get('img_media_id');
+                                    if (!$mediaId) return null;
+                                    $m = \App\Models\Media::find($mediaId);
+                                    if (!$m) return null;
+                                    return new \Illuminate\Support\HtmlString('<img src="'.$m->optimizedUrl('small').'" style="max-height: 150px; border-radius: 8px; object-fit: contain;">');
+                                }),
                         ])->columns(2)->collapsible()
                     ])
                 ])->visible(fn ($record) => $record?->page_slug === 'home')->columnSpanFull(),
@@ -96,15 +113,24 @@ class PageSettingForm
                             Textarea::make('description_en')->label('Descrizione / nota (EN)'),
                             TextInput::make('website_url')->label('Sito web / link')->url(),
                             Select::make('logo_media_id')->label('Logo Fornitore')
-                                ->options(function () {
-                                    return \App\Models\Media::where('type', 'image')->get()->mapWithKeys(function ($media) {
-                                        $url = $media->thumbnail_url ?: ($media->type === 'image' ? $media->optimizedUrl('small') : null);
-                                        $preview = $url ? '<img src="' . (str_starts_with($url, 'http') ? $url : asset($url)) . '" style="height: 30px; width: 30px; object-fit: contain; border-radius: 4px; display: inline-block; margin-right: 8px; vertical-align: middle; filter: brightness(0) invert(1);" />' : '';
-                                        $name = $media->alt ?: ($media->name ?: "Media #{$media->id}");
-                                        return [$media->id => '<div style="display: flex; align-items: center; background: #222; padding: 2px;">' . $preview . '<span>' . e($name) . '</span></div>'];
-                                    });
-                                })
-                                ->allowHtml()
+                                ->searchable()
+                                ->getSearchResultsUsing(fn (string $search) =>
+                                    \App\Models\Media::query()
+                                        ->where('type', 'image')
+                                        ->where(function ($q) use ($search) {
+                                            $q->where('alt', 'like', "%{$search}%")
+                                              ->orWhere('public_id', 'like', "%{$search}%");
+                                        })
+                                        ->limit(20)
+                                        ->get()
+                                        ->mapWithKeys(fn ($media) => [$media->id => $media->alt ?: "Media #{$media->id}"])
+                                        ->toArray()
+                                )
+                                ->getOptionLabelUsing(fn ($value) => 
+                                    ($media = \App\Models\Media::find($value)) 
+                                        ? ($media->alt ?: "Media #{$media->id}") 
+                                        : "Media"
+                                )
                                 ->createOptionForm([
                                     FileUpload::make('file')->label('Carica Logo')->image()->storeFiles(false)->required(),
                                     TextInput::make('alt')->label('Testo Alternativo'),
@@ -115,6 +141,15 @@ class PageSettingForm
                                         $media->update(['alt' => $data['alt']]);
                                     }
                                     return $media->id;
+                                })->reactive(),
+                            \Filament\Forms\Components\Placeholder::make('logo_preview')
+                                ->label('Anteprima Logo')
+                                ->content(function (\Filament\Schemas\Components\Utilities\Get $get) {
+                                    $mediaId = $get('logo_media_id');
+                                    if (!$mediaId) return null;
+                                    $m = \App\Models\Media::find($mediaId);
+                                    if (!$m) return null;
+                                    return new \Illuminate\Support\HtmlString('<img src="'.$m->optimizedUrl('small').'" style="max-height: 100px; max-width: 150px; border-radius: 4px; object-fit: contain; filter: brightness(0) invert(1); background: #222; padding: 10px;">');
                                 })
                         ])->columns(1)->collapsible()
                     ])
@@ -140,14 +175,24 @@ class PageSettingForm
                         ->required()
                         ->unique(ignoreRecord: true),
                     Select::make('hero_media_id')->label('Immagine Hero')
-                        ->relationship('heroMedia', 'name', fn ($query) => $query->where('type', 'image'))
-                        ->allowHtml()
-                        ->getOptionLabelFromRecordUsing(function (\App\Models\Media $record) {
-                            $url = $record->thumbnail_url ?: ($record->type === 'image' ? $record->optimizedUrl('small') : null);
-                            $preview = $url ? '<img src="' . (str_starts_with($url, 'http') ? $url : asset($url)) . '" style="height: 30px; width: 30px; object-fit: cover; border-radius: 4px; display: inline-block; margin-right: 8px; vertical-align: middle;" />' : '';
-                            $name = $record->alt ?: ($record->name ?: "Media #{$record->id}");
-                            return '<div style="display: flex; align-items: center;">' . $preview . '<span>' . e($name) . '</span></div>';
-                        })
+                        ->searchable()
+                        ->getSearchResultsUsing(fn (string $search) =>
+                            \App\Models\Media::query()
+                                ->where('type', 'image')
+                                ->where(function ($q) use ($search) {
+                                    $q->where('alt', 'like', "%{$search}%")
+                                      ->orWhere('public_id', 'like', "%{$search}%");
+                                })
+                                ->limit(20)
+                                ->get()
+                                ->mapWithKeys(fn ($media) => [$media->id => $media->alt ?: "Media #{$media->id}"])
+                                ->toArray()
+                        )
+                        ->getOptionLabelUsing(fn ($value) => 
+                            ($media = \App\Models\Media::find($value)) 
+                                ? ($media->alt ?: "Media #{$media->id}") 
+                                : "Media"
+                        )
                         ->createOptionForm([
                             FileUpload::make('file')->label('Carica File')->image()->storeFiles(false)->required(),
                             TextInput::make('alt')->label('Testo Alternativo'),
@@ -157,10 +202,17 @@ class PageSettingForm
                             if (!empty($data['alt'])) {
                                 $media->update(['alt' => $data['alt']]);
                             }
-                            return $media->getKey();
-                        })
-                        ->searchable()
-                        ->preload(),
+                            return $media->id;
+                        })->reactive(),
+                    \Filament\Forms\Components\Placeholder::make('hero_preview')
+                        ->label('Anteprima Hero')
+                        ->content(function (\Filament\Schemas\Components\Utilities\Get $get) {
+                            $mediaId = $get('hero_media_id');
+                            if (!$mediaId) return null;
+                            $m = \App\Models\Media::find($mediaId);
+                            if (!$m) return null;
+                            return new \Illuminate\Support\HtmlString('<img src="'.$m->optimizedUrl('small').'" style="max-height: 150px; border-radius: 8px; object-fit: contain;">');
+                        }),
                     TextInput::make('hero_overlay_opacity')->label('Opacità Sfondo Hero')
                         ->numeric()
                         ->default(0.4)

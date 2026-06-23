@@ -10,7 +10,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? __('news.hero_title'),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? __('news.hero_subtitle'),
-        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaBacheca.png'),
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaBacheca.jpg'),
         'bgPosition' => 'center 30%'
     ])
     
@@ -31,10 +31,7 @@
                         <div class="ev-card-giant is-clickable" onclick="document.getElementById('news-modal-{{ $notizia->id }}').style.display='flex'">
                             <div class="ev-card-bg">
                                 @if($notizia->cover)
-                                    <div class="ev-card-normal-bg-inner">
-                                        <img src="{{ $notizia->cover->optimizedUrl('card') }}" alt="{{ $notizia->getTranslation('title') }}" class="ev-card-normal-blur" />
-                                    </div>
-                                    <img src="{{ $notizia->cover->optimizedUrl('card') }}" alt="{{ $notizia->getTranslation('title') }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2;" />
+                                    <img src="{{ $notizia->cover->optimizedUrl('card') }}" alt="{{ $notizia->getTranslation('title') }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2;" loading="lazy" decoding="async" />
                                 @else
                                     <div class="ev-card-placeholder"></div>
                                 @endif
@@ -121,3 +118,4 @@
         </div>
     </section>
 @endsection
+

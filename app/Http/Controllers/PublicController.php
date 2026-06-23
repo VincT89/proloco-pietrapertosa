@@ -31,8 +31,15 @@ class PublicController extends Controller
     public function proLoco()
     {
         $page = PageSetting::where('page_slug', 'pro-loco')->first();
+        
+        $financialDocuments = \App\Models\FinancialDocument::with('media')
+            ->where('is_published', true)
+            ->orderBy('year', 'desc')
+            ->orderBy('sort_order', 'asc')
+            ->get()
+            ->groupBy('year');
 
-        return view('pages.proLoco', compact('page'));
+        return view('pages.proLoco', compact('page', 'financialDocuments'));
     }
 
     public function community()

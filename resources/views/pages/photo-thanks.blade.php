@@ -6,7 +6,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? "Photo acknowledgements" : "Ringraziamenti fotografici"),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? "Thanks to those who contributed images and visual materials." : "Un grazie a chi ha contribuito con immagini e materiali visivi."),
-        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaProloco.png')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaProloco.jpg')
     ])
     
     @if($page?->getTranslation('intro_text'))
@@ -31,13 +31,13 @@
                                 if (!empty($contributor['logo_media_id'])) {
                                     $media = \App\Models\Media::find($contributor['logo_media_id']);
                                     if ($media) {
-                                        $logoUrl = $media->url;
+                                        $logoUrl = $media->optimizedUrl('small');
                                     }
                                 }
                             @endphp
                             @if($logoUrl)
                                 <div class="contributor-img" style="height: 220px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; padding: 20px;">
-                                    <img src="{{ str_replace('/upload/', '/upload/w_400,h_300,c_fit/', $logoUrl) }}" alt="{{ $contributor['name'] ?? '' }}" style="max-height: 100%; max-width: 100%; object-fit: contain; filter: brightness(0) invert(1);">
+                                    <img src="{{ $logoUrl }}" alt="{{ $contributor['name'] ?? '' }}" style="max-height: 100%; max-width: 100%; object-fit: contain; filter: brightness(0) invert(1);" loading="lazy" decoding="async">
                                 </div>
                             @endif
                             <div class="contributor-body" style="padding: 30px; flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center;">
@@ -72,3 +72,4 @@
         </div>
     </section>
 @endsection
+

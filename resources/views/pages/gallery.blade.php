@@ -10,7 +10,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? "Photo Archive" : "Archivio Fotografico"),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? "Pietrapertosa in pictures" : "Pietrapertosa in immagini"),
-        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaGalleria.png')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaGalleria.jpg')
     ])
     
     <section class="wrap pb-80 pt-40">
@@ -91,3 +91,4 @@
     ])
 
 @endsection
+

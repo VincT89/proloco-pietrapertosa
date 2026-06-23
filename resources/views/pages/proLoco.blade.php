@@ -11,7 +11,7 @@
     @include('components.section-hero', [
         'title' => $page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? "The Pro Loco" : "La Pro Loco"),
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? "THE ENGINE OF OUR COMMUNITY" : "MOTORE DELLA NOSTRA COMUNITÀ"),
-        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaProloco.png')
+        'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaProloco.jpg')
     ])
     
     @include('components.page-intro', [
@@ -43,6 +43,46 @@
             </div>
         </div>
     </section>
+
+    @if(isset($financialDocuments) && $financialDocuments->count() > 0)
+    <section class="ed-sec bg-mut">
+        <div class="ed-wrap">
+            <div class="proloco-center-box" style="margin-bottom: 40px;">
+                <span class="ed-subtitle">{{ (app()->getLocale() === 'en') ? "Transparency" : "Trasparenza" }}</span>
+                <h2 class="ed-title">{{ (app()->getLocale() === 'en') ? "Financial Reports & Documents" : "Bilanci e Rendiconti" }}</h2>
+                <p class="proloco-center-desc" style="max-width: 600px; margin: 0 auto;">
+                    {{ (app()->getLocale() === 'en') ? "Financial documents and reports of the Pro Loco Pietrapertosana." : "Bilanci e documenti della Pro Loco Pietrapertosana per la trasparenza amministrativa." }}
+                </p>
+            </div>
+
+            <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px;">
+                @foreach($financialDocuments as $year => $documents)
+                    <div>
+                        <h3 style="font-size: 1.5rem; color: var(--color-primary); margin-bottom: 20px; border-bottom: 1px solid var(--color-border); padding-bottom: 10px;">{{ $year }}</h3>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            @foreach($documents as $doc)
+                                <a href="{{ $doc->media ? $doc->media->url : '#' }}" target="_blank" style="display: flex; align-items: center; justify-content: space-between; padding: 20px; background: var(--color-surface); border-radius: 8px; text-decoration: none; border: 1px solid var(--color-border); transition: all 0.2s ease;" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.transform='translateY(0)';">
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--color-text); font-size: 1.1rem; margin-bottom: 4px;">{{ $doc->getTranslation('title', app()->getLocale(), false) ?: $doc->title }}</div>
+                                        <div style="font-size: 0.9rem; color: var(--color-text-mut);">
+                                            <span style="display: inline-block; padding: 2px 8px; background: rgba(184, 135, 70, 0.1); color: var(--color-primary); border-radius: 4px; font-weight: 500; font-size: 0.8rem; margin-right: 10px;">{{ $doc->type->getLabel() }}</span>
+                                            @if($doc->getTranslation('description', app()->getLocale(), false) ?? $doc->description)
+                                                {{ $doc->getTranslation('description', app()->getLocale(), false) ?? $doc->description }}
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div style="color: var(--color-primary);">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
 
     <!-- Squadra -->
     @include('components.squadra')
@@ -134,3 +174,4 @@
         </div>
     </section>
 @endsection
+
