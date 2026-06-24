@@ -13,14 +13,14 @@ class PublicController extends Controller
 {
     public function home()
     {
-        $page = Cache::remember('home_page_setting', 1800, fn() => PageSetting::with('heroMedia')->where('page_slug', 'home')->first());
-        $events = Cache::remember('home_events', 1800, fn() => Event::with('cover')
+        $page = PageSetting::with('heroMedia')->where('page_slug', 'home')->first();
+        $events = Event::with('cover')
             ->where('status', 'published')
             ->orderByRaw('start_date IS NULL')
             ->orderBy('start_date', 'desc')
             ->take(3)
-            ->get());
-        $news = Cache::remember('home_news', 1800, fn() => News::with('cover')->where('status', 'published')->orderBy('published_at', 'desc')->take(3)->get());
+            ->get();
+        $news = News::with('cover')->where('status', 'published')->orderBy('published_at', 'desc')->take(3)->get();
 
         return view('pages.home', compact('page', 'events', 'news'));
     }
@@ -96,32 +96,27 @@ class PublicController extends Controller
 
     public function news()
     {
-        $page = Cache::remember('news_page_setting', 1800, fn() => PageSetting::with('heroMedia')->where('page_slug', 'notizie')->first());
-        
-        $pageNumber = request()->get('page', 1);
-        $news = Cache::remember('news_list_page_' . $pageNumber, 1800, fn() => News::with(['cover', 'attachmentsMedia', 'galleryMedia', 'externalMedia'])
+        $page = PageSetting::with('heroMedia')->where('page_slug', 'notizie')->first();
+        $news = News::with(['cover', 'attachmentsMedia', 'galleryMedia', 'externalMedia'])
             ->where('status', 'published')
             ->orderBy('published_at', 'desc')
-            ->paginate(9));
+            ->paginate(9);
 
         return view('pages.news', compact('page', 'news'));
     }
 
     public function events()
     {
-        $page = Cache::remember('events_page_setting', 1800, fn() => PageSetting::with('heroMedia')->where('page_slug', 'eventi')->first());
-        
-        $pageNumber = request()->get('page', 1);
-        $events = Cache::remember('events_list_page_' . $pageNumber, 1800, fn() => Event::with(['cover', 'galleryMedia', 'externalMedia'])
+        $page = PageSetting::with('heroMedia')->where('page_slug', 'eventi')->first();
+        $events = Event::with(['cover', 'galleryMedia', 'externalMedia'])
             ->where('status', 'published')
             ->orderByRaw('start_date IS NULL')
             ->orderBy('start_date', 'desc')
-            ->paginate(9));
-            
-        $annualEvents = Cache::remember('events_annual', 1800, fn() => DirectoryItem::with('galleryMedia')
+            ->paginate(9);
+        $annualEvents = DirectoryItem::with('galleryMedia')
             ->where('category', 'eventi_annuali')
             ->orderBy('sort_order')
-            ->get());
+            ->get();
 
         return view('pages.events', compact('page', 'events', 'annualEvents'));
     }
