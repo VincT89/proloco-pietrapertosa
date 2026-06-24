@@ -11,6 +11,7 @@
                 <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
             </button>
             
+            <div id="lbLoader" class="lb-loader" aria-hidden="true"></div>
             <div id="lbMediaContainer" class="lb-media-container"></div>
             
             <div class="lb-caption-wrap" id="lbCap">

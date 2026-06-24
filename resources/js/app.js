@@ -171,38 +171,65 @@ const initApp = () => {
     window.updateLightbox = function() {
         const { images, index } = window.lbData;
         if (images.length === 0) return;
-        
+
         const media = images[index];
         const container = document.getElementById('lbMediaContainer');
-        if (container) {
+        const loader = document.getElementById('lbLoader');
+        const modal = document.getElementById('gallery-modal');
+
+        if (!container) return;
+
+        container.innerHTML = '';
+        if (loader) loader.classList.add('is-visible');
+        if (modal) modal.classList.add('is-loading');
+
+        const showElement = (el) => {
+            el.className = "lb-img";
             container.innerHTML = '';
+            container.appendChild(el);
+            if (loader) loader.classList.remove('is-visible');
+            if (modal) modal.classList.remove('is-loading');
+        };
+
+        if (typeof media === 'string' || media.type === 'image') {
+            const url = typeof media === 'string' ? media : media.url;
+            const preload = new Image();
+
+            preload.onload = () => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = media.alt || '';
+                showElement(img);
+            };
+
+            preload.onerror = () => {
+                if (loader) loader.classList.remove('is-visible');
+                if (modal) modal.classList.remove('is-loading');
+            };
+
+            preload.src = url;
+        } else if (media.type === 'video') {
             let el;
-            if (typeof media === 'string' || media.type === 'image') {
-                const url = typeof media === 'string' ? media : media.url;
-                el = document.createElement('img');
-                el.src = url;
-            } else if (media.type === 'video') {
-                if (media.provider === 'cloudinary') {
-                    el = document.createElement('video');
-                    el.controls = true;
-                    el.src = media.url;
-                } else {
-                    el = document.createElement('iframe');
-                    el.src = media.embed_url;
-                    el.setAttribute("allowfullscreen", "true");
-                    el.setAttribute("frameborder", "0");
-                }
+
+            if (media.provider === 'cloudinary') {
+                el = document.createElement('video');
+                el.controls = true;
+                el.src = media.url;
+                el.preload = 'metadata';
+            } else {
+                el = document.createElement('iframe');
+                el.src = media.embed_url;
+                el.setAttribute("allowfullscreen", "true");
+                el.setAttribute("frameborder", "0");
             }
-            if (el) {
-                el.className = "lb-img";
-                container.appendChild(el);
-            }
+
+            showElement(el);
         }
-        
+
         const prevBtn = document.getElementById('lb-prev');
         const nextBtn = document.getElementById('lb-next');
         const cap = document.getElementById('lbCap');
-        
+
         if (images.length > 1) {
             prevBtn.style.display = 'flex';
             nextBtn.style.display = 'flex';

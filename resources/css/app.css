@@ -1407,6 +1407,42 @@ html, body { -ms-overflow-style: none; scrollbar-width: none; }
   display: block;
 }
 
+.lb-loader {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.lb-loader.is-visible {
+  display: flex;
+}
+
+.lb-loader::after {
+  content: "";
+  width: 44px;
+  height: 44px;
+  border: 2px solid rgba(201, 164, 92, .25);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: lb-spin .8s linear infinite;
+}
+
+@keyframes lb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#gallery-modal.is-loading #lb-prev,
+#gallery-modal.is-loading #lb-next,
+#gallery-modal.is-loading #lbCap {
+  opacity: .25;
+}
+
 @media (max-width: 768px) {
   .lb-prev { left: 10px; }
   .lb-next { right: 10px; }
