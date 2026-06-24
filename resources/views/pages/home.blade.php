@@ -9,6 +9,8 @@
             'title' => $ev->title,
             'title_en' => $ev->title_en,
             'cover_url' => $ev->cover ? asset($ev->cover->optimizedUrl('card')) : null,
+            'cover_blur_url' => $ev->cover ? asset($ev->cover->optimizedUrl('poster_blur')) : null,
+            'cover_poster_url' => $ev->cover ? asset($ev->cover->optimizedUrl('poster')) : null,
             'start_date' => $ev->start_date,
             'fallback_date' => null
         ];
@@ -94,8 +96,15 @@
                     @foreach($eventsToDisplay as $ev)
                         <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'events' : 'eventi')) }}" class="ed-link-clean">
                             <div class="ed-card">
-                                <div class="ed-img-box tall">
-                                    <img src="{{ $ev->cover_url ?? 'https://placehold.co/400x600/14181f/d9aa63?text=Locandina' }}" alt="{{ app()->getLocale() === 'en' && !empty($ev->title_en) ? $ev->title_en : $ev->title }}" loading="lazy" decoding="async" />
+                                <div class="ed-img-box tall" style="background-color: var(--ink);">
+                                    @if(!empty($ev->cover_url))
+                                        <img src="{{ $ev->cover_blur_url }}" class="ev-card-normal-blur" loading="lazy" decoding="async" />
+                                        <div class="ev-card-normal-poster">
+                                            <img src="{{ $ev->cover_poster_url }}" class="pos-abs-cover object-contain" loading="lazy" decoding="async" />
+                                        </div>
+                                    @else
+                                        <img src="https://placehold.co/400x600/14181f/d9aa63?text=Locandina" alt="{{ app()->getLocale() === 'en' && !empty($ev->title_en) ? $ev->title_en : $ev->title }}" loading="lazy" decoding="async" />
+                                    @endif
                                 </div>
                                 <div class="ed-glass-cap">
                                     <span>
