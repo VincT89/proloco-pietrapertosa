@@ -77,10 +77,10 @@
                     @endphp
                     <div class="ev-card-normal {{ count($galleryThumb) > 0 ? 'is-clickable' : '' }}" @if(count($galleryLarge) > 0) onclick='openGallery(@json($galleryLarge))' @endif>
                         <div class="ev-card-normal-bg">
-                            @if(count($galleryThumb) > 0)
-                                @include('components.auto-carousel', ['images' => $galleryThumb, 'interval' => 3000 + $loop->index * 500, 'objectFit' => 'contain'])
-                            @elseif($ev->cover)
+                            @if($ev->cover)
                                 <img src="{{ $ev->cover->optimizedUrl('card') }}" class="pos-abs-cover object-contain" loading="lazy" decoding="async" />
+                            @elseif(count($galleryThumb) > 0)
+                                @include('components.auto-carousel', ['images' => $galleryThumb, 'interval' => 3000 + $loop->index * 500, 'objectFit' => 'contain'])
                             @else
                                 <div class="ev-card-placeholder"></div>
                             @endif
