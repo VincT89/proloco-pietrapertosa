@@ -35,10 +35,16 @@
                     <p class="proloco-desc-short">
                         {{ (app()->getLocale() === 'en') ? "We operate in full compliance with the regulations for the Third Sector. The official statute and the minutes of the assemblies are always available to our members." : "Operiamo nel massimo rispetto delle normative per il Terzo Settore. Lo statuto ufficiale e i verbali delle assemblee sono sempre a disposizione dei nostri tesserati." }}
                     </p>
-                    <a href="{{ asset('images/Statuto_ProLoco_Pietrapertosa_Leggibile.pdf') }}" target="_blank" class="ed-btn proloco-btn-pad">
-                        <svg width="18" height="18" class="proloco-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-                        {{ (app()->getLocale() === 'en') ? "View the Statute (PDF)" : "Visualizza lo Statuto (PDF)" }}
-                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start;">
+                        <a href="{{ asset('images/Statuto_ProLoco_Pietrapertosa_Leggibile.pdf') }}" target="_blank" class="ed-btn proloco-btn-pad">
+                            <svg width="18" height="18" class="proloco-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                            {{ (app()->getLocale() === 'en') ? "View the Statute (PDF)" : "Visualizza lo Statuto (PDF)" }}
+                        </a>
+                        <a href="{{ asset('images/Atto_Costitutivo_Proloco_Pietrapertosana.pdf') }}" target="_blank" class="ed-btn proloco-btn-pad" style="background: transparent; border: 1px solid var(--gold); color: var(--gold);" onmouseover="this.style.background='var(--gold)'; this.style.color='var(--ink)'" onmouseout="this.style.background='transparent'; this.style.color='var(--gold)'">
+                            <svg width="18" height="18" class="proloco-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                            {{ (app()->getLocale() === 'en') ? "View Deed of Incorporation (PDF)" : "Visualizza l'Atto di Costituzione (PDF)" }}
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -58,21 +64,21 @@
             <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px;">
                 @foreach($financialDocuments as $year => $documents)
                     <div>
-                        <h3 style="font-size: 1.5rem; color: var(--color-primary); margin-bottom: 20px; border-bottom: 1px solid var(--color-border); padding-bottom: 10px;">{{ $year }}</h3>
+                        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--gold); margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">{{ $year }}</h3>
                         <div style="display: flex; flex-direction: column; gap: 15px;">
                             @foreach($documents as $doc)
-                                <a href="{{ $doc->media ? $doc->media->url : '#' }}" target="_blank" style="display: flex; align-items: center; justify-content: space-between; padding: 20px; background: var(--color-surface); border-radius: 8px; text-decoration: none; border: 1px solid var(--color-border); transition: all 0.2s ease;" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.transform='translateY(0)';">
+                                <a href="{{ $doc->media ? $doc->media->url : '#' }}" target="_blank" style="display: flex; align-items: center; justify-content: space-between; padding: 20px; background: var(--ink-2); border-radius: 8px; text-decoration: none; border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='rgba(255,255,255,0.05)'; this.style.transform='translateY(0)';">
                                     <div>
-                                        <div style="font-weight: 600; color: var(--color-text); font-size: 1.1rem; margin-bottom: 4px;">{{ $doc->getTranslation('title', app()->getLocale(), false) ?: $doc->title }}</div>
-                                        <div style="font-size: 0.9rem; color: var(--color-text-mut);">
-                                            <span style="display: inline-block; padding: 2px 8px; background: rgba(184, 135, 70, 0.1); color: var(--color-primary); border-radius: 4px; font-weight: 500; font-size: 0.8rem; margin-right: 10px;">{{ $doc->type->getLabel() }}</span>
+                                        <div style="font-weight: 500; color: var(--paper); font-size: 1.15rem; margin-bottom: 8px;">{{ $doc->getTranslation('title', app()->getLocale(), false) ?: $doc->title }}</div>
+                                        <div style="font-size: 0.9rem; color: var(--stone); display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                            <span style="display: inline-block; padding: 4px 10px; background: rgba(217, 170, 99, 0.1); color: var(--gold); border-radius: 4px; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">{{ $doc->type->getLabel() }}</span>
                                             @if($doc->getTranslation('description', app()->getLocale(), false) ?? $doc->description)
-                                                {{ $doc->getTranslation('description', app()->getLocale(), false) ?? $doc->description }}
+                                                <span>{{ $doc->getTranslation('description', app()->getLocale(), false) ?? $doc->description }}</span>
                                             @endif
                                         </div>
                                     </div>
-                                    <div style="color: var(--color-primary);">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                    <div style="color: var(--gold); background: rgba(217, 170, 99, 0.05); padding: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.3s;" onmouseover="this.style.background='rgba(217, 170, 99, 0.15)'" onmouseout="this.style.background='rgba(217, 170, 99, 0.05)'">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                                     </div>
                                 </a>
                             @endforeach

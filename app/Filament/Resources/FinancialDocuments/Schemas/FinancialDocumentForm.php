@@ -56,10 +56,10 @@ class FinancialDocumentForm
                         Select::make('media_id')
                             ->label('File PDF (Libreria Cloudinary)')
                             ->searchable()
+                            ->required()
                             ->getSearchResultsUsing(fn (string $search) =>
                                 \App\Models\Media::query()
                                     ->where('type', 'document')
-                                    ->orWhere('type', 'image')
                                     ->where(function ($q) use ($search) {
                                         $q->where('alt', 'like', "%{$search}%")
                                           ->orWhere('public_id', 'like', "%{$search}%");
@@ -105,6 +105,7 @@ class FinancialDocumentForm
                         
                         Toggle::make('is_published')
                             ->label('Pubblicato')
+                            ->default(true)
                             ->required()
                             ->columnSpanFull(),
                         DateTimePicker::make('published_at')

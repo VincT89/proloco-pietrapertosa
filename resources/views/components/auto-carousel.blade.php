@@ -1,4 +1,4 @@
-<div class="auto-carousel" data-interval="{{ $interval ?? 4000 }}" data-fit="{{ $objectFit ?? 'cover' }}">
+<div class="auto-carousel {{ $className ?? '' }}" data-interval="{{ $interval ?? 4000 }}" data-fit="{{ $objectFit ?? 'cover' }}">
     @foreach($images as $idx => $imgUrl)
         <img 
             src="{{ $imgUrl }}" 

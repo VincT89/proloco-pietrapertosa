@@ -11,6 +11,10 @@
 /storage/framework/views/*
 /bootstrap/cache/*
 
+# Livewire
+/storage/app/private/livewire-tmp/*
+/storage/app/livewire-tmp/*
+
 # Environment files
 .env
 .env.*

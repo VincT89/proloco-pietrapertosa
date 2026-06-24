@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum DocumentType: string
+use Filament\Support\Contracts\HasLabel;
+
+enum DocumentType: string implements HasLabel
 {
     case BALANCE_SHEET = 'balance_sheet';
     case BUDGET = 'budget';

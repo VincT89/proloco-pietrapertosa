@@ -29,9 +29,13 @@
                 <div class="ev-card-grid">
                     @foreach($news as $notizia)
                         <div class="ev-card-giant is-clickable" onclick="document.getElementById('news-modal-{{ $notizia->id }}').style.display='flex'">
-                            <div class="ev-card-bg">
+                            <div class="ev-card-bg" style="overflow: hidden; border-radius: 8px;">
                                 @if($notizia->cover)
-                                    <img src="{{ $notizia->cover->optimizedUrl('card') }}" alt="{{ $notizia->getTranslation('title') }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2;" loading="lazy" decoding="async" />
+                                    <img src="{{ $notizia->cover->optimizedUrl('poster_blur') }}" class="ev-card-normal-blur" loading="lazy" decoding="async" />
+
+                                    <div class="ev-card-normal-poster">
+                                        <img src="{{ $notizia->cover->optimizedUrl('poster') }}" class="pos-abs-cover object-contain" loading="lazy" decoding="async" />
+                                    </div>
                                 @else
                                     <div class="ev-card-placeholder"></div>
                                 @endif

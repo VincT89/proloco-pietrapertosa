@@ -30,6 +30,7 @@ class PublicController extends Controller
         
         $financialDocuments = \App\Models\FinancialDocument::with('media')
             ->where('is_published', true)
+            ->whereNotNull('media_id')
             ->orderBy('year', 'desc')
             ->orderBy('sort_order', 'asc')
             ->get()
