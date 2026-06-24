@@ -15,12 +15,8 @@ class PublicController extends Controller
         $page = PageSetting::where('page_slug', 'home')->first();
         $events = Event::with('cover')
             ->where('status', 'published')
-            ->where(function ($query) {
-                $query->whereNull('start_date')
-                    ->orWhereDate('start_date', '>=', now()->toDateString());
-            })
             ->orderByRaw('start_date IS NULL')
-            ->orderBy('start_date', 'asc')
+            ->orderBy('start_date', 'desc')
             ->take(3)
             ->get();
         $news = News::with('cover')->where('status', 'published')->orderBy('published_at', 'desc')->take(3)->get();
@@ -112,12 +108,8 @@ class PublicController extends Controller
         $page = PageSetting::where('page_slug', 'eventi')->first();
         $events = Event::with(['cover', 'galleryMedia', 'externalMedia'])
             ->where('status', 'published')
-            ->where(function ($query) {
-                $query->whereNull('start_date')
-                    ->orWhereDate('start_date', '>=', now()->toDateString());
-            })
             ->orderByRaw('start_date IS NULL')
-            ->orderBy('start_date', 'asc')
+            ->orderBy('start_date', 'desc')
             ->paginate(9);
         $annualEvents = DirectoryItem::with('galleryMedia')
             ->where('category', 'eventi_annuali')
