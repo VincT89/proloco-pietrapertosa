@@ -37,9 +37,22 @@
                             @endif
                             
                             <div class="gal-grid mb-60">
-                                @foreach($allGalleryMedia as $idx => $media)
+                                @php
+                                    $galleryJsonData = $allGalleryMedia->map(fn($m) => [
+                                        'type' => $m->type,
+                                        'provider' => $m->provider,
+                                        'url' => $m->type === 'image' ? $m->optimizedUrl('large') : ($m->type === 'video' ? $m->optimizedVideoUrl() : $m->url),
+                                        'embed_url' => $m->embed_url
+                                    ])->toJson();
+                                @endphp
+                                <script>
+                                    window.galleries = window.galleries || {};
+                                    window.galleries['album-{{ $album->id }}'] = {!! $galleryJsonData !!};
+                                </script>
+
+                                @foreach($allGalleryMedia->take(8) as $idx => $media)
                                     <div class="cur fad gal-img-wrap pos-rel"
-                                         onclick="openGallery({{ $allGalleryMedia->map(fn($m) => ['type' => $m->type, 'provider' => $m->provider, 'url' => $m->type === 'image' ? $m->optimizedUrl('large') : ($m->type === 'video' ? $m->optimizedVideoUrl() : $m->url), 'embed_url' => $m->embed_url])->toJson() }}, {{ $idx }})"
+                                         onclick="if(typeof openGallery === 'function') openGallery(window.galleries['album-{{ $album->id }}'], {{ $idx }})"
                                          onmouseenter="this.querySelector('.gal-overlay').style.opacity = '1'"
                                          onmouseleave="this.querySelector('.gal-overlay').style.opacity = '0'">
                                         
@@ -57,6 +70,14 @@
                                         </div>
                                     </div>
                                 @endforeach
+                                
+                                @if($allGalleryMedia->count() > 8)
+                                    <div class="cur fad gal-img-wrap pos-rel"
+                                         style="display: flex; align-items: center; justify-content: center; background: var(--ink); border: 1px solid var(--gray); border-radius: 8px;"
+                                         onclick="if(typeof openGallery === 'function') openGallery(window.galleries['album-{{ $album->id }}'], 8)">
+                                        <span style="color: var(--gold); font-size: 1.5rem; font-weight: 600;">+{{ $allGalleryMedia->count() - 8 }} {{ (app()->getLocale() === 'en') ? 'photos' : 'foto' }}</span>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     @endif

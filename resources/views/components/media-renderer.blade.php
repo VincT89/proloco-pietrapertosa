@@ -2,7 +2,7 @@
 
 @if($media)
     @if($media->type === 'image')
-        <img src="{{ $media->optimizedUrl($preset) }}" alt="{{ $media->alt ?? '' }}" class="{{ $class }}">
+        <img src="{{ $media->optimizedUrl($preset) }}" alt="{{ $media->alt ?? '' }}" class="{{ $class }}" loading="lazy" decoding="async">
     @elseif($media->type === 'video')
         @if($media->provider === 'cloudinary')
             <video controls preload="metadata" poster="{{ $media->thumbnail_url ?? $media->videoThumbnailUrl('card') }}" class="w-full h-auto {{ $class }}">

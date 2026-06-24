@@ -21,7 +21,8 @@
     <section class="cm-sec wrap pb-80">
         @foreach($realta as $asso)
             @php
-                $gallery = $asso->galleryMedia->pluck('url')->toArray();
+                $gallery = $asso->galleryMedia->map(fn($m) => $m->optimizedUrl('large'))->toArray();
+                $thumbs = $asso->galleryMedia->map(fn($m) => $m->optimizedUrl('card'))->toArray();
             @endphp
             <div class="sticky-split">
                 <div class="sticky-text">
@@ -41,7 +42,7 @@
                     @if(count($gallery) > 0)
                         @foreach($gallery as $i => $img)
                             <div class="sticky-img-box cur" onclick='openGallery(@json($gallery), {{ $i }})'>
-                                <img src="{{ asset($img) }}" alt="{{ $asso->title }} {{ $i + 1 }}" class="cm-img" />
+                                <img src="{{ $thumbs[$i] }}" alt="{{ $asso->title }} {{ $i + 1 }}" class="cm-img" loading="lazy" decoding="async" />
                                 <div class="cm-img-overlay"></div>
                             </div>
                         @endforeach

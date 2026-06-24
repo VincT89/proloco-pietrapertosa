@@ -152,7 +152,7 @@
                                 <tbody>
                                     @foreach($events as $cal)
                                         @php
-                                            $galleryList = $cal->galleryMedia->pluck('url')->toArray();
+                                            $galleryList = $cal->galleryMedia->map(fn($m) => $m->optimizedUrl('large'))->toArray();
                                             $allGalleryMedia = $cal->galleryMedia->concat($cal->externalMedia);
                                             $galleryJsonData = $allGalleryMedia->map(fn($m) => [
                                                 'type' => $m->type,

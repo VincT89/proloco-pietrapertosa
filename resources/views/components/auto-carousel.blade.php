@@ -4,6 +4,7 @@
             src="{{ $imgUrl }}" 
             alt="Carousel Image {{ $idx + 1 }}" 
             class="carousel-img {{ $idx === 0 ? 'active' : '' }} object-{{ $objectFit ?? 'cover' }}"
+            loading="lazy" decoding="async"
         />
     @endforeach
 

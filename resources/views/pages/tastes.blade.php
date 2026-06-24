@@ -22,8 +22,7 @@
         <div class="sapori-list">
             @foreach($piatti ?? [] as $i => $sapore)
                 @php
-                    $gallery = $sapore->galleryMedia->pluck('url')->toArray();
-                    $img = count($gallery) > 0 ? $gallery[0] : asset('images/pietrapertosaBacheca.jpg');
+                    $img = count($sapore->galleryMedia) > 0 ? $sapore->galleryMedia[0]->optimizedUrl('card') : asset('images/pietrapertosaBacheca.jpg');
                 @endphp
                 @include('components.experience-card', [
                     'reverse' => $i % 2 !== 0,
