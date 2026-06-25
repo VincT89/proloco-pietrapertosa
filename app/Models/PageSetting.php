@@ -31,7 +31,7 @@ class PageSetting extends Model
             'home' => 'Home',
             'pro-loco' => 'Pro Loco',
             'comunita' => 'Comunità',
-            'territorio' => 'Territorio',
+            'eccellenze' => 'Eccellenze',
             'sapori' => 'Sapori',
             'scopri' => 'Scopri',
             'storie' => 'Storie',

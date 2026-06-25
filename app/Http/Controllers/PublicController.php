@@ -48,14 +48,14 @@ class PublicController extends Controller
         return view('pages.community', compact('page', 'realta'));
     }
 
-    public function territory()
+    public function excellences()
     {
-        $page = PageSetting::with('heroMedia')->where('page_slug', 'territorio')->first();
-        $aziende = DirectoryItem::with('galleryMedia', 'externalMedia')->where('category', 'territorio_aziende')->get();
-        $foodtruck = DirectoryItem::with('galleryMedia', 'externalMedia')->where('category', 'territorio_foodtruck')->get();
-        $artigiani = DirectoryItem::with('galleryMedia', 'externalMedia')->where('category', 'territorio_artigiani')->get();
+        $page = PageSetting::with('heroMedia')->where('page_slug', 'eccellenze')->first();
+        $aziende = DirectoryItem::with(['galleryMedia', 'externalMedia'])->where('category', 'eccellenze_aziende')->orderBy('sort_order')->get();
+        $foodtruck = DirectoryItem::with(['galleryMedia', 'externalMedia'])->where('category', 'eccellenze_foodtruck')->orderBy('sort_order')->get();
+        $artigiani = DirectoryItem::with(['galleryMedia', 'externalMedia'])->where('category', 'eccellenze_artigiani')->orderBy('sort_order')->get();
 
-        return view('pages.territory', compact('page', 'aziende', 'foodtruck', 'artigiani'));
+        return view('pages.excellences', compact('page', 'aziende', 'foodtruck', 'artigiani'));
     }
 
     public function tastes()
@@ -76,27 +76,6 @@ class PublicController extends Controller
             ->get();
 
         return view('pages.discover', compact('page', 'luoghi'));
-    }
-
-    public function stories()
-    {
-        $page = PageSetting::with('heroMedia')->where('page_slug', 'storie')->first();
-
-        return view('pages.stories', compact('page'));
-    }
-
-    public function borgo()
-    {
-        $page = PageSetting::with('heroMedia')->where('page_slug', 'il-borgo')->first();
-
-        return view('pages.borgo', compact('page'));
-    }
-
-    public function contacts()
-    {
-        $page = PageSetting::with('heroMedia')->where('page_slug', 'contatti')->first();
-
-        return view('pages.contacts', compact('page'));
     }
 
     public function news()

@@ -65,10 +65,10 @@ class PopulatePageSettings extends Command
                 'intro_text_en' => '<p>The associations that keep the village alive.</p>',
                 'hero_image' => 'immaginePaese.jpg'
             ],
-            'territorio' => [
-                'hero_title' => 'Esplora il Territorio', 'hero_title_en' => 'Explore the territory',
+            'eccellenze' => [
+                'hero_title' => 'Le Eccellenze', 'hero_title_en' => 'Our Excellences',
                 'hero_subtitle' => 'Natura e avventura', 'hero_subtitle_en' => 'Nature and adventure',
-                'intro_title' => 'Un territorio unico', 'intro_title_en' => 'A unique territory',
+                'intro_title' => 'Tradizione, artigianato e sapori autentici', 'intro_title_en' => 'Tradition, craftsmanship and authentic flavors',
                 'intro_text' => '<p>Scopri le eccellenze di Pietrapertosa.</p>',
                 'intro_text_en' => '<p>Discover the excellence of Pietrapertosa.</p>',
                 'hero_image' => 'percorsi.jpg'

@@ -44,9 +44,9 @@ class DirectoryItemForm
                     Select::make('category')->label('Categoria')
                         ->options([
                             'comunita' => 'Comunità',
-                            'territorio_aziende' => 'Territorio - Aziende Agricole',
-                            'territorio_foodtruck' => 'Territorio - Food Truck',
-                            'territorio_artigiani' => 'Territorio - Artigiani',
+                            'eccellenze_aziende' => 'Eccellenze - Aziende Agricole',
+                            'eccellenze_foodtruck' => 'Eccellenze - Food Truck',
+                            'eccellenze_artigiani' => 'Eccellenze - Artigiani',
                             'sapori_piatti' => 'Sapori - Piatti Tipici',
                             'eventi_annuali' => 'Eventi Annuali',
                             'scopri_luoghi' => 'Scopri - Luoghi',

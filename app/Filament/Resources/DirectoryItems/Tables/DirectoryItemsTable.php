@@ -43,9 +43,9 @@ class DirectoryItemsTable
                     ->label('Filtra per Categoria')
                     ->options([
                         'comunita' => 'Comunità',
-                        'territorio_aziende' => 'Territorio - Aziende',
-                        'territorio_foodtruck' => 'Territorio - Food Truck',
-                        'territorio_artigiani' => 'Territorio - Artigiani',
+                        'eccellenze_aziende' => 'Eccellenze - Aziende',
+                        'eccellenze_foodtruck' => 'Eccellenze - Food Truck',
+                        'eccellenze_artigiani' => 'Eccellenze - Artigiani',
                         'sapori_piatti' => 'Sapori - Piatti',
                         'eventi_annuali' => 'Eventi Annuali',
                         'scopri_luoghi' => 'Scopri - Luoghi',

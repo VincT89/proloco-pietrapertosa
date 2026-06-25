@@ -1374,8 +1374,8 @@ html, body { -ms-overflow-style: none; scrollbar-width: none; }
   font-size: clamp(2.6rem, 5vw, 4.4rem);
 }
 .scopri-section-1 {
-    padding-top: 72px;
-    padding-bottom: 80px;
+    padding-top: 120px;
+    padding-bottom: 120px;
 }
 .scopri-section-head {
     margin-bottom: 52px;
@@ -1386,10 +1386,10 @@ html, body { -ms-overflow-style: none; scrollbar-width: none; }
 
 .discover-feature-slide {
     display: none;
-    max-width: 1120px;
+    max-width: 1280px;
     margin: 0 auto;
-    grid-template-columns: 0.85fr 1.15fr;
-    gap: 56px;
+    grid-template-columns: 0.85fr 1.25fr;
+    gap: 64px;
     align-items: center;
 }
 
@@ -1438,7 +1438,7 @@ html, body { -ms-overflow-style: none; scrollbar-width: none; }
 
 .discover-feature-media {
     position: relative;
-    min-height: 360px;
+    min-height: 480px;
 }
 
 .discover-collage-img {
@@ -2046,7 +2046,7 @@ html, body { -ms-overflow-style: none; scrollbar-width: none; }
 .scopri-cta-wrap { text-align: center; margin-top: 60px; }
 .scopri-cta-text { color: var(--stone); margin-bottom: 24px; font-size: 1.1rem; }
 .scopri-btn-solid { text-decoration: none; background: var(--gold); color: var(--ink); padding: 16px 36px; font-size: 1rem; display: inline-block; }
-.scopri-section-2 { padding-bottom: 80px; padding-top: 60px; border-top: 1px solid var(--hair); }
+.scopri-section-2 { padding-bottom: 120px; padding-top: 100px; border-top: 1px solid var(--hair); }
 .scopri-box-outline { background: var(--ink-2); border: 1px solid rgba(217,170,99,0.3); padding: clamp(40px, 6vw, 60px); text-align: center; border-radius: 4px; }
 .scopri-box-title { font-size: 2.4rem; font-family: var(--font-cormorant), serif; margin-bottom: 20px; color: var(--paper); }
 .scopri-box-desc { color: var(--stone); font-size: 1.1rem; max-width: 65ch; margin: 0 auto 36px; line-height: 1.7; }

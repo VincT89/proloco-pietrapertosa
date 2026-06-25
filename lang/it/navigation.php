@@ -5,7 +5,7 @@ return [
     'events' => 'Eventi',
     'community' => 'Comunità',
     'news' => 'Notizie',
-    'territory' => 'Territorio',
+    'excellences' => 'Eccellenze',
     'tastes' => 'Sapori',
     'discover' => 'Scopri & Vivi',
     'gallery' => 'Galleria',

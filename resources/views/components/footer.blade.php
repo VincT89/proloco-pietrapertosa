@@ -38,14 +38,14 @@
             <a href="{{ url("/" . app()->getLocale() . "") }}">@lang('navigation.home')</a>
             <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'events' : 'eventi')) }}">@lang('navigation.events')</a>
             <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'community' : 'comunita')) }}">@lang('navigation.community')</a>
-            <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'territory' : 'territorio')) }}">@lang('navigation.territory')</a>
+            <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'excellences' : 'eccellenze')) }}">@lang('navigation.excellences')</a>
             <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'tastes' : 'sapori')) }}">@lang('navigation.tastes')</a>
             <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'discover' : 'scopri')) }}">@lang('navigation.discover')</a>
             <a href="{{ url("/" . app()->getLocale() . "/pro-loco") }}">@lang('navigation.pro_loco')</a>
         </div>
 
         <div>
-            <h5>@lang('navigation.territory')</h5>
+            <h5>@lang('navigation.excellences')</h5>
             <a href="https://www.volodellangelo.com" target="_blank" rel="noopener noreferrer">Volo dell'Angelo</a>
             <a href="https://www.parcogallipolicognato.it/comuni_dettaglio.php?id=76061" target="_blank" rel="noopener noreferrer">Parco Gallipoli Cognato</a>
             <a href="https://www.basilicataturistica.it/territori/pietrapertosa/" target="_blank" rel="noopener noreferrer">APT Basilicata</a>

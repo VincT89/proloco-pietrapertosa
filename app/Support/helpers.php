@@ -20,14 +20,13 @@ if (! function_exists('localized_route')) {
             'eventi' => 'events',
             'notizie' => 'news',
             'galleria' => 'gallery',
-            'contatti' => 'contacts',
+
             'comunita' => 'community',
-            'territorio' => 'territory',
+            'eccellenze' => 'excellences',
             'sapori' => 'tastes',
             'scopri' => 'discover',
             'pro-loco' => 'pro-loco',
-            'storie' => 'stories',
-            'il-borgo' => 'the-village',
+
             'cookie' => 'cookies',
             'ringraziamenti-fotografici' => 'photo-thanks',
         ];

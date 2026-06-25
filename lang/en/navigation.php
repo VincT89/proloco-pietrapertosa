@@ -5,7 +5,7 @@ return [
     'events' => 'Events',
     'community' => 'Community',
     'news' => 'News',
-    'territory' => 'Territory',
+    'excellences' => 'Excellences',
     'tastes' => 'Tastes',
     'discover' => 'Discover & Live',
     'gallery' => 'Gallery',
