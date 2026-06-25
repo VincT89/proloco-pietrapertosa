@@ -50,7 +50,7 @@ class DirectoryItemForm
                             'sapori_piatti' => 'Sapori - Piatti Tipici',
                             'eventi_annuali' => 'Eventi Annuali',
                             'scopri_luoghi' => 'Scopri - Luoghi',
-                            'scopri_servizi' => 'Scopri - Servizi utili',
+
                         ])
                         ->searchable()
                         ->required(),
@@ -89,6 +89,11 @@ class DirectoryItemForm
                         ->multiple()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'])
                         ->maxSize(10240)
+                        ->helperText(new \Illuminate\Support\HtmlString(
+                            'Prima del caricamento è consigliato comprimere le immagini o convertirle in JPG/WebP. 
+                            Dimensione consigliata: 500 KB - 2 MB. Evitare file superiori a 10 MB. 
+                            Puoi usare <a href="https://www.iloveimg.com/it" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">iLoveIMG</a>.'
+                        ))
                         ->getUploadedFileUsing(function (string $file): ?array {
                             return [
                                 'name' => basename($file),

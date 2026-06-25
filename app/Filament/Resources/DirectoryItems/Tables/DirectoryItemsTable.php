@@ -49,7 +49,7 @@ class DirectoryItemsTable
                         'sapori_piatti' => 'Sapori - Piatti',
                         'eventi_annuali' => 'Eventi Annuali',
                         'scopri_luoghi' => 'Scopri - Luoghi',
-                        'scopri_servizi' => 'Scopri - Servizi utili',
+
                     ]),
             ])
             ->recordActions([

@@ -22,72 +22,21 @@
     @if(count($aziende) > 0)
         <section class="wrap terr-section-1">
             <h2 class="terr-title">{{ (app()->getLocale() === 'en') ? "Farms" : "Aziende Agricole" }}</h2>
-            <div class="terr-list">
-                @foreach($aziende as $index => $az)
-                    @php $gallery = $az->galleryMedia->concat($az->externalMedia); @endphp
-                    <div class="ed-split terr-item {{ $index % 2 !== 0 ? 'terr-item-rtl' : 'terr-item-ltr' }}">
-                        <div class="terr-text-reset">
-                            <span class="lbl-mut terr-item-subtitle">{{ $az->getTranslation('subtitle') }}</span>
-                            <h3 class="terr-item-title">{{ $az->getTranslation('title') }}</h3>
-                            <div class="terr-item-desc">{!! clean($az->getTranslation('description')) !!}</div>
-                            @if($az->contact_info)
-                                <div class="terr-item-contact">{{ (app()->getLocale() === 'en') ? "Contact:" : "Contatto:" }} {{ $az->contact_info }}</div>
-                            @endif
-                        </div>
-                        @if($gallery->count() > 0)
-                            @include('components.interactive-collage', ['images' => $gallery, 'altText' => $az->title])
-                        @endif
-                    </div>
-                @endforeach
-            </div>
+            @include('components.feature-slider', ['items' => $aziende])
         </section>
     @endif
 
     @if(count($foodtruck) > 0)
         <section class="wrap terr-section-2">
             <h2 class="terr-title">{{ (app()->getLocale() === 'en') ? "Food Truck and Street Food" : "Food Truck e Street Food" }}</h2>
-            <div class="terr-list">
-                @foreach($foodtruck as $index => $ft)
-                    @php $gallery = $ft->galleryMedia->concat($ft->externalMedia); @endphp
-                    <div class="ed-split terr-item {{ $index % 2 === 0 ? 'terr-item-rtl' : 'terr-item-ltr' }}">
-                        <div class="terr-text-reset">
-                            <span class="lbl-mut terr-item-subtitle">{{ $ft->getTranslation('subtitle') }}</span>
-                            <h3 class="terr-item-title">{{ $ft->getTranslation('title') }}</h3>
-                            <div class="terr-item-desc">{!! clean($ft->getTranslation('description')) !!}</div>
-                            @if($ft->contact_info)
-                                <div class="terr-item-contact">{{ (app()->getLocale() === 'en') ? "Contact:" : "Contatto:" }} {{ $ft->contact_info }}</div>
-                            @endif
-                        </div>
-                        @if($gallery->count() > 0)
-                            @include('components.interactive-collage', ['images' => $gallery, 'altText' => $ft->title])
-                        @endif
-                    </div>
-                @endforeach
-            </div>
+            @include('components.feature-slider', ['items' => $foodtruck])
         </section>
     @endif
 
     @if(count($artigiani) > 0)
         <section class="wrap terr-section-3">
             <h2 class="terr-title">{{ (app()->getLocale() === 'en') ? "Artisans" : "Artigiani" }}</h2>
-            <div class="terr-list">
-                @foreach($artigiani as $index => $art)
-                    @php $gallery = $art->galleryMedia->concat($art->externalMedia); @endphp
-                    <div class="ed-split terr-item {{ $index % 2 !== 0 ? 'terr-item-rtl' : 'terr-item-ltr' }}">
-                        <div class="terr-text-reset">
-                            <span class="lbl-mut terr-item-subtitle">{{ $art->getTranslation('subtitle') }}</span>
-                            <h3 class="terr-item-title">{{ $art->getTranslation('title') }}</h3>
-                            <div class="terr-item-desc">{!! clean($art->getTranslation('description')) !!}</div>
-                            @if($art->contact_info)
-                                <div class="terr-item-contact">{{ (app()->getLocale() === 'en') ? "Contact:" : "Contatto:" }} {{ $art->contact_info }}</div>
-                            @endif
-                        </div>
-                        @if($gallery->count() > 0)
-                            @include('components.interactive-collage', ['images' => $gallery, 'altText' => $art->title])
-                        @endif
-                    </div>
-                @endforeach
-            </div>
+            @include('components.feature-slider', ['items' => $artigiani])
         </section>
     @endif
 @endsection

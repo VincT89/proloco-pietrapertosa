@@ -75,12 +75,7 @@ class PublicController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        $servizi = DirectoryItem::query()
-            ->where('category', 'scopri_servizi')
-            ->orderBy('sort_order')
-            ->get();
-
-        return view('pages.discover', compact('page', 'luoghi', 'servizi'));
+        return view('pages.discover', compact('page', 'luoghi'));
     }
 
     public function stories()

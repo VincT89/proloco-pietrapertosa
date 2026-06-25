@@ -69,7 +69,17 @@ class NewsForm
                                 : "Media"
                         )
                         ->createOptionForm([
-                            FileUpload::make('file')->label('Carica File')->image()->storeFiles(false)->required(),
+                            FileUpload::make('file')
+                                ->label('Carica File')
+                                ->image()
+                                ->storeFiles(false)
+                                ->maxSize(10240)
+                                ->helperText(new \Illuminate\Support\HtmlString(
+                                    'Comprimi l’immagine o convertila in JPG/WebP prima del caricamento. 
+                                    Dimensione consigliata: 500 KB - 2 MB. Evitare file superiori a 10 MB. 
+                                    Puoi usare <a href="https://www.iloveimg.com/it" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">iLoveIMG</a>.'
+                                ))
+                                ->required(),
                             TextInput::make('alt')->label('Testo Alternativo'),
                         ])
                         ->createOptionUsing(function (array $data) {

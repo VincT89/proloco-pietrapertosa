@@ -179,6 +179,10 @@
                                 <span class="ed-li-text">{{ app()->getLocale() === 'en' && !empty($scopri->nome_en) ? $scopri->nome_en : $scopri->nome }}</span>
                             </li>
                         @endforeach
+                        <li class="ed-li-flex">
+                            <span class="ed-list-bullet"></span>
+                            <span class="ed-li-text">{{ app()->getLocale() === 'en' ? '...and much more...' : '...e molto altro...' }}</span>
+                        </li>
                     </ul>
 
                     @php

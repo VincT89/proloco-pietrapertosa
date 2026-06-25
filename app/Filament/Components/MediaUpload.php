@@ -19,6 +19,11 @@ class MediaUpload
             ->multiple()
             ->acceptedFileTypes($acceptedTypes)
             ->maxSize(10240)
+            ->helperText(new \Illuminate\Support\HtmlString(
+                'Prima del caricamento è consigliato comprimere le immagini o convertirle in JPG/WebP. 
+                Dimensione consigliata: 500 KB - 2 MB. Evitare file superiori a 10 MB. 
+                Puoi usare <a href="https://www.iloveimg.com/it" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">iLoveIMG</a>.'
+            ))
             ->getUploadedFileUsing(function (string $file): ?array {
                 return [
                     'name' => basename($file),
