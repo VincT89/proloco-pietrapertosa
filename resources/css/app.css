@@ -1528,9 +1528,12 @@ html, body { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
 @media (max-width: 900px) {
-    .discover-feature-slide,
     .discover-feature-slide.is-active {
         display: block;
+    }
+    
+    .discover-feature-slider {
+        margin-bottom: 40px;
     }
 
     .discover-feature-copy {
