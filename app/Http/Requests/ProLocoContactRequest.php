@@ -36,7 +36,22 @@ class ProLocoContactRequest extends FormRequest
             'email' => ['required', 'email:rfc', 'max:190'],
             'subject' => ['nullable', 'string', 'max:120'],
             'message' => ['required', 'string', 'max:3000'],
-            'website_url' => ['nullable', 'max:0'],
+            'website_url' => ['nullable', 'string', 'max:255'],
+            'privacy' => ['accepted'],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => __('messages.contact_validation_name_required'),
+            'email.required' => __('messages.contact_validation_email_required'),
+            'email.email' => __('messages.contact_validation_email_required'),
+            'message.required' => __('messages.contact_validation_message_required'),
+            'privacy.accepted' => __('messages.contact_privacy_required'),
         ];
     }
 }

@@ -22,6 +22,8 @@ class ContactMessage extends Mailable
     public function __construct(array $data)
     {
         $this->data = $data;
+        $this->data['date'] = now()->format('d/m/Y H:i');
+        $this->data['locale'] = strtoupper(app()->getLocale());
     }
 
     /**
@@ -29,8 +31,9 @@ class ContactMessage extends Mailable
      */
     public function envelope(): Envelope
     {
+        $subjectUser = !empty($this->data['subject']) ? $this->data['subject'] : 'Nuovo messaggio dal sito';
         return new Envelope(
-            subject: 'Nuovo Messaggio dal Sito: ' . ($this->data['subject'] ?? 'Contatto Generico'),
+            subject: '[Pro Loco Pietrapertosa] ' . $subjectUser,
             replyTo: [
                 new \Illuminate\Mail\Mailables\Address($this->data['email'], $this->data['name']),
             ],

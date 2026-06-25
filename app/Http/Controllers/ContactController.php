@@ -13,7 +13,7 @@ class ContactController extends Controller
         // Silent honeypot check
         if (!blank($request->input('website_url'))) {
             \Illuminate\Support\Facades\Log::info('Honeypot triggered in contact form', ['ip' => $request->ip()]);
-            return back()->with('success', 'Il tuo messaggio è stato inviato con successo. Ti risponderemo il prima possibile.');
+            return back()->with('success', __('messages.contact_success'));
         }
 
         $data = $request->validated();
@@ -21,7 +21,11 @@ class ContactController extends Controller
         $toAddress = config('mail.proloco_contact_email');
 
         if (blank($toAddress)) {
-            \Illuminate\Support\Facades\Log::error('PROLOCO_CONTACT_EMAIL non configurato');
+            \Illuminate\Support\Facades\Log::error('PROLOCO_CONTACT_EMAIL non configurato', [
+                'route' => request()->route()->getName(),
+                'locale' => app()->getLocale(),
+                'recipient_configured' => 'no'
+            ]);
             return back()->with('error', __('messages.contact_error'))->withInput();
         }
 
@@ -30,8 +34,13 @@ class ContactController extends Controller
 
             return back()->with('success', __('messages.contact_success'));
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Errore invio form Pro Loco', [
+            \Illuminate\Support\Facades\Log::error('Errore tecnico invio form Pro Loco', [
                 'message' => $e->getMessage(),
+                'exception_class' => get_class($e),
+                'route' => request()->route()->getName(),
+                'locale' => app()->getLocale(),
+                'mail_mailer' => config('mail.default'),
+                'mail_host' => config('mail.mailers.smtp.host'),
             ]);
 
             return back()->with('error', __('messages.contact_error'))->withInput();

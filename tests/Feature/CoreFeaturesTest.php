@@ -67,7 +67,8 @@ class CoreFeaturesTest extends TestCase
             'name' => 'Bot',
             'email' => 'bot@example.com',
             'message' => 'Spam message',
-            'website' => 'http://spam.com', // Honeypot filled
+            'website_url' => 'http://spam.com', // Honeypot filled
+            'privacy' => true,
         ]);
 
         $response->assertSessionHas('success');

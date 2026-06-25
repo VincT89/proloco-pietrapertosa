@@ -135,6 +135,19 @@
                     <textarea name="message" required placeholder="{{ (app()->getLocale() === 'en') ? 'Your message' : 'Il tuo messaggio' }}" class="ed-input mt-15" rows="4">{{ old('message') }}</textarea>
                     @error('message')<div class="form-error-msg">{{ $message }}</div>@enderror
 
+                    <div class="proloco-form-privacy mt-15">
+                        <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.8); cursor: pointer;">
+                            <input type="checkbox" name="privacy" value="1" required {{ old('privacy') ? 'checked' : '' }} style="margin-top: 4px;" />
+                            <span>
+                                {!! (app()->getLocale() === 'en') 
+                                    ? 'I agree to the processing of personal data according to the <a href="'.route('privacy.en').'" target="_blank" style="color:#fff; text-decoration:underline;">Privacy Policy</a>.' 
+                                    : 'Acconsento al trattamento dei dati personali secondo la <a href="'.route('privacy.it').'" target="_blank" style="color:#fff; text-decoration:underline;">Privacy Policy</a>.' 
+                                !!}
+                            </span>
+                        </label>
+                    </div>
+                    @error('privacy')<div class="form-error-msg">{{ $message }}</div>@enderror
+
                     <div class="proloco-form-submit mt-15">
                         <button type="submit" class="ed-btn">{{ (app()->getLocale() === 'en') ? "Send Request" : "Invia Richiesta" }}</button>
                     </div>

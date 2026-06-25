@@ -10,6 +10,10 @@
 **Messaggio:**  
 {{ $data['message'] }}
 
+---
+**Data di invio:** {{ $data['date'] ?? now()->format('d/m/Y H:i') }}  
+**Lingua form:** {{ $data['locale'] ?? strtoupper(app()->getLocale()) }}
+
 Grazie,<br>
 {{ config('app.name') }}
 </x-mail::message>
