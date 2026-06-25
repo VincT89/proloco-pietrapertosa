@@ -144,11 +144,15 @@ const initApp = () => {
         window.lbData.images = images;
         window.lbData.index = index;
         window.updateLightbox();
-        document.getElementById('gallery-modal').style.display = 'flex';
+        const modal = document.getElementById('gallery-modal');
+        modal.style.display = 'flex';
+        modal.classList.add('active');
     };
 
     window.closeGallery = function() {
-        document.getElementById('gallery-modal').style.display = 'none';
+        const modal = document.getElementById('gallery-modal');
+        modal.style.display = 'none';
+        modal.classList.remove('active');
         window.lbData.images = [];
     };
 
@@ -370,6 +374,106 @@ const initApp = () => {
         }
         originalUpdateLightbox();
     };
+
+    document.querySelectorAll('.rotating-discover-collage').forEach((collage) => {
+        const items = Array.from(collage.querySelectorAll('.rotating-collage-item'));
+
+        if (items.length < 2) return;
+
+        let activeIndex = 0;
+        const intervalMs = Number(collage.dataset.interval || 4500);
+
+        const applyPositions = () => {
+            items.forEach((item, index) => {
+                item.classList.remove('bi1', 'bi2', 'bi3', 'is-active');
+
+                const relativeIndex = (index - activeIndex + items.length) % items.length;
+
+                if (relativeIndex === 0) item.classList.add('bi1', 'is-active');
+                if (relativeIndex === 1) item.classList.add('bi2');
+                if (relativeIndex === 2) item.classList.add('bi3');
+
+                item.hidden = relativeIndex > 2;
+            });
+        };
+
+        const goTo = (index) => {
+            activeIndex = index;
+            applyPositions();
+        };
+
+        items.forEach((item, index) => {
+            item.addEventListener('click', () => goTo(index));
+        });
+
+        applyPositions();
+
+        setInterval(() => {
+            activeIndex = (activeIndex + 1) % items.length;
+            applyPositions();
+        }, intervalMs);
+    });
+
+    document.querySelectorAll('.discover-feature-slider').forEach((slider) => {
+        const slides = Array.from(slider.querySelectorAll('.discover-feature-slide'));
+        const dots = Array.from(slider.querySelectorAll('.discover-feature-dot'));
+        const prev = slider.querySelector('.discover-feature-prev');
+        const next = slider.querySelector('.discover-feature-next');
+        const interval = Number(slider.dataset.interval || 6500);
+
+        if (slides.length <= 1) return;
+
+        let current = 0;
+        let timer = null;
+
+        const goTo = (index) => {
+            current = (index + slides.length) % slides.length;
+
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('is-active', i === current);
+            });
+
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('is-active', i === current);
+            });
+        };
+
+        const start = () => {
+            timer = setInterval(() => {
+                goTo(current + 1);
+            }, interval);
+        };
+
+        const stop = () => {
+            if (timer) clearInterval(timer);
+        };
+
+        next?.addEventListener('click', () => {
+            stop();
+            goTo(current + 1);
+            start();
+        });
+
+        prev?.addEventListener('click', () => {
+            stop();
+            goTo(current - 1);
+            start();
+        });
+
+        dots.forEach((dot) => {
+            dot.addEventListener('click', () => {
+                stop();
+                goTo(Number(dot.dataset.index || 0));
+                start();
+            });
+        });
+
+        slider.addEventListener('mouseenter', stop);
+        slider.addEventListener('mouseleave', start);
+
+        goTo(0);
+        start();
+    });
 };
 
 if (document.readyState === 'loading') {

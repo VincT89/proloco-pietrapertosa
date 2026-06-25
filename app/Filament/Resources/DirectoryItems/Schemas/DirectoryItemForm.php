@@ -49,6 +49,8 @@ class DirectoryItemForm
                             'territorio_artigiani' => 'Territorio - Artigiani',
                             'sapori_piatti' => 'Sapori - Piatti Tipici',
                             'eventi_annuali' => 'Eventi Annuali',
+                            'scopri_luoghi' => 'Scopri - Luoghi',
+                            'scopri_servizi' => 'Scopri - Servizi utili',
                         ])
                         ->searchable()
                         ->required(),
@@ -86,7 +88,7 @@ class DirectoryItemForm
                     FileUpload::make('gallery_files')->label('Galleria Immagini/Video (File Locali)')
                         ->multiple()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'])
-                        ->maxSize(102400)
+                        ->maxSize(10240)
                         ->getUploadedFileUsing(function (string $file): ?array {
                             return [
                                 'name' => basename($file),

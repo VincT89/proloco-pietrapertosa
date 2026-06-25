@@ -1,20 +1,6 @@
 @extends('layouts.app')
 
 @php
-    
-
-    $luoghi = [
-        ['id' => 1, 'nome' => (app()->getLocale() === 'en') ? "The Arabata" : "L'Arabata", 'img' => asset('images/arabata01.jpg')],
-        ['id' => 2, 'nome' => (app()->getLocale() === 'en') ? "The Norman-Swabian Castle" : "Il Castello Normanno-Svevo", 'img' => asset('images/castello.jpg')],
-        ['id' => 3, 'nome' => (app()->getLocale() === 'en') ? "The Path of the Seven Stones" : "Il Sentiero delle Sette Pietre", 'img' => asset('images/percorsi.jpg')],
-        ['id' => 4, 'nome' => (app()->getLocale() === 'en') ? "Flight of the Angel" : "Il Volo dell'Angelo", 'img' => asset('images/voloAngelo.jpg')]
-    ];
-
-    $servizi = [
-        ['id' => 1, 'nome' => "Infopoint I.A.T. / Pro Loco", 'info' => (app()->getLocale() === 'en') ? "Tourist Information and Reception" : "Informazioni Turistiche e Accoglienza", 'contatto' => (app()->getLocale() === 'en') ? "Tel: +39 0971 983002 | Mobile: +39 342 989 6770" : "Tel: 0971 983002 | Cell: 342 989 6770"],
-        ['id' => 2, 'nome' => (app()->getLocale() === 'en') ? "Municipality of Pietrapertosa" : "Comune di Pietrapertosa", 'info' => (app()->getLocale() === 'en') ? "Switchboard and Municipal Offices" : "Centralino e Uffici Comunali", 'contatto' => (app()->getLocale() === 'en') ? "Tel: +39 0971 983052" : "Tel: 0971 983052"],
-        ['id' => 3, 'nome' => (app()->getLocale() === 'en') ? "Flight of the Angel" : "Volo dell'Angelo", 'info' => (app()->getLocale() === 'en') ? "Ticket Office and Facility Information" : "Biglietteria e Informazioni Impianti", 'contatto' => (app()->getLocale() === 'en') ? "Tel: +39 0971 983110 | Mobile: +39 342 989 6770" : "Tel: 0971 983110 | Cell: 342 989 6770"]
-    ];
 @endphp
 
 @section('title', ($page?->getTranslation('hero_title') ?? ((app()->getLocale() === 'en') ? 'Discover and Live' : 'Scopri e Vivi')) . ' · Proloco Pietrapertosana')
@@ -33,18 +19,86 @@
 
     <!-- Sezione Luoghi - Senza pulsanti ripetitivi -->
     <section class="wrap scopri-section-1">
-        <div class="scopri-grid-1">
-            @foreach($luoghi as $luogo)
-                <div class="scopri-card">
-                    <div class="scopri-img-wrap">
-                        <img src="{{ $luogo['img'] }}" alt="{{ $luogo['nome'] }}" class="scopri-img" />
+    @if($luoghi->count())
+        <div class="discover-feature-slider" data-interval="6500">
+            @foreach($luoghi as $index => $luogo)
+                @php
+                    $images = $luogo->galleryMedia->take(5)->values();
+                    $galleryData = $images->map(function($m) {
+                        return [
+                            'url' => $m->optimizedUrl('default') ?? $m->url,
+                            'type' => $m->isVideo() ? 'video' : 'image',
+                            'provider' => $m->provider,
+                            'embed_url' => $m->embed_url,
+                            'alt' => $m->alt
+                        ];
+                    })->toJson();
+                    $title = $luogo->getTranslation('title');
+                    $subtitle = $luogo->getTranslation('subtitle');
+                    $description = $luogo->getTranslation('description');
+                    $contact = $luogo->getTranslation('contact_info');
+                @endphp
+
+                <article class="discover-feature-slide {{ $index === 0 ? 'is-active' : '' }}" data-index="{{ $index }}">
+                    <div class="discover-feature-copy">
+
+
+                        <h2 class="discover-feature-title">{{ $title }}</h2>
+
+                        @if($subtitle)
+                            <p class="discover-feature-subtitle">{{ $subtitle }}</p>
+                        @endif
+
+                        @if($description)
+                            <div class="discover-feature-description">
+                                {!! $description !!}
+                            </div>
+                        @endif
+
+                        @if($contact)
+                            <div class="discover-feature-contact">
+                                {!! nl2br(e($contact)) !!}
+                            </div>
+                        @endif
                     </div>
-                    <div class="scopri-card-overlay">
-                        <h3 class="scopri-card-title">{{ $luogo['nome'] }}</h3>
-                    </div>
-                </div>
+
+                    @if($images->count())
+                        <div class="discover-feature-media">
+                            @foreach($images as $imgIndex => $img)
+                                <div class="discover-collage-img discover-collage-img-{{ $imgIndex + 1 }}" onclick="openGallery({{ $galleryData }}, {{ $imgIndex }})" style="cursor: pointer;">
+                                    <img
+                                        src="{{ $img->optimizedUrl($imgIndex === 0 ? 'large' : 'card') }}"
+                                        alt="{{ $title }}"
+                                        loading="lazy"
+                                        decoding="async"
+                                    >
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </article>
             @endforeach
+
+            @if($luoghi->count() > 1)
+                <div class="discover-feature-controls">
+                    <button type="button" class="discover-feature-prev" aria-label="Precedente">←</button>
+
+                    <div class="discover-feature-dots">
+                        @foreach($luoghi as $index => $luogo)
+                            <button
+                                type="button"
+                                class="discover-feature-dot {{ $index === 0 ? 'is-active' : '' }}"
+                                data-index="{{ $index }}"
+                                aria-label="Vai al luogo {{ $index + 1 }}"
+                            ></button>
+                        @endforeach
+                    </div>
+
+                    <button type="button" class="discover-feature-next" aria-label="Successivo">→</button>
+                </div>
+            @endif
         </div>
+    @endif
 
         <div class="scopri-cta-wrap">
             <p class="scopri-cta-text">{{ (app()->getLocale() === 'en') ? "Want to explore the itineraries step by step?" : "Vuoi esplorare gli itinerari passo dopo passo?" }}</p>
@@ -77,9 +131,17 @@
         <div class="scopri-grid-2">
             @foreach($servizi as $item)
                 <div class="scopri-info-card">
-                    <h3 class="scopri-info-card-title">{{ $item['nome'] }}</h3>
-                    <p class="scopri-info-card-text">{{ $item['info'] }}</p>
-                    <div class="scopri-info-card-contact">{{ $item['contatto'] }}</div>
+                    <h3 class="scopri-info-card-title">{{ $item->getTranslation('title') }}</h3>
+            
+                    @if($item->getTranslation('subtitle'))
+                        <p class="scopri-info-card-text">{{ $item->getTranslation('subtitle') }}</p>
+                    @endif
+            
+                    @if($item->getTranslation('contact_info'))
+                        <div class="scopri-info-card-contact">
+                            {!! nl2br(e($item->getTranslation('contact_info'))) !!}
+                        </div>
+                    @endif
                 </div>
             @endforeach
         </div>

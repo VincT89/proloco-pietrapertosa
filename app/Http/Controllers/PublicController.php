@@ -70,7 +70,17 @@ class PublicController extends Controller
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'scopri')->first();
 
-        return view('pages.discover', compact('page'));
+        $luoghi = DirectoryItem::with('galleryMedia')
+            ->where('category', 'scopri_luoghi')
+            ->orderBy('sort_order')
+            ->get();
+
+        $servizi = DirectoryItem::query()
+            ->where('category', 'scopri_servizi')
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('pages.discover', compact('page', 'luoghi', 'servizi'));
     }
 
     public function stories()

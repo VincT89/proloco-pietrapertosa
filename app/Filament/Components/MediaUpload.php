@@ -18,7 +18,7 @@ class MediaUpload
         return FileUpload::make($name)
             ->multiple()
             ->acceptedFileTypes($acceptedTypes)
-            ->maxSize(102400)
+            ->maxSize(10240)
             ->getUploadedFileUsing(function (string $file): ?array {
                 return [
                     'name' => basename($file),

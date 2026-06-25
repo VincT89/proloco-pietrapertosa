@@ -196,17 +196,31 @@
                     @endif
                 </div>
 
-                <div class="borgo-imgs">
-                    @if(isset($fallbackScopri[0]))
-                        <div class="bi1"><img src="{{ $fallbackScopri[0]->img ?? '' }}" alt="{{ $fallbackScopri[0]->nome ?? '' }}" loading="lazy" decoding="async" /></div>
-                    @endif
-                    @if(isset($fallbackScopri[1]))
-                        <div class="bi2"><img src="{{ $fallbackScopri[1]->img ?? '' }}" alt="{{ $fallbackScopri[1]->nome ?? '' }}" loading="lazy" decoding="async" /></div>
-                    @endif
-                    @if(isset($fallbackScopri[2]))
-                        <div class="bi3"><img src="{{ $fallbackScopri[2]->img ?? '' }}" alt="{{ $fallbackScopri[2]->nome ?? '' }}" loading="lazy" decoding="async" /></div>
-                    @endif
-                </div>
+                @php
+                    $collageItems = collect($fallbackScopri)
+                        ->filter(fn ($item) => !empty($item->img))
+                        ->values();
+                @endphp
+                
+                @if($collageItems->count() > 0)
+                    <div class="borgo-imgs rotating-discover-collage" data-interval="4500">
+                        @foreach($collageItems->take(3) as $index => $item)
+                            <button
+                                type="button"
+                                class="rotating-collage-item {{ $index === 0 ? 'bi1 is-active' : ($index === 1 ? 'bi2' : 'bi3') }}"
+                                data-index="{{ $index }}"
+                                aria-label="{{ app()->getLocale() === 'en' && !empty($item->nome_en) ? $item->nome_en : $item->nome }}"
+                            >
+                                <img
+                                    src="{{ $item->img }}"
+                                    alt="{{ app()->getLocale() === 'en' && !empty($item->nome_en) ? $item->nome_en : $item->nome }}"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </section>
