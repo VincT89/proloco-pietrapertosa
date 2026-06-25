@@ -33,10 +33,10 @@ class ProLocoContactRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:120'],
-            'email' => ['required', 'email:rfc,dns', 'max:190'],
+            'email' => ['required', 'email:rfc', 'max:190'],
             'subject' => ['nullable', 'string', 'max:120'],
             'message' => ['required', 'string', 'max:3000'],
-            'website' => ['nullable', 'max:0'],
+            'website_url' => ['nullable', 'max:0'],
         ];
     }
 }

@@ -11,7 +11,7 @@ class ContactController extends Controller
     public function send(ProLocoContactRequest $request)
     {
         // Silent honeypot check
-        if (!blank($request->input('website'))) {
+        if (!blank($request->input('website_url'))) {
             \Illuminate\Support\Facades\Log::info('Honeypot triggered in contact form', ['ip' => $request->ip()]);
             return back()->with('success', 'Il tuo messaggio è stato inviato con successo. Ti risponderemo il prima possibile.');
         }

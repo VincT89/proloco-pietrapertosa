@@ -107,7 +107,7 @@
                     @csrf
                     <!-- Honeypot -->
                     <div class="d-none">
-                        <input type="text" name="website" value="" tabindex="-1" autocomplete="off" />
+                        <input type="text" name="website_url" value="" tabindex="-1" autocomplete="new-password" />
                     </div>
 
                     @if(session('success'))
