@@ -481,3 +481,5 @@ if (document.readyState === 'loading') {
 } else {
     initApp();
 }
+
+import './chatbot.js';

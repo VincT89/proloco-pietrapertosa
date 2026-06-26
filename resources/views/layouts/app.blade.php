@@ -11,6 +11,7 @@
         @endif
     </title>
     <meta name="description" content="@yield('seo_description', 'Associazione Pro Loco Pietrapertosana: il borgo più alto della Basilicata, tra le guglie delle Dolomiti Lucane. Castello saraceno, Arabata, Volo dell\'Angelo, news, eventi, locandine e foto.')">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
 
@@ -24,5 +25,6 @@
     @include('components.footer')
     @include('components.lightbox')
     @include('components.cookie-consent')
+    @include('components.chatbot')
 </body>
 </html>

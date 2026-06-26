@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.prolocopietrapertosa.it/sitemap.xml
+Sitemap: https://www.proloco-pietrapertosana.it/sitemap.xml

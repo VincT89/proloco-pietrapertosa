@@ -3,6 +3,7 @@
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\ChatbotController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -29,6 +30,16 @@ Route::middleware(['setLocale'])->group(function () {
             ->middleware('throttle:5,1');
         Route::get('/privacy', [PublicController::class, 'privacy'])->name('privacy.it');
         Route::get('/cookie', [PublicController::class, 'cookie'])->name('cookie.it');
+
+        // Chatbot routes
+        Route::post('/chatbot/message', [ChatbotController::class, 'message'])
+            ->name('chatbot.message.it')
+            ->defaults('locale', 'it')
+            ->middleware('throttle:20,1');
+        Route::get('/chatbot/suggestions', [ChatbotController::class, 'suggestions'])
+            ->name('chatbot.suggestions.it')
+            ->defaults('locale', 'it')
+            ->middleware('throttle:20,1');
     });
 
     Route::prefix('en')->group(function () {
@@ -48,5 +59,15 @@ Route::middleware(['setLocale'])->group(function () {
             ->middleware('throttle:5,1');
         Route::get('/privacy', [PublicController::class, 'privacy'])->name('privacy.en');
         Route::get('/cookies', [PublicController::class, 'cookie'])->name('cookie.en');
+
+        // Chatbot routes
+        Route::post('/chatbot/message', [ChatbotController::class, 'message'])
+            ->name('chatbot.message.en')
+            ->defaults('locale', 'en')
+            ->middleware('throttle:20,1');
+        Route::get('/chatbot/suggestions', [ChatbotController::class, 'suggestions'])
+            ->name('chatbot.suggestions.en')
+            ->defaults('locale', 'en')
+            ->middleware('throttle:20,1');
     });
 });

@@ -25,9 +25,7 @@ class SitemapController extends Controller
             Event::max('updated_at')
         ])->filter()->max();
         
-        if (!$lastmod) {
-            $lastmod = Carbon::now();
-        }
+        $lastmod = $lastmod ? Carbon::parse($lastmod) : Carbon::now();
 
         // 1. Home (Priority 1.0, Daily)
         $sitemap->add(Url::create(route('home.it'))->setLastModificationDate($lastmod)->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)->setPriority(1.0));
