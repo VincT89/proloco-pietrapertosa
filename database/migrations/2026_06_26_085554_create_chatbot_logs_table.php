@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('locale', 10);
             $table->text('query')->nullable();
-            $table->string('mode')->nullable(); // generic_navigation, specific_search, ambiguous
+            $table->string('mode')->nullable(); // navigation, search, mixed
             $table->string('matched_destination')->nullable();
             $table->integer('result_count')->default(0);
             $table->timestamps();

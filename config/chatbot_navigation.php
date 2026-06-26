@@ -28,8 +28,8 @@ return [
                 'en' => 'Tastes'
             ],
             'generic_keywords' => [
-                'it' => ['sapori', 'mangiare', 'ristoranti', 'trattoria', 'pranzo', 'cena', 'cibo', 'prodotti tipici'],
-                'en' => ['tastes', 'eat', 'restaurants', 'lunch', 'dinner', 'food', 'typical products']
+                'it' => ['sapori', 'mangiare', 'ristoranti', 'trattoria', 'pranzo', 'cena', 'cibo', 'prodotti tipici', 'bar'],
+                'en' => ['tastes', 'eat', 'restaurants', 'lunch', 'dinner', 'food', 'typical products', 'bar']
             ]
         ],
         'events' => [

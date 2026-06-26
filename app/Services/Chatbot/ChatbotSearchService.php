@@ -31,7 +31,7 @@ class ChatbotSearchService
         ];
     }
 
-    public function normalizeQuery(string $query, string $locale): array
+    public function normalizeQuery(string $query, string $locale, bool $useSynonyms = true): array
     {
         $query = mb_strtolower(trim($query));
         
@@ -53,7 +53,7 @@ class ChatbotSearchService
                 $terms[] = $word;
                 
                 // Sinonimi
-                if (isset($synonyms[$word])) {
+                if ($useSynonyms && isset($synonyms[$word])) {
                     $terms = array_merge($terms, $synonyms[$word]);
                 }
             }
@@ -86,9 +86,9 @@ class ChatbotSearchService
         return $uniqueResults->sortByDesc('score')->take(5)->values();
     }
 
-    public function findStrongTitleMatch(string $query, string $locale): bool
+    public function findStrongTitleMatch(string $query, string $locale, bool $useSynonyms = true): bool
     {
-        $terms = $this->normalizeQuery($query, $locale);
+        $terms = $this->normalizeQuery($query, $locale, $useSynonyms);
         if (empty($terms)) return false;
 
         $termLikes = collect($terms)->map(fn($t) => "%{$t}%")->toArray();

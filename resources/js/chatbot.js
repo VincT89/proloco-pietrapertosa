@@ -55,8 +55,31 @@ document.addEventListener('DOMContentLoaded', () => {
         chatbotPanel.classList.remove('is-open');
     }
 
+    const chatbotClear = document.getElementById('chatbotClear');
+
     chatbotToggle.addEventListener('click', toggleChat);
     chatbotClose.addEventListener('click', closeChat);
+
+    if (chatbotClear) {
+        chatbotClear.addEventListener('click', () => {
+            sessionStorage.removeItem('chatbotHistory');
+            sessionStorage.removeItem('chatbotContext');
+            messageHistory = [];
+            context = {};
+            chatbotMessages.innerHTML = '';
+            
+            // Add a small system message indicating chat was cleared, followed by normal initialization
+            const clearedMsgDiv = document.createElement('div');
+            clearedMsgDiv.style.textAlign = 'center';
+            clearedMsgDiv.style.fontSize = '0.8rem';
+            clearedMsgDiv.style.color = '#888';
+            clearedMsgDiv.style.margin = '10px 0';
+            clearedMsgDiv.textContent = locale === 'en' ? 'Chat history cleared' : 'Cronologia chat cancellata';
+            chatbotMessages.appendChild(clearedMsgDiv);
+            
+            init();
+        });
+    }
 
     function fetchSuggestions() {
         fetch(`${baseUrl}/suggestions`)

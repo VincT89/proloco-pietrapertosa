@@ -8,7 +8,7 @@ class ChatbotNavigationService
     {
         $destKey = $classification['destination'];
         
-        if ($classification['classification'] === 'ambiguous') {
+        if ($classification['classification'] === 'mixed') {
             return $this->buildAmbiguousResponse($locale, $builder);
         }
 
@@ -27,6 +27,17 @@ class ChatbotNavigationService
             $url = route($routeName);
         }
 
+        if ($destKey === 'tastes') {
+            $reply = $locale === 'en'
+                ? "You can visit the Tastes or Excellences pages. For more information, also visit Borgo Racconta."
+                : "Visita la pagina Sapori oppure Eccellenze. Per maggiori informazioni visita anche Il Borgo Racconta.";
+            $builder->setReply($reply);
+            $builder->addLink($locale === 'en' ? 'Tastes' : 'Sapori', route('tastes.' . $locale));
+            $builder->addLink($locale === 'en' ? 'Excellences' : 'Eccellenze', route('excellences.' . $locale));
+            $builder->addLink('Borgo Racconta', 'https://www.borgoracconta.it/citta/pietrapertosa/');
+            return $builder;
+        }
+
         $reply = $locale === 'en'
             ? "You can visit the {$label} section to find the information you're looking for."
             : "Puoi visitare la sezione {$label} per trovare le informazioni che cerchi.";
@@ -34,8 +45,8 @@ class ChatbotNavigationService
         $builder->setReply($reply);
         $builder->addLink($label, $url);
 
-        // Add Borgo Racconta if destination is tastes or pro_loco (services/hospitality)
-        if (in_array($destKey, ['tastes', 'pro_loco'])) {
+        // Add Borgo Racconta if destination is pro_loco or sleep (services/hospitality)
+        if (in_array($destKey, ['pro_loco', 'sleep'])) {
             $this->appendBorgoRacconta($locale, $builder);
         }
 

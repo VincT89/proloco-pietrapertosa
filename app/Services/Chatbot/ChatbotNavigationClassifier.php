@@ -30,12 +30,13 @@ class ChatbotNavigationClassifier
 
         // 2. Normalize and check length
         $terms = $this->searchService->normalizeQuery($message, $locale);
+        $originalTerms = $this->searchService->normalizeQuery($message, $locale, false);
         
         // If it's a short query, it's more likely generic navigation.
         // But first let's see if it strongly matches a specific title in DB.
-        if (!empty($terms)) {
-            $isStrongMatch = $this->searchService->findStrongTitleMatch($message, $locale);
-            if ($isStrongMatch && count($terms) > 1) {
+        if (!empty($originalTerms)) {
+            $isStrongMatch = $this->searchService->findStrongTitleMatch($message, $locale, false);
+            if ($isStrongMatch && count($originalTerms) > 1) {
                 return [
                     'classification' => 'search',
                     'destination' => null,
