@@ -217,9 +217,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 a.className = 'chatbot-link';
                 a.href = link.url;
                 a.textContent = link.label;
+                
+                try {
+                    const parsedUrl = new URL(link.url, window.location.origin);
+                    if (parsedUrl.origin !== window.location.origin) {
+                        a.target = '_blank';
+                        a.rel = 'noopener noreferrer';
+                    }
+                } catch (e) {
+                    // Ignore parsing errors
+                }
+
                 linksContainer.appendChild(a);
             });
             msgDiv.appendChild(linksContainer);
+        }
+
+        // Quick Replies
+        if (data.quickReplies && data.quickReplies.length > 0) {
+            const qrContainer = document.createElement('div');
+            qrContainer.className = 'chatbot-quick-replies';
+            
+            data.quickReplies.forEach(qr => {
+                const btn = document.createElement('button');
+                btn.className = 'chatbot-quick-reply-btn';
+                btn.textContent = qr.label;
+                btn.onclick = () => {
+                    chatbotInput.value = qr.payload;
+                    sendMessage();
+                };
+                qrContainer.appendChild(btn);
+            });
+            msgDiv.appendChild(qrContainer);
         }
 
         chatbotMessages.appendChild(msgDiv);

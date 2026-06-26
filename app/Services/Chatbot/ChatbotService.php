@@ -11,17 +11,23 @@ class ChatbotService
     protected ChatbotEventRepository $eventRepo;
     protected ChatbotDocumentRepository $documentRepo;
     protected ChatbotSearchService $searchService;
+    protected ChatbotNavigationClassifier $classifier;
+    protected ChatbotNavigationService $navigationService;
 
     public function __construct(
         IntentDetectorService $intentDetector,
         ChatbotEventRepository $eventRepo,
         ChatbotDocumentRepository $documentRepo,
-        ChatbotSearchService $searchService
+        ChatbotSearchService $searchService,
+        ChatbotNavigationClassifier $classifier,
+        ChatbotNavigationService $navigationService
     ) {
         $this->intentDetector = $intentDetector;
         $this->eventRepo = $eventRepo;
         $this->documentRepo = $documentRepo;
         $this->searchService = $searchService;
+        $this->classifier = $classifier;
+        $this->navigationService = $navigationService;
     }
 
     public function getInitialSuggestions(string $locale): array
@@ -74,7 +80,7 @@ class ChatbotService
                 return $this->handleDocuments($message, $locale, $builder);
             case 'fallback_search':
             default:
-                return $this->handleSearch($message, $locale, $builder);
+                return $this->handleNavigationOrSearch($message, $locale, $builder);
         }
     }
 
@@ -168,7 +174,7 @@ class ChatbotService
         
         if ($messageLength > 5) {
             // È una richiesta specifica (es. "cerco il bilancio 2023"). Usiamo il search service
-            return $this->handleSearch($message, $locale, $builder);
+            return $this->handleNavigationOrSearch($message, $locale, $builder);
         }
 
         $docs = $this->documentRepo->getLatestFinancialDocuments();
@@ -189,86 +195,57 @@ class ChatbotService
         return $builder;
     }
 
-    protected function handleSearch(string $message, string $locale, ChatbotResponseBuilder $builder): ChatbotResponseBuilder
+    protected function handleNavigationOrSearch(string $message, string $locale, ChatbotResponseBuilder $builder): ChatbotResponseBuilder
     {
-        $terms = $this->searchService->normalizeQuery($message, $locale);
-        
-        $msgLower = strtolower($message);
-        $borgoRaccontaRegex = '/(mangiare|mangio|ristorante|ristoranti|trattoria|pranzo|cena|cucina|dormire|pernottare|alloggio|alloggi|hotel|b&b|camere|ospitalità|visitare|vedere|attrazioni|luoghi|itinerari|eat|restaurant|food|lunch|dinner|sleep|stay|accommodation|room|visit|see|places)/';
-        $needsBorgoRacconta = preg_match($borgoRaccontaRegex, $msgLower);
+        $classification = $this->classifier->classify($message, $locale);
+        $results = collect();
 
-        if (empty($terms)) {
-            $reply = $locale === 'en' 
-                ? "You can ask me for information about events, places to visit, tastes, excellences, documents and contacts." 
-                : "Puoi chiedermi informazioni su eventi, luoghi da visitare, sapori, eccellenze, documenti e contatti.";
+        if ($classification['classification'] === 'navigation') {
+            $builder = $this->navigationService->buildResponse($classification, $locale, $builder);
+        } elseif ($classification['classification'] === 'mixed') {
+            $builder = $this->navigationService->buildAmbiguousResponse($locale, $builder);
+        } else {
+            // search
+            $results = $this->searchService->search($message, $locale);
             
-            if ($needsBorgoRacconta) {
-                $reply .= "\n\n" . ($locale === 'en' 
-                    ? "For more information on places, hospitality and services you can also consult the Borgo Racconta portal." 
-                    : "Per maggiori informazioni su luoghi, ospitalità e servizi puoi consultare anche il portale Borgo Racconta.");
-                $builder->addLink('Borgo Racconta', 'https://www.borgoracconta.it/citta/pietrapertosa/');
-            }
-            return $builder->setReply($reply);
-        }
-
-        $results = $this->searchService->search($message, $locale);
-
-        if ($results->isEmpty()) {
-            // Fallback specifico per come arrivare / info point
-            $isHowToArrive = str_contains($msgLower, 'come arrivare') || str_contains($msgLower, 'raggiungere') || str_contains($msgLower, 'how to get') || str_contains($msgLower, 'directions');
-            $isInfoPoint = str_contains($msgLower, 'info point') || str_contains($msgLower, 'orari');
-
-            if ($isHowToArrive) {
+            if ($results->isEmpty()) {
                 $reply = $locale === 'en' 
-                    ? "I could not find updated information on how to reach Pietrapertosa. You can contact the Pro Loco from the contact page."
-                    : "Non ho trovato informazioni aggiornate su come raggiungere Pietrapertosa nel sito. Puoi contattare la Pro Loco dalla pagina contatti.";
-                $builder->addLink($locale === 'en' ? 'Contact Us' : 'Contattaci', route('proLoco.' . $locale));
-            } elseif ($isInfoPoint) {
-                $reply = $locale === 'en' 
-                    ? "I could not find updated Info Point hours on the website. You can contact the Pro Loco from the contact page."
-                    : "Non ho trovato orari aggiornati dell’Info Point nel sito. Puoi contattare la Pro Loco dalla pagina contatti.";
-                $builder->addLink($locale === 'en' ? 'Contact Us' : 'Contattaci', route('proLoco.' . $locale));
+                    ? "I could not find enough specific information on the website to answer this question." 
+                    : "Non ho trovato informazioni specifiche nel sito per rispondere a questa domanda.";
+                $builder->setReply($reply);
             } else {
-                $reply = $locale === 'en' 
-                    ? "I could not find enough information on the website to answer this question." 
-                    : "Non ho trovato informazioni sufficienti nel sito per rispondere a questa domanda.";
+                $reply = $locale === 'en' ? "Here is what I found:" : "Ecco cosa ho trovato nel sito:";
+                $builder->setReply($reply);
+                
+                foreach ($results as $result) {
+                    if ($result['type'] === 'card') {
+                        $builder->addCard([
+                            'title' => $result['title'],
+                            'subtitle' => $result['subtitle'] ?? null,
+                            'description' => $result['description'] ?? null,
+                            'url' => $result['url'] ?? '#',
+                            'image' => $result['image'] ?? null
+                        ]);
+                    } elseif ($result['type'] === 'link') {
+                        $builder->addLink($result['title'], $result['url']);
+                    }
+                }
             }
-
-            if ($needsBorgoRacconta) {
-                $reply .= "\n\n" . ($locale === 'en' 
-                    ? "For more information on places, hospitality and services you can also consult the Borgo Racconta portal." 
-                    : "Per maggiori informazioni su luoghi, ospitalità e servizi puoi consultare anche il portale Borgo Racconta.");
-                $builder->addLink('Borgo Racconta', 'https://www.borgoracconta.it/citta/pietrapertosa/');
-            }
-
-            return $builder->setReply($reply);
         }
 
-        $reply = $locale === 'en' 
-            ? "I found this information on the website:" 
-            : "Ho trovato queste informazioni sul sito:";
-        
-        if ($needsBorgoRacconta) {
-            $reply .= "\n\n" . ($locale === 'en' 
-                ? "For more information on places, hospitality and services you can also consult the Borgo Racconta portal." 
-                : "Per maggiori informazioni su luoghi, ospitalità e servizi puoi consultare anche il portale Borgo Racconta.");
-            $builder->addLink('Borgo Racconta', 'https://www.borgoracconta.it/citta/pietrapertosa/');
-        }
-
-        $builder->setReply($reply);
-
-        foreach ($results as $result) {
-            if ($result['type'] === 'card') {
-                $builder->addCard([
-                    'title' => $result['title'],
-                    'subtitle' => $result['subtitle'],
-                    'description' => $result['description'],
-                    'url' => $result['url'],
-                    'image' => $result['image']
-                ]);
-            } elseif ($result['type'] === 'link') {
-                $builder->addLink($result['title'], $result['url']);
-            }
+        // Log the query if enabled
+        if (config('chatbot.logging_enabled', true)) {
+            $queryToLog = config('chatbot.log_raw_query', false) 
+                ? $message 
+                : hash('sha256', trim(strtolower($message)));
+            
+            \App\Models\ChatbotLog::create([
+                'locale' => $locale,
+                'query' => $queryToLog,
+                'mode' => $classification['classification'],
+                'matched_destination' => $classification['destination'],
+                'result_count' => $results->count(),
+            ]);
         }
 
         return $builder;

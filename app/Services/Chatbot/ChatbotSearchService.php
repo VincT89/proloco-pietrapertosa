@@ -12,26 +12,55 @@ use Illuminate\Support\Str;
 
 class ChatbotSearchService
 {
-    protected array $stopwords = [
-        'it' => ['dove', 'cosa', 'come', 'posso', 'puoi', 'mi', 'del', 'della', 'dei', 'le', 'gli', 'il', 'lo', 'la', 'un', 'una', 'l', 'vorrei', 'sapere', 'parlami', 'dimmi', 'informazioni', 'su', 'sui', 'sulle', 'per', 'di', 'da', 'in', 'con', 'chi', 'quando', 'perché', 'cerco', 'cercare', 'trovo', 'trovare'],
-        'en' => ['what', 'where', 'how', 'can', 'i', 'you', 'the', 'a', 'an', 'of', 'about', 'me', 'tell', 'want', 'know', 'information', 'on', 'in', 'with', 'who', 'when', 'why', 'search', 'find']
-    ];
+    public function getRouteMap(): array
+    {
+        return [
+            'home' => 'home',
+            'pro-loco' => 'proLoco',
+            'contatti' => 'proLoco',
+            'comunita' => 'community',
+            'storie' => 'community',
+            'eccellenze' => 'excellences',
+            'sapori' => 'tastes',
+            'scopri' => 'discover',
+            'il-borgo' => 'discover',
+            'notizie' => 'news',
+            'eventi' => 'events',
+            'galleria' => 'gallery',
+            'ringraziamenti-fotografici' => 'photo-thanks'
+        ];
+    }
 
-    protected array $routeMap = [
-        'home' => 'home',
-        'pro-loco' => 'proLoco',
-        'contatti' => 'proLoco',
-        'comunita' => 'community',
-        'storie' => 'community',
-        'eccellenze' => 'excellences',
-        'sapori' => 'tastes',
-        'scopri' => 'discover',
-        'il-borgo' => 'discover',
-        'notizie' => 'news',
-        'eventi' => 'events',
-        'galleria' => 'gallery',
-        'ringraziamenti-fotografici' => 'photo-thanks'
-    ];
+    public function normalizeQuery(string $query, string $locale): array
+    {
+        $query = mb_strtolower(trim($query));
+        
+        // Rimuove articoli apostrofati prima di rimuovere la punteggiatura
+        $query = preg_replace("/\b(l'|dell'|all'|un'|sull'|nell')/u", "", $query);
+        
+        // Sostituisce apostrofi restanti e punteggiatura varia con spazi
+        $query = preg_replace("/['’]/u", " ", $query);
+        $query = preg_replace("/[^\p{L}\p{N}\s]/u", "", $query);
+        
+        $words = array_filter(explode(' ', $query));
+        $stops = config('chatbot.stopwords.' . $locale, []);
+        $synonyms = config('chatbot.synonyms', []);
+        
+        $terms = [];
+        foreach ($words as $word) {
+            $word = trim($word);
+            if (strlen($word) > 1 && !in_array($word, $stops)) {
+                $terms[] = $word;
+                
+                // Sinonimi
+                if (isset($synonyms[$word])) {
+                    $terms = array_merge($terms, $synonyms[$word]);
+                }
+            }
+        }
+        
+        return array_values(array_unique($terms));
+    }
 
     public function search(string $query, string $locale): Collection
     {
@@ -39,7 +68,7 @@ class ChatbotSearchService
         $results = collect();
         
         if (empty($terms)) {
-            return $results; // Ritorna vuoto per attivare il fallback specifico nel ChatbotService
+            return $results;
         }
 
         $results = $results->merge($this->searchEvents($terms, $locale));
@@ -57,51 +86,34 @@ class ChatbotSearchService
         return $uniqueResults->sortByDesc('score')->take(5)->values();
     }
 
-    protected array $synonyms = [
-        'mangiare' => ['mangiare', 'ristorante', 'sapori', 'mangio', 'pranzo', 'cena', 'trattoria', 'eat', 'food', 'restaurant', 'lunch', 'dinner'],
-        'mangio' => ['mangiare', 'ristorante', 'sapori'],
-        'pranzo' => ['mangiare', 'ristorante', 'sapori'],
-        'cena' => ['mangiare', 'ristorante', 'sapori'],
-        'trattoria' => ['mangiare', 'ristorante', 'sapori'],
-        'ristoranti' => ['mangiare', 'ristorante', 'sapori'],
-        'dormire' => ['dormire', 'alloggi', 'ospitalità', 'pernottare', 'hotel', 'b&b', 'camere', 'sleep', 'stay', 'accommodation', 'room'],
-        'pernottare' => ['dormire', 'alloggi', 'ospitalità'],
-        'alloggio' => ['dormire', 'alloggi', 'ospitalità'],
-        'vedere' => ['visitare', 'scopri', 'luoghi', 'see', 'visit', 'attractions'],
-        'visitare' => ['visitare', 'scopri', 'luoghi'],
-        'volo' => ['volo', 'angelo'],
-        'arabata' => ['arabata', 'tracce', 'arabi'],
-        'castello' => ['castello', 'saraceno']
-    ];
-
-    public function normalizeQuery(string $query, string $locale): array
+    public function findStrongTitleMatch(string $query, string $locale): bool
     {
-        $query = mb_strtolower(trim($query));
-        
-        // Rimuove articoli apostrofati prima di rimuovere la punteggiatura
-        $query = preg_replace("/\b(l'|dell'|all'|un'|sull'|nell')/u", "", $query);
-        
-        // Sostituisce apostrofi restanti e punteggiatura varia con spazi
-        $query = preg_replace("/['’]/u", " ", $query);
-        $query = preg_replace("/[^\p{L}\p{N}\s]/u", "", $query);
-        
-        $words = array_filter(explode(' ', $query));
-        $stops = $this->stopwords[$locale] ?? [];
-        
-        $terms = [];
-        foreach ($words as $word) {
-            $word = trim($word);
-            if (strlen($word) > 1 && !in_array($word, $stops)) {
-                $terms[] = $word;
-                
-                // Sinonimi
-                if (isset($this->synonyms[$word])) {
-                    $terms = array_merge($terms, $this->synonyms[$word]);
+        $terms = $this->normalizeQuery($query, $locale);
+        if (empty($terms)) return false;
+
+        $termLikes = collect($terms)->map(fn($t) => "%{$t}%")->toArray();
+
+        // Check Directory
+        $hasDirectory = DirectoryItem::where(function($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->orWhere('title', 'LIKE', "%{$term}%")
+                      ->orWhere('title_en', 'LIKE', "%{$term}%");
                 }
-            }
-        }
-        
-        return array_values(array_unique($terms));
+            })->exists();
+        if ($hasDirectory) return true;
+
+        // Check Events
+        $hasEvent = Event::where('status', 'published')
+            ->where(function($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->orWhere('title', 'LIKE', "%{$term}%")
+                      ->orWhere('title_en', 'LIKE', "%{$term}%")
+                      ->orWhere('slug', 'LIKE', "%{$term}%");
+                }
+            })->exists();
+        if ($hasEvent) return true;
+
+        return false;
     }
 
     protected function calculateScore(array $terms, array $fields): int
@@ -288,7 +300,8 @@ class ChatbotSearchService
             ]);
 
             try {
-                $routeName = $this->routeMap[$page->page_slug] ?? 'home';
+                $routeMap = $this->getRouteMap();
+                $routeName = $routeMap[$page->page_slug] ?? 'home';
                 $url = route($routeName . '.' . $locale);
             } catch (\Exception $e) {
                 $url = route('home.' . $locale);

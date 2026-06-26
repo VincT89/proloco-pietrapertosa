@@ -65,7 +65,7 @@ class ChatbotTest extends TestCase
             'message' => 'cosa posso'
         ]);
         $response->assertStatus(200);
-        $this->assertStringContainsString('Puoi chiedermi informazioni su eventi', $response->json('reply'));
+        $this->assertStringContainsString('Non sono sicuro', $response->json('reply'));
     }
 
     public function test_unknown_question_returns_safe_fallback()
@@ -74,29 +74,20 @@ class ChatbotTest extends TestCase
             'message' => 'Pizzaburger spaziale'
         ]);
         $response->assertStatus(200);
-        $this->assertStringContainsString('Non ho trovato informazioni sufficienti', $response->json('reply'));
+        $this->assertStringContainsString('Non ho trovato informazioni specifiche', $response->json('reply'));
     }
 
-    public function test_where_to_eat_search()
+    public function test_where_to_eat_navigation()
     {
-        DirectoryItem::create([
-            'title' => 'Ristorante Il Castello',
-            'description' => 'Un ottimo posto dove mangiare',
-            'category' => 'sapori_piatti',
-            'is_public' => true,
-        ]);
-
         $response = $this->postJson('/it/chatbot/message', [
             'message' => 'dove mangiare?'
         ]);
         $response->assertStatus(200);
-        $this->assertStringContainsString('Ho trovato queste informazioni sul sito', $response->json('reply'));
+        $this->assertStringContainsString('Puoi visitare la sezione Sapori', $response->json('reply'));
         $this->assertStringContainsString('Borgo Racconta', $response->json('reply'));
         
-        $cards = collect($response->json('cards'));
-        $this->assertTrue($cards->contains('title', 'Ristorante Il Castello'));
-
         $links = collect($response->json('links'));
+        $this->assertTrue($links->contains('label', 'Sapori'));
         $this->assertTrue($links->contains('label', 'Borgo Racconta'));
     }
 
@@ -114,7 +105,7 @@ class ChatbotTest extends TestCase
         ]);
         
         $response->assertStatus(200);
-        $this->assertStringContainsString('Ho trovato queste informazioni sul sito', $response->json('reply'));
+        $this->assertStringContainsString('Ecco cosa ho trovato nel sito', $response->json('reply'));
         
         $cards = collect($response->json('cards'));
         $this->assertTrue($cards->contains('title', 'Festa dell\'Arabata'));
@@ -147,44 +138,39 @@ class ChatbotTest extends TestCase
         $this->assertTrue($links->contains('title', 'Bilancio 2023 (2023)') || $links->contains('label', 'Bilancio 2023 (2023)'));
     }
 
-    public function test_where_to_sleep_fallback_contains_borgo_racconta()
+    public function test_where_to_sleep_navigation_contains_borgo_racconta()
     {
-        // No DB records
         $response = $this->postJson('/it/chatbot/message', [
             'message' => 'dove dormire?'
         ]);
         $response->assertStatus(200);
-        $this->assertStringContainsString('Non ho trovato informazioni sufficienti', $response->json('reply'));
-        $this->assertStringContainsString('Borgo Racconta', $response->json('reply'));
+        $this->assertStringContainsString('Puoi visitare la sezione Ospitalità (Borgo Racconta)', $response->json('reply'));
         
         $links = collect($response->json('links'));
-        $this->assertTrue($links->contains('label', 'Borgo Racconta'));
+        $this->assertTrue($links->contains('label', 'Ospitalità (Borgo Racconta)'));
     }
 
-    public function test_where_to_eat_en_fallback()
+    public function test_where_to_eat_en_navigation()
     {
         $response = $this->postJson('/en/chatbot/message', [
             'message' => 'where to eat?'
         ]);
         $response->assertStatus(200);
+        $this->assertStringContainsString('Tastes section', $response->json('reply'));
         $this->assertStringContainsString('Borgo Racconta portal', $response->json('reply'));
     }
 
-    public function test_synonyms_expansion()
+    public function test_ambiguous_query_returns_mixed_response()
     {
-        DirectoryItem::create([
-            'title' => 'Taverna',
-            'description' => 'Un posto magnifico che serve sapori incredibili', // "sapori" is synonym of "mangio"
-            'category' => 'sapori_piatti',
-            'is_public' => true,
-        ]);
-
         $response = $this->postJson('/it/chatbot/message', [
-            'message' => 'dove mangio?'
+            'message' => 'sapori ed eventi'
         ]);
         $response->assertStatus(200);
-        $cards = collect($response->json('cards'));
-        $this->assertTrue($cards->contains('title', 'Taverna'));
+        $this->assertStringContainsString('Non sono sicuro', $response->json('reply'));
+        
+        $links = collect($response->json('links'));
+        $this->assertTrue($links->contains('label', 'Scopri & Vivi'));
+        $this->assertTrue($links->contains('label', 'Sapori'));
     }
 
     public function test_url_allowlist_rejects_malicious_links()
