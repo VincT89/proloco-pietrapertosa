@@ -15,5 +15,8 @@
                 <a href="{{ $page->hero_cta_url }}" class="ed-btn ed-btn-gold">{{ $page->getTranslation('hero_cta_text') }}</a>
             </div>
         @endif
+        @if(isset($extra_html))
+            {!! $extra_html !!}
+        @endif
     </div>
 </div>
