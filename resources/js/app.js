@@ -202,7 +202,7 @@ const initApp = () => {
             preload.onload = () => {
                 const img = document.createElement('img');
                 img.src = url;
-                img.alt = media.alt || '';
+                img.alt = typeof media === 'string' ? '' : (media.alt || '');
                 showElement(img);
             };
 
@@ -356,7 +356,7 @@ const initApp = () => {
         if (images.length === 0) return;
         
         const media = images[index];
-        if (media.type === 'video' && media.provider !== 'cloudinary') {
+        if (media && typeof media === 'object' && media.type === 'video' && media.provider !== 'cloudinary') {
             if (!window.hasExternalConsent()) {
                 const container = document.getElementById('lbMediaContainer');
                 if (container) {

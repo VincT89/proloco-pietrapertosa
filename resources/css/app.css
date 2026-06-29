@@ -921,6 +921,7 @@ h2 em{font-style:italic;color:var(--gold-soft)}
 .modal .x .ico{width:15px;height:15px}
 .btn-dark{width:100%;display:inline-flex;justify-content:center;align-items:center;gap:12px;background:var(--ink);color:var(--paper);border:none;font-family:'Source Sans 3';font-size:.66rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;padding:18px;cursor:pointer;transition:.35s}
 .btn-dark:hover{background:#a5742e}
+#gallery-modal { z-index: 1100 !important; }
 #lightbox .img-wrap{position:relative;max-width:min(920px,94vw);max-height:88vh;animation:mup .5s var(--ease)}
 #lightbox img{max-width:100%;max-height:88vh;object-fit:contain;box-shadow:0 40px 120px -30px rgba(0,0,0,.8)}
 #lightbox .x{background:var(--paper);border:none;color:var(--ink);top:-16px;right:-16px}
@@ -2095,7 +2096,7 @@ html, body { -ms-overflow-style: none; scrollbar-width: none; }
 .ev-card-giant { position: relative; width: 100%; max-width: 420px; height: clamp(500px, 60vh, 700px); border-radius: 8px; overflow: hidden; flex: 1 1 340px; display: flex; flex-direction: column; justify-content: flex-end; }
 .ev-card-bg { position: absolute; inset: 0; z-index: 1; }
 .ev-card-placeholder { width: 100%; height: 100%; background: var(--stone); }
-.ev-card-overlay-right { position: absolute; inset: 0; z-index: 2; background: linear-gradient(to top, rgba(13,16,20,1) 0%, rgba(13,16,20,0.85) 40%, rgba(13,16,20,0.3) 70%, transparent 100%); }
+.ev-card-overlay-right { position: absolute; inset: 0; z-index: 2; background: linear-gradient(to top, rgba(13,16,20,1) 0%, rgba(13,16,20,0.98) 55%, rgba(13,16,20,0.8) 80%, transparent 100%); }
 .ev-card-content { position: relative; z-index: 3; width: 100%; padding: clamp(40px, 6vw, 60px) clamp(20px, 5vw, 80px); }
 .ev-card-content-inner { max-width: 600px; }
 .ev-card-subtitle { color: var(--gold); text-transform: uppercase; letter-spacing: 2px; font-size: clamp(0.65rem, 0.8vw, 0.75rem); font-weight: 600; display: inline-block; margin-bottom: 24px; border-bottom: 1px solid var(--gold); padding-bottom: 6px; }
@@ -2113,7 +2114,7 @@ html, body { -ms-overflow-style: none; scrollbar-width: none; }
 .ev-card-normal-blur, .ev-card-normal-blur-carousel { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(22px) brightness(0.55); transform: scale(1.12); }
 .ev-card-normal-poster { position: absolute; inset: 18px 18px 115px; z-index: 2; }
 .ev-card-normal-poster .auto-carousel, .ev-card-normal-poster img { width: 100%; height: 100%; }
-.ev-card-normal-overlay { position: absolute; inset: 0; z-index: 3; background: linear-gradient(to top, rgba(13,16,20,0.95) 0%, rgba(13,16,20,0.8) 40%, rgba(13,16,20,0.4) 100%); }
+.ev-card-normal-overlay { position: absolute; inset: 0; z-index: 3; background: linear-gradient(to top, rgba(13,16,20,1) 0%, rgba(13,16,20,0.95) 50%, rgba(13,16,20,0.6) 80%, transparent 100%); }
 .ev-card-normal-content { position: relative; z-index: 4; width: 100%; padding: clamp(30px, 5vw, 40px) clamp(40px, 6vw, 50px); }
 .ev-card-normal-inner { max-width: 600px; }
 .ev-card-normal-subtitle { color: var(--gold); text-transform: uppercase; letter-spacing: 2px; font-size: clamp(0.65rem, 0.8vw, 0.75rem); font-weight: 600; display: inline-block; margin-bottom: 20px; border-bottom: 1px solid var(--gold); padding-bottom: 6px; }

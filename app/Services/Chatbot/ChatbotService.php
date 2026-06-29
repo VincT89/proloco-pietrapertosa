@@ -235,17 +235,21 @@ class ChatbotService
 
         // Log the query if enabled
         if (config('chatbot.logging_enabled', true)) {
-            $queryToLog = config('chatbot.log_raw_query', false) 
-                ? $message 
-                : hash('sha256', trim(strtolower($message)));
-            
-            \App\Models\ChatbotLog::create([
-                'locale' => $locale,
-                'query' => $queryToLog,
-                'mode' => $classification['classification'],
-                'matched_destination' => $classification['destination'],
-                'result_count' => $results->count(),
-            ]);
+            try {
+                $queryToLog = config('chatbot.log_raw_query', false) 
+                    ? $message 
+                    : hash('sha256', trim(strtolower($message)));
+                
+                \App\Models\ChatbotLog::create([
+                    'locale' => $locale,
+                    'query' => $queryToLog,
+                    'mode' => $classification['classification'],
+                    'matched_destination' => $classification['destination'],
+                    'result_count' => $results->count(),
+                ]);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('ChatbotLog creation failed: ' . $e->getMessage());
+            }
         }
 
         return $builder;

@@ -36,11 +36,11 @@
                         {{ (app()->getLocale() === 'en') ? "We operate in full compliance with the regulations for the Third Sector. The official statute and the minutes of the assemblies are always available to our members." : "Operiamo nel massimo rispetto delle normative per il Terzo Settore. Lo statuto ufficiale e i verbali delle assemblee sono sempre a disposizione dei nostri tesserati." }}
                     </p>
                     <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start;">
-                        <a href="{{ asset('images/Statuto_ProLoco_Pietrapertosa_Leggibile.pdf') }}" target="_blank" class="ed-btn proloco-btn-pad">
+                        <a href="{{ asset('images/Statuto_ProLoco_Pietrapertosa_Leggibile.pdf') }}" target="_blank" rel="noopener noreferrer" class="ed-btn proloco-btn-pad">
                             <svg width="18" height="18" class="proloco-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
                             {{ (app()->getLocale() === 'en') ? "View the Statute (PDF)" : "Visualizza lo Statuto (PDF)" }}
                         </a>
-                        <a href="{{ asset('images/Atto_Costitutivo_Proloco_Pietrapertosana.pdf') }}" target="_blank" class="ed-btn proloco-btn-pad" style="background: transparent; border: 1px solid var(--gold); color: var(--gold);" onmouseover="this.style.background='var(--gold)'; this.style.color='var(--ink)'" onmouseout="this.style.background='transparent'; this.style.color='var(--gold)'">
+                        <a href="{{ asset('images/Atto_Costitutivo_Proloco_Pietrapertosana.pdf') }}" target="_blank" rel="noopener noreferrer" class="ed-btn proloco-btn-pad" style="background: transparent; border: 1px solid var(--gold); color: var(--gold);" onmouseover="this.style.background='var(--gold)'; this.style.color='var(--ink)'" onmouseout="this.style.background='transparent'; this.style.color='var(--gold)'">
                             <svg width="18" height="18" class="proloco-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
                             {{ (app()->getLocale() === 'en') ? "View Deed of Incorporation (PDF)" : "Visualizza l'Atto di Costituzione (PDF)" }}
                         </a>
@@ -67,7 +67,7 @@
                         <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--gold); margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">{{ $year }}</h3>
                         <div style="display: flex; flex-direction: column; gap: 15px;">
                             @foreach($documents as $doc)
-                                <a href="{{ $doc->media ? $doc->media->url : '#' }}" target="_blank" style="display: flex; align-items: center; justify-content: space-between; padding: 20px; background: var(--ink-2); border-radius: 8px; text-decoration: none; border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='rgba(255,255,255,0.05)'; this.style.transform='translateY(0)';">
+                                <a href="{{ $doc->media ? $doc->media->url : '#' }}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: space-between; padding: 20px; background: var(--ink-2); border-radius: 8px; text-decoration: none; border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='rgba(255,255,255,0.05)'; this.style.transform='translateY(0)';">
                                     <div>
                                         <div style="font-weight: 500; color: var(--paper); font-size: 1.15rem; margin-bottom: 8px;">{{ $doc->getTranslation('title', app()->getLocale(), false) ?: $doc->title }}</div>
                                         <div style="font-size: 0.9rem; color: var(--stone); display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
@@ -140,8 +140,8 @@
                             <input type="checkbox" name="privacy" value="1" required {{ old('privacy') ? 'checked' : '' }} style="margin-top: 4px;" />
                             <span>
                                 {!! (app()->getLocale() === 'en') 
-                                    ? 'I agree to the processing of personal data according to the <a href="'.route('privacy.en').'" target="_blank" style="color:var(--ed-color-theme); text-decoration:underline; font-weight:bold;">Privacy Policy</a>.' 
-                                    : 'Acconsento al trattamento dei dati personali secondo la <a href="'.route('privacy.it').'" target="_blank" style="color:var(--ed-color-theme); text-decoration:underline; font-weight:bold;">Privacy Policy</a>.' 
+                                    ? 'I agree to the processing of personal data according to the <a href="'.route('privacy.en').'" target="_blank" rel="noopener noreferrer" style="color:var(--ed-color-theme); text-decoration:underline; font-weight:bold;">Privacy Policy</a>.' 
+                                    : 'Acconsento al trattamento dei dati personali secondo la <a href="'.route('privacy.it').'" target="_blank" rel="noopener noreferrer" style="color:var(--ed-color-theme); text-decoration:underline; font-weight:bold;">Privacy Policy</a>.' 
                                 !!}
                             </span>
                         </label>

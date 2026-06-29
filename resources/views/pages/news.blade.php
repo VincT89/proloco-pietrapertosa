@@ -65,7 +65,7 @@
                                 </button>
                                 
                                 @if($notizia->cover)
-                                    <div style="width: 100%; border-radius: 8px; margin-bottom: 30px; display: flex; justify-content: center; background: var(--ink-2); overflow: hidden;">
+                                    <div class="cur" onclick="openGallery({{ collect([['type' => $notizia->cover->type, 'provider' => $notizia->cover->provider, 'url' => $notizia->cover->type === 'image' ? $notizia->cover->optimizedUrl('large') : ($notizia->cover->type === 'video' ? $notizia->cover->optimizedVideoUrl() : $notizia->cover->url), 'embed_url' => $notizia->cover->embed_url]])->toJson() }}, 0)" style="width: 100%; border-radius: 8px; margin-bottom: 30px; display: flex; justify-content: center; background: var(--ink-2); overflow: hidden;">
                                         <img src="{{ $notizia->cover->optimizedUrl('large') }}" alt="{{ $notizia->getTranslation('title') }}" style="width: 100%; max-height: 400px; object-fit: contain;" />
                                     </div>
                                 @endif
@@ -87,7 +87,7 @@
                                         <h4 style="color: var(--gold); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Documenti Allegati</h4>
                                         <div style="display: flex; flex-direction: column; gap: 10px;">
                                             @foreach($attachments as $attachment)
-                                                <a href="{{ $attachment->url }}" download rel="noopener noreferrer" style="display: flex; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 20px; border-radius: 6px; color: var(--paper); text-decoration: none; border: 1px solid rgba(255,255,255,0.05); transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                                                <a href="{{ $attachment->url }}" target="_blank" download rel="noopener noreferrer" style="display: flex; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 20px; border-radius: 6px; color: var(--paper); text-decoration: none; border: 1px solid rgba(255,255,255,0.05); transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
                                                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 15px; color: var(--gold); flex-shrink: 0;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                                     <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.95rem;">
                                                         {{ $attachment->alt ?: basename($attachment->url) }}

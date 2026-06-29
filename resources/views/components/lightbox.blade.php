@@ -1,4 +1,4 @@
-<div class="modal lb-modal" id="gallery-modal" onclick="closeGallery()">
+<div class="modal lb-modal" id="gallery-modal" onclick="closeGallery()" style="z-index: 99999;">
     <div class="ov"></div>
     <div class="lb-img-wrap" onclick="event.stopPropagation()">
         

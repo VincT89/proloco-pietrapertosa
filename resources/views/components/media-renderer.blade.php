@@ -28,7 +28,7 @@
                 />
             </div>
             <div class="media-ig-link-wrapper">
-                <a href="{{ $media->url }}" target="_blank" class="media-ig-link">Apri su Instagram</a>
+                <a href="{{ $media->url }}" target="_blank" rel="noopener noreferrer" class="media-ig-link">Apri su Instagram</a>
             </div>
         @endif
     @endif

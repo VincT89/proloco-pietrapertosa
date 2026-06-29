@@ -27,7 +27,7 @@ class PageSettingForm
                         TextInput::make('hero_title')->label('Titolo Hero')->default(null),
                         TextInput::make('hero_subtitle')->label('Sottotitolo Hero')->default(null),
                         TextInput::make('hero_cta_text')->label('Testo Pulsante (CTA) Hero')->default(null),
-                        TextInput::make('hero_cta_url')->label('URL Pulsante (CTA) Hero')->default(null),
+                        TextInput::make('hero_cta_url')->label('URL Pulsante (CTA) Hero')->default(null)->rule('regex:/^(https?:\/\/|\/)[a-zA-Z0-9\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=\%]+$/i'),
                         TextInput::make('intro_title')->label('Titolo Intro')->default(null),
                         RichEditor::make('intro_text')->label('Testo Intro')->default(null)->columnSpanFull(),
                     ]),
@@ -58,7 +58,7 @@ class PageSettingForm
                             Textarea::make('data.discover_text_en')->label('Testo Scopri (EN)')->columnSpanFull(),
                             TextInput::make('data.discover_cta_text')->label('Testo Pulsante Scopri')->default('Borgo Racconta'),
                             TextInput::make('data.discover_cta_text_en')->label('Testo Pulsante Scopri (EN)')->default('Borgo Racconta'),
-                            TextInput::make('data.discover_cta_url')->label('URL Pulsante Scopri')->default('https://www.borgoracconta.it/citta/pietrapertosa/'),
+                            TextInput::make('data.discover_cta_url')->label('URL Pulsante Scopri')->default('https://www.borgoracconta.it/citta/pietrapertosa/')->rule('regex:/^(https?:\/\/|\/)[a-zA-Z0-9\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=\%]+$/i'),
                         ]),
                         \Filament\Forms\Components\Repeater::make('data.discover_items')->label('Elementi Scopri Pietrapertosa')->schema([
                             TextInput::make('nome')->label('Titolo')->required(),

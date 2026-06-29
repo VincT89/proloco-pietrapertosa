@@ -82,9 +82,15 @@ class CloudinaryService
      */
     public function cleanupTemporaryUpload(string $url)
     {
-        $cached = \Illuminate\Support\Facades\Cache::get('last_upload_'.$url);
-        if ($cached && isset($cached['public_id'])) {
-            $this->deleteMedia($cached['public_id'], $cached['resource_type'] ?? 'image');
+        $cachedId = \Illuminate\Support\Facades\Cache::get('last_upload_'.$url);
+        if ($cachedId) {
+            $media = \App\Models\Media::find($cachedId);
+            if ($media) {
+                $this->deleteMediaByUrl($media->url, $media->resource_type ?? 'image');
+                $media->delete();
+            } else {
+                $this->deleteMediaByUrl($url);
+            }
             \Illuminate\Support\Facades\Cache::forget('last_upload_'.$url);
             return true;
         }

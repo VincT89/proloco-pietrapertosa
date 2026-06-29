@@ -58,6 +58,7 @@ class Media extends Model
             || \Illuminate\Support\Facades\DB::table('events')->where('cover_media_id', $this->id)->exists()
             || \Illuminate\Support\Facades\DB::table('page_settings')->where('hero_media_id', $this->id)->exists()
             || \Illuminate\Support\Facades\DB::table('financial_documents')->where('media_id', $this->id)->exists()
-            || \Illuminate\Support\Facades\DB::table('page_settings')->where('data', 'like', '%"img_media_id":' . $this->id . '%')->exists();
+            || \Illuminate\Support\Facades\DB::table('page_settings')->where('data', 'like', '%"img_media_id":' . $this->id . '%')->exists()
+            || \Illuminate\Support\Facades\DB::table('page_settings')->where('data', 'like', '%"logo_media_id":' . $this->id . '%')->exists();
     }
 }

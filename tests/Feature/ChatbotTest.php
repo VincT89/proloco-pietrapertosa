@@ -83,8 +83,8 @@ class ChatbotTest extends TestCase
             'message' => 'dove mangiare?'
         ]);
         $response->assertStatus(200);
-        $this->assertStringContainsString('Puoi visitare la sezione Sapori', $response->json('reply'));
-        $this->assertStringContainsString('Borgo Racconta', $response->json('reply'));
+        $this->assertStringContainsString('Visita la pagina Sapori oppure Eccellenze', $response->json('reply'));
+        $this->assertStringContainsString('Il Borgo Racconta', $response->json('reply'));
         
         $links = collect($response->json('links'));
         $this->assertTrue($links->contains('label', 'Sapori'));
@@ -114,11 +114,11 @@ class ChatbotTest extends TestCase
     public function test_document_search_returns_link()
     {
         $media = Media::create([
-            'file_name' => 'bilancio-2023.pdf',
+            'type' => 'document',
+            'provider' => 'cloudinary',
+            'public_id' => 'bilancio-2023',
             'url' => 'https://res.cloudinary.com/bilancio.pdf',
-            'mime_type' => 'application/pdf',
-            'size' => 1024,
-            'collection_name' => 'documents'
+            'resource_type' => 'raw'
         ]);
 
         FinancialDocument::create([
@@ -156,8 +156,8 @@ class ChatbotTest extends TestCase
             'message' => 'where to eat?'
         ]);
         $response->assertStatus(200);
-        $this->assertStringContainsString('Tastes section', $response->json('reply'));
-        $this->assertStringContainsString('Borgo Racconta portal', $response->json('reply'));
+        $this->assertStringContainsString('Tastes or Excellences', $response->json('reply'));
+        $this->assertStringContainsString('Borgo Racconta', $response->json('reply'));
     }
 
     public function test_ambiguous_query_returns_mixed_response()
@@ -176,11 +176,11 @@ class ChatbotTest extends TestCase
     public function test_url_allowlist_rejects_malicious_links()
     {
         $media = Media::create([
-            'file_name' => 'hack.pdf',
+            'type' => 'document',
+            'provider' => 'cloudinary',
+            'public_id' => 'hack',
             'url' => 'javascript:alert(1)',
-            'mime_type' => 'application/pdf',
-            'size' => 1024,
-            'collection_name' => 'documents'
+            'resource_type' => 'raw'
         ]);
 
         FinancialDocument::create([
