@@ -2245,6 +2245,16 @@ html, body { -ms-overflow-style: none; scrollbar-width: none; }
 .form-error-msg { color: #9b1c1c; font-size: 12px; margin-top: 2px; }
 .mt-15 { margin-top: 15px; }
 
+/* ============ EXTERNAL EMBEDS ============ */
+.external-embed { position: relative; width: 100%; display: block; background: var(--ink-2, #14181f); overflow: hidden; }
+.external-embed.external-embed-ratio-16-9 { padding-top: 56.25%; }
+.external-embed.external-embed-ratio-1-1 { padding-top: 100%; }
+.external-embed.external-embed-ratio-auto { height: 100%; min-height: 300px; }
+.external-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.external-embed-placeholder { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; background: rgba(0,0,0,0.4); color: var(--stone); border: 1px dashed var(--hair); }
+.external-embed-text p { margin-bottom: 12px; }
+.external-embed-button { margin-top: 10px; }
+
 /* ============ COOKIE & EXTERNAL ============ */
 .cookie-banner { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(13, 16, 20, 0.95); backdrop-filter: blur(10px); z-index: 10050; padding: 20px; border-top: 1px solid var(--hair); transition: transform 0.5s ease; pointer-events: auto; }
 .cookie-banner, .cookie-banner * { pointer-events: auto; }
