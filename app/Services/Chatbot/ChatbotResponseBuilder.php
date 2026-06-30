@@ -35,7 +35,7 @@ class ChatbotResponseBuilder
             '/',
             route('home.it'),
             route('home.en'),
-            'https://res.cloudinary.com/',
+            'https://res.cloudinary.com/' . config('services.cloudinary.cloud_name') . '/',
             'https://www.borgoracconta.it/'
         ];
 

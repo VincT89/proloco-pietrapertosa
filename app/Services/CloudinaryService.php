@@ -47,6 +47,7 @@ class CloudinaryService
         return [
             'public_id' => $response['public_id'],
             'url' => $response['secure_url'],
+            'secure_url' => $response['secure_url'],
             'resource_type' => $response['resource_type'] ?? 'image',
             'duration' => $response['duration'] ?? null,
             'format' => $response['format'] ?? null,

@@ -35,6 +35,9 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->email === 'admin@prolocopietrapertosana.it';
+        $admins = config('services.admin_emails', ['admin@prolocopietrapertosana.it']);
+        return in_array(strtolower(trim($this->email)), array_map(function($email) {
+            return strtolower(trim($email));
+        }, $admins));
     }
 }

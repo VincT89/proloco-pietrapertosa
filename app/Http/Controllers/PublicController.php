@@ -16,7 +16,7 @@ class PublicController extends Controller
         $page = PageSetting::with('heroMedia')->where('page_slug', 'home')->first();
         $events = Event::with('cover')
             ->where('status', 'published')
-            ->orderByRaw('start_date IS NULL')
+            ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
             ->orderBy('start_date', 'desc')
             ->take(3)
             ->get();
@@ -94,7 +94,7 @@ class PublicController extends Controller
         $page = PageSetting::with('heroMedia')->where('page_slug', 'eventi')->first();
         $events = Event::with(['cover', 'galleryMedia', 'externalMedia'])
             ->where('status', 'published')
-            ->orderByRaw('start_date IS NULL')
+            ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
             ->orderBy('start_date', 'desc')
             ->paginate(9);
         $annualEvents = DirectoryItem::with('galleryMedia')
@@ -109,7 +109,8 @@ class PublicController extends Controller
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'galleria')->first();
         $albums = GalleryAlbum::with(['galleryMedia', 'externalMedia'])
-            ->orderByRaw('ISNULL(section_date), section_date DESC')
+            ->orderByRaw('CASE WHEN section_date IS NULL THEN 1 ELSE 0 END')
+            ->orderBy('section_date', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate(12);
 

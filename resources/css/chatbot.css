@@ -347,6 +347,9 @@
     padding: 12px 20px;
     border-top: 1px solid var(--chatbot-border);
     background-color: var(--chatbot-bg);
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .chatbot-input {
@@ -381,7 +384,61 @@
     cursor: not-allowed;
 }
 
+/* Responsive / Overflow Fixes */
+#proloco-chatbot,
+.chatbot-panel,
+.chatbot-container {
+    max-width: 100vw;
+    box-sizing: border-box;
+}
+
+.chatbot-messages,
+.chatbot-message,
+.chatbot-bubble,
+.chatbot-card,
+.chatbot-link {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.chatbot-panel {
+    overflow: hidden;
+}
+
+.chatbot-input-wrapper,
+.chatbot-form {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.chatbot-input,
+.chatbot-form input,
+.chatbot-form textarea {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 /* Mobile Responsive */
+@media (max-width: 640px) {
+    #proloco-chatbot {
+        left: 12px;
+        right: 12px;
+        width: auto;
+        max-width: calc(100vw - 24px);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .chatbot-panel {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
 @media (max-width: 480px) {
     .chatbot-panel {
         position: fixed;

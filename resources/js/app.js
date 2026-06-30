@@ -103,37 +103,62 @@ const initApp = () => {
 
     // AutoCarousel logic
     document.querySelectorAll('.auto-carousel').forEach(carousel => {
+        if (document.querySelector('.hero-h1') && carousel.closest('.hero-media')) return;
+
+        if (carousel.dataset.initialized === 'true') return;
+        carousel.dataset.initialized = 'true';
+
         const interval = parseInt(carousel.dataset.interval || 4000);
         const images = carousel.querySelectorAll('img');
         const dots = carousel.querySelectorAll('.carousel-dot');
         if (images.length <= 1) return;
         
         let currentIndex = 0;
+        let timer = null;
+        let isTransitioning = false;
+
+        const stop = () => {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+        };
 
         const updateCarousel = (newIndex) => {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
             images[currentIndex].style.opacity = '0';
             images[currentIndex].style.zIndex = '0';
             if(dots.length > 0) dots[currentIndex].style.background = 'rgba(255,255,255,0.4)';
             
-            currentIndex = newIndex;
+            currentIndex = (newIndex + images.length) % images.length;
             
             images[currentIndex].style.opacity = '1';
             images[currentIndex].style.zIndex = '1';
             if(dots.length > 0) dots[currentIndex].style.background = 'var(--gold)';
+
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 1200);
         };
 
-        let timer = setInterval(() => {
-            updateCarousel((currentIndex + 1) % images.length);
-        }, interval);
+        const start = () => {
+            stop();
+            timer = setInterval(() => {
+                updateCarousel(currentIndex + 1);
+            }, interval);
+        };
+
+        start();
 
         dots.forEach(dot => {
             dot.addEventListener('click', (e) => {
                 e.stopPropagation();
-                clearInterval(timer);
+                e.preventDefault();
+                stop();
                 updateCarousel(parseInt(dot.dataset.index));
-                timer = setInterval(() => {
-                    updateCarousel((currentIndex + 1) % images.length);
-                }, interval);
+                start();
             });
         });
     });
@@ -415,6 +440,11 @@ const initApp = () => {
     });
 
     document.querySelectorAll('.discover-feature-slider').forEach((slider) => {
+        if (document.querySelector('.hero-h1') && slider.closest('.hero-media')) return;
+
+        if (slider.dataset.initialized === 'true') return;
+        slider.dataset.initialized = 'true';
+
         const slides = Array.from(slider.querySelectorAll('.discover-feature-slide'));
         const dots = Array.from(slider.querySelectorAll('.discover-feature-dot'));
         const prev = slider.querySelector('.discover-feature-prev');
@@ -425,8 +455,19 @@ const initApp = () => {
 
         let current = 0;
         let timer = null;
+        let isTransitioning = false;
+
+        const stop = () => {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+        };
 
         const goTo = (index) => {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
             current = (index + slides.length) % slides.length;
 
             slides.forEach((slide, i) => {
@@ -436,32 +477,36 @@ const initApp = () => {
             dots.forEach((dot, i) => {
                 dot.classList.toggle('is-active', i === current);
             });
+
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 700);
         };
 
         const start = () => {
+            stop();
             timer = setInterval(() => {
                 goTo(current + 1);
             }, interval);
         };
 
-        const stop = () => {
-            if (timer) clearInterval(timer);
-        };
-
-        next?.addEventListener('click', () => {
+        next?.addEventListener('click', (e) => {
+            e.preventDefault();
             stop();
             goTo(current + 1);
             start();
         });
 
-        prev?.addEventListener('click', () => {
+        prev?.addEventListener('click', (e) => {
+            e.preventDefault();
             stop();
             goTo(current - 1);
             start();
         });
 
         dots.forEach((dot) => {
-            dot.addEventListener('click', () => {
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
                 stop();
                 goTo(Number(dot.dataset.index || 0));
                 start();
@@ -471,7 +516,8 @@ const initApp = () => {
         slider.addEventListener('mouseenter', stop);
         slider.addEventListener('mouseleave', start);
 
-        goTo(0);
+        // Remove goTo(0) to avoid initial double initialization issues if the HTML is already active
+        // Just start the interval
         start();
     });
 };

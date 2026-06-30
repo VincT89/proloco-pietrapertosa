@@ -54,13 +54,37 @@ class ChatbotService
         $intent = $this->intentDetector->detect($message, $locale);
         
         $builder = new ChatbotResponseBuilder();
-        $builder->setContext([
+        $builder->setContext(array_merge($context, [
             'topic' => $intent,
-            'entity_type' => null,
-            'entity_id' => null
-        ]);
+            'last_intent' => $intent
+        ]));
 
-        return $this->routeIntent($intent, $message, $locale, $builder)->build();
+        $builder = $this->routeIntent($intent, $message, $locale, $builder);
+
+        // Se è un search di fallback, gestisce lui il log.
+        // Se è 'documents' ma con query lunga, viene deviato al search.
+        $messageLength = strlen(trim(str_replace(['documenti', 'documents', 'scaricare', 'download'], '', strtolower($message))));
+        $deferredSearch = ($intent === 'documents' && $messageLength > 5);
+
+        if ($intent !== 'fallback_search' && !$deferredSearch && config('chatbot.logging_enabled', true)) {
+            try {
+                $queryToLog = config('chatbot.log_raw_query', false) 
+                    ? $message 
+                    : hash('sha256', trim(strtolower($message)));
+                
+                \App\Models\ChatbotLog::create([
+                    'locale' => $locale,
+                    'query' => $queryToLog,
+                    'mode' => 'intent',
+                    'matched_destination' => $intent,
+                    'result_count' => 1,
+                ]);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('ChatbotLog creation failed: ' . $e->getMessage());
+            }
+        }
+
+        return $builder->build();
     }
 
     protected function routeIntent(string $intent, string $message, string $locale, ChatbotResponseBuilder $builder): ChatbotResponseBuilder
@@ -119,7 +143,7 @@ class ChatbotService
 
         $builder->addCard([
             'title' => $title,
-            'subtitle' => $event->start_date->format('d/m/Y H:i'),
+            'subtitle' => $event->start_date ? $event->start_date->format('d/m/Y H:i') : ($locale === 'en' ? 'Date TBA' : 'Data da definire'),
             'description' => \Illuminate\Support\Str::limit(strip_tags($description), 100),
             'url' => route('events.' . $locale),
             'image' => $event->cover ? $event->cover->url : null
@@ -146,7 +170,7 @@ class ChatbotService
             $title = $locale === 'en' && $event->title_en ? $event->title_en : $event->title;
             $builder->addCard([
                 'title' => $title,
-                'subtitle' => $event->start_date->format('d/m/Y'),
+                'subtitle' => $event->start_date ? $event->start_date->format('d/m/Y') : '',
                 'description' => '',
                 'url' => route('events.' . $locale),
                 'image' => $event->cover ? $event->cover->url : null

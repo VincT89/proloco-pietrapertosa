@@ -45,4 +45,6 @@ return [
         'api_secret' => env('CLOUDINARY_API_SECRET'),
     ],
 
+    'admin_emails' => explode(',', env('ADMIN_EMAILS', 'admin@prolocopietrapertosana.it')),
+
 ];

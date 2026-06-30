@@ -132,7 +132,7 @@ class ChatbotSearchService
 
     protected function searchEvents(array $terms, string $locale): Collection
     {
-        $query = Event::where('status', 'published');
+        $query = Event::with('cover')->where('status', 'published');
         
         $query->where(function($q) use ($terms) {
             foreach ($terms as $term) {
@@ -172,7 +172,7 @@ class ChatbotSearchService
 
     protected function searchNews(array $terms, string $locale): Collection
     {
-        $query = News::where('status', 'published');
+        $query = News::with('cover')->where('status', 'published');
         
         $query->where(function($q) use ($terms) {
             foreach ($terms as $term) {
@@ -214,7 +214,7 @@ class ChatbotSearchService
 
     protected function searchDirectory(array $terms, string $locale): Collection
     {
-        $query = DirectoryItem::query();
+        $query = DirectoryItem::with('cover');
         
         $query->where(function($q) use ($terms) {
             foreach ($terms as $term) {
@@ -321,7 +321,7 @@ class ChatbotSearchService
 
     protected function searchDocuments(array $terms, string $locale): Collection
     {
-        $query = FinancialDocument::where('is_published', true)->whereNotNull('media_id');
+        $query = FinancialDocument::with('media')->where('is_published', true)->whereNotNull('media_id');
         
         $query->where(function($q) use ($terms) {
             foreach ($terms as $term) {

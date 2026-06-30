@@ -35,11 +35,11 @@ class MediaManager
                     'type' => $isVideo ? 'video' : (($upload['resource_type'] ?? '') === 'raw' ? 'document' : 'image'),
                     'provider' => 'cloudinary',
                     'resource_type' => $upload['resource_type'] ?? 'image',
-                    'url' => $upload['secure_url'] ?? $upload['url'],
+                    'url' => $upload['secure_url'],
                     'public_id' => $upload['public_id'],
                     'alt' => $file->getClientOriginalName(),
                     'thumbnail_url' => $isVideo 
-                        ? str_replace('/video/upload/', '/video/upload/so_1,w_600,h_400,c_fill,f_jpg/', $upload['secure_url'] ?? $upload['url']) 
+                        ? str_replace('/video/upload/', '/video/upload/so_1,w_600,h_400,c_fill,f_jpg/', $upload['secure_url']) 
                         : null,
                     'metadata' => [
                         'original_name' => $file->getClientOriginalName(),
