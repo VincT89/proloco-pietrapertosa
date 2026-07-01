@@ -140,8 +140,8 @@
                             <input type="checkbox" name="privacy" value="1" required {{ old('privacy') ? 'checked' : '' }} style="margin-top: 4px;" />
                             <span>
                                 {!! (app()->getLocale() === 'en') 
-                                    ? 'I agree to the processing of personal data according to the <a href="'.route('privacy.en').'" target="_blank" rel="noopener noreferrer" style="color:var(--ed-color-theme); text-decoration:underline; font-weight:bold;">Privacy Policy</a>.' 
-                                    : 'Acconsento al trattamento dei dati personali secondo la <a href="'.route('privacy.it').'" target="_blank" rel="noopener noreferrer" style="color:var(--ed-color-theme); text-decoration:underline; font-weight:bold;">Privacy Policy</a>.' 
+                                    ? 'I consent to the processing of my personal data pursuant to the GDPR and according to the <a href="'.route('privacy.en').'" target="_blank" rel="noopener noreferrer" style="color:var(--ed-color-theme); text-decoration:underline; font-weight:bold;">Privacy Policy</a>.' 
+                                    : 'Acconsento al trattamento dei miei dati personali ai sensi del GDPR e secondo la <a href="'.route('privacy.it').'" target="_blank" rel="noopener noreferrer" style="color:var(--ed-color-theme); text-decoration:underline; font-weight:bold;">Privacy Policy</a>.' 
                                 !!}
                             </span>
                         </label>

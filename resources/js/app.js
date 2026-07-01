@@ -355,9 +355,11 @@ const initApp = () => {
     };
 
     const cookieBanner = document.getElementById('cookieBanner');
-    if (cookieBanner && !window.hasExternalConsent() && !window.hasRejectedConsent()) {
+    if (cookieBanner) {
         setTimeout(() => cookieBanner.classList.remove('is-hidden'), 1000);
-    } else if (window.hasExternalConsent()) {
+    }
+
+    if (window.hasExternalConsent()) {
         window.loadExternalEmbeds();
     }
 

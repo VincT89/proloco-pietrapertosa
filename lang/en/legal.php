@@ -4,7 +4,7 @@ return [
     'privacy' => 'Privacy Policy',
     'cookie' => 'Cookie Policy',
     'cookie_banner_title' => 'Cookie Preferences',
-    'cookie_banner_text' => 'We use technical cookies and, with your consent, external contents.',
+    'cookie_banner_text' => 'We use technical cookies and, with GDPR/ePrivacy consent, external contents.',
     'accept_external' => 'Accept external contents',
     'reject_external' => 'Reject',
     'manage_preferences' => 'Manage preferences',
