@@ -15,10 +15,23 @@ class PublicController extends Controller
     public function home()
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'home')->first();
+
+        $monthStart = Carbon::now()->startOfMonth();
+        $monthEnd = Carbon::now()->endOfMonth();
+
         $events = Event::with('cover')
             ->where('status', 'published')
-            ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
-            ->orderBy('start_date', 'desc')
+            ->where(function ($query) use ($monthStart, $monthEnd) {
+                $query
+                    ->whereBetween('start_date', [$monthStart, $monthEnd])
+                    ->orWhereBetween('end_date', [$monthStart, $monthEnd])
+                    ->orWhere(function ($query) use ($monthStart, $monthEnd) {
+                        $query
+                            ->where('start_date', '<=', $monthStart)
+                            ->where('end_date', '>=', $monthEnd);
+                    });
+            })
+            ->orderBy('start_date')
             ->take(3)
             ->get();
         $news = News::with('cover')->where('status', 'published')->orderBy('published_at', 'desc')->take(3)->get();
