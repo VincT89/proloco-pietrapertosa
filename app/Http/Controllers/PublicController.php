@@ -8,6 +8,7 @@ use App\Models\GalleryAlbum;
 use App\Models\News;
 use App\Models\PageSetting;
 use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class PublicController extends Controller
 {
@@ -92,6 +93,25 @@ class PublicController extends Controller
     public function events()
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'eventi')->first();
+
+        $monthStart = Carbon::now()->startOfMonth();
+        $monthEnd = Carbon::now()->endOfMonth();
+
+        $currentMonthEvents = Event::with(['cover', 'galleryMedia', 'externalMedia'])
+            ->where('status', 'published')
+            ->where(function ($query) use ($monthStart, $monthEnd) {
+                $query
+                    ->whereBetween('start_date', [$monthStart, $monthEnd])
+                    ->orWhereBetween('end_date', [$monthStart, $monthEnd])
+                    ->orWhere(function ($query) use ($monthStart, $monthEnd) {
+                        $query
+                            ->where('start_date', '<=', $monthStart)
+                            ->where('end_date', '>=', $monthEnd);
+                    });
+            })
+            ->orderBy('start_date')
+            ->get();
+
         $events = Event::with(['cover', 'galleryMedia', 'externalMedia'])
             ->where('status', 'published')
             ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
@@ -102,7 +122,7 @@ class PublicController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        return view('pages.events', compact('page', 'events', 'annualEvents'));
+        return view('pages.events', compact('page', 'events', 'annualEvents', 'currentMonthEvents'));
     }
 
     public function gallery()

@@ -59,13 +59,13 @@
             <h2 class="ed-title ev-title-nomargin">{{ __('events.upcoming_title', ['year' => date('Y')]) }}</h2>
         </div>
         
-        @if($events->isEmpty())
+        @if($currentMonthEvents->isEmpty())
             <div class="ev-empty-msg-2">
                 <p class="ev-empty-italic">@lang('events.no_events_upcoming')</p>
             </div>
         @else
             <div class="ev-grid-cards">
-                @foreach($events as $ev)
+                @foreach($currentMonthEvents as $ev)
                     @php
                     $galleryLarge = $ev->galleryMedia->map(fn($m) => [
                         'type' => $m->type, 
