@@ -14,7 +14,7 @@
                 <ul class="fu">
                     <li><a href="mailto:prolocopietrapertosa@gmail.com">prolocopietrapertosa@gmail.com</a></li>
                     <li><a href="mailto:prolocopietrapertosa@pec.it">prolocopietrapertosa@pec.it</a></li>
-                    <li>342 989 6770</li>
+                    <li>320 833 7801</li>
                 </ul>
                 <p>@lang('navigation.association_desc')</p>
                 <div class="footer-address">
