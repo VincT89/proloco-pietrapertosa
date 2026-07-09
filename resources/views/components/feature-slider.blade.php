@@ -51,7 +51,7 @@
                 </div>
 
                 @if($images->count())
-                    <div class="discover-feature-media">
+                    <div class="discover-feature-media" data-count="{{ $images->count() }}">
                         @foreach($images as $imgIndex => $img)
                             <div class="discover-collage-img discover-collage-img-{{ $imgIndex + 1 }}" onclick="openGallery({{ $galleryData }}, {{ $imgIndex }})" style="cursor: pointer;">
                                 <img
