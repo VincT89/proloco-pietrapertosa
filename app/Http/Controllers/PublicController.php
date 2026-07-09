@@ -16,7 +16,7 @@ class PublicController extends Controller
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'home')->first();
 
-        $cutoff = Carbon::now()->subWeeks(2);
+        $cutoff = Carbon::now()->subDay();
 
         $events = Event::with('cover')
             ->where('status', 'published')
@@ -104,7 +104,7 @@ class PublicController extends Controller
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'eventi')->first();
 
-        $cutoff = Carbon::now()->subWeeks(2);
+        $cutoff = Carbon::now()->subDay();
 
         $currentMonthEvents = Event::with(['cover', 'galleryMedia', 'externalMedia'])
             ->where('status', 'published')
@@ -119,7 +119,7 @@ class PublicController extends Controller
             ->orderBy('start_date', 'asc')
             ->get();
 
-        $cutoff = Carbon::now()->subWeeks(2);
+        $cutoff = Carbon::now()->subDay();
 
         $events = Event::with(['cover', 'galleryMedia', 'externalMedia'])
             ->where('status', 'published')
