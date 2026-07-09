@@ -186,9 +186,40 @@ const initApp = () => {
 
         root.querySelectorAll('iframe').forEach((iframe) => {
             try {
+                if (!iframe.dataset.originalSrc) {
+                    iframe.dataset.originalSrc = iframe.src;
+                }
                 iframe.src = 'about:blank';
             } catch (e) {}
         });
+    };
+
+    window.restoreMediaInside = function(root) {
+        if (!root) return;
+
+        root.querySelectorAll('iframe').forEach((iframe) => {
+            try {
+                if (iframe.dataset.originalSrc && iframe.src === 'about:blank') {
+                    iframe.src = iframe.dataset.originalSrc;
+                }
+            } catch (e) {}
+        });
+    };
+
+    window.openNewsModal = function(id, e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        const modal = document.getElementById(id);
+        if (!modal) return;
+
+        if (typeof window.restoreMediaInside === 'function') {
+            window.restoreMediaInside(modal);
+        }
+
+        modal.style.display = 'flex';
     };
 
     window.closeGallery = function(e) {

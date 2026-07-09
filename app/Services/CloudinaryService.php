@@ -43,7 +43,10 @@ class CloudinaryService
                 'Il file "' . $file->getClientOriginalName() . '" supera il limite massimo di ' . $maxMb . ' MB.'
             );
         }
-        $isDocument = preg_match('/application\/(pdf|msword|vnd\.openxmlformats-officedocument|zip|rar)/i', $mime);
+        $isDocument = preg_match(
+            '/application\/(pdf|msword|vnd\.openxmlformats-officedocument|zip|x-zip-compressed|rar)/i',
+            $mime
+        );
         
         $response = $this->cloudinary->uploadApi()->upload($file->getRealPath(), [
             'folder' => $folder,

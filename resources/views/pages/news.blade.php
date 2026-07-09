@@ -28,7 +28,7 @@
             @else
                 <div class="ev-card-grid">
                     @foreach($news as $notizia)
-                        <div class="ev-card-giant is-clickable" onclick="document.getElementById('news-modal-{{ $notizia->id }}').style.display='flex'">
+                        <div class="ev-card-giant is-clickable" onclick="openNewsModal('news-modal-{{ $notizia->id }}', event)">
                             <div class="ev-card-bg" style="overflow: hidden; border-radius: 8px;">
                                 @if($notizia->cover)
                                     <img src="{{ $notizia->cover->optimizedUrl('poster_blur') }}" class="ev-card-normal-blur" loading="lazy" decoding="async" />

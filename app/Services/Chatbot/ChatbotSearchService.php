@@ -353,13 +353,20 @@ class ChatbotSearchService
 
             $firstMedia = $album->galleryMedia->first();
 
+            $image = null;
+            if ($firstMedia) {
+                $image = $firstMedia->isVideo()
+                    ? ($firstMedia->thumbnail_url ?? $firstMedia->videoThumbnailUrl('card'))
+                    : $firstMedia->optimizedUrl('card');
+            }
+
             return [
                 'type' => 'card',
                 'title' => $title,
                 'subtitle' => $locale === 'en' ? 'Photo album' : 'Album fotografico',
                 'description' => $album->section_date ? $album->section_date->format('d/m/Y') : '',
                 'url' => route('gallery.' . $locale),
-                'image' => $firstMedia ? $firstMedia->url : null,
+                'image' => $image,
                 'score' => $score
             ];
         });

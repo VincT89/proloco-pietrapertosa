@@ -79,6 +79,7 @@ class FinancialDocumentForm
                                     ->label('Carica nuovo documento')
                                     ->acceptedFileTypes(['application/pdf'])
                                     ->storeFiles(false)
+                                    ->maxSize(10240)
                                     ->helperText(new \Illuminate\Support\HtmlString(
                                         'Evitare file superiori a 10 MB. Se il documento è troppo pesante, riduci la dimensione prima del caricamento.'
                                     ))
