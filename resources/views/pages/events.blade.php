@@ -25,7 +25,7 @@
                         'url' => $m->type === 'image' ? $m->optimizedUrl('large') : ($m->type === 'video' ? $m->optimizedVideoUrl() : $m->url), 
                         'embed_url' => $m->embed_url
                     ])->toArray();
-                    $galleryThumb = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('card'))->toArray();
+                    $galleryThumb = $ev->galleryMedia->map(fn($m) => $m->isVideo() ? $m->videoThumbnailUrl('card') : $m->optimizedUrl('card'))->filter()->toArray();
                 @endphp
                 <div class="ev-card-giant {{ count($galleryThumb) > 0 ? 'is-clickable' : '' }}" @if(count($galleryLarge) > 0) onclick='openGallery(@json($galleryLarge))' @endif>
                     <div class="ev-card-bg">
@@ -44,7 +44,26 @@
                             <h3 class="ev-card-title">
                                 {{ $ev->getTranslation('title') }}
                             </h3>
-                            <p class="ev-card-desc">{{ Str::limit(strip_tags(html_entity_decode($ev->getTranslation('description'))), 150) }}</p>
+                            @php
+                                $desc = strip_tags(html_entity_decode($ev->getTranslation('description')));
+                                $limit = 150;
+                                $readMore = app()->getLocale() === 'en' ? 'Read more' : 'Leggi di più';
+                                $readLess = app()->getLocale() === 'en' ? 'Show less' : 'Riduci';
+                            @endphp
+                            <div class="ev-card-desc">
+                                @if(\Illuminate\Support\Str::length($desc) > $limit)
+                                    <div id="ev-desc-trunc-{{ $ev->id }}">
+                                        {{ \Illuminate\Support\Str::limit($desc, $limit, '') }}... 
+                                        <span style="color: var(--gold); font-weight: 500; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); document.getElementById('ev-desc-trunc-{{ $ev->id }}').style.display='none'; document.getElementById('ev-desc-full-{{ $ev->id }}').style.display='block';">{{ $readMore }}</span>
+                                    </div>
+                                    <div id="ev-desc-full-{{ $ev->id }}" style="display: none;">
+                                        {{ $desc }} 
+                                        <span style="color: var(--gold); font-weight: 500; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); document.getElementById('ev-desc-full-{{ $ev->id }}').style.display='none'; document.getElementById('ev-desc-trunc-{{ $ev->id }}').style.display='block';">{{ $readLess }}</span>
+                                    </div>
+                                @else
+                                    {{ $desc }}
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -73,13 +92,19 @@
                         'url' => $m->type === 'image' ? $m->optimizedUrl('large') : ($m->type === 'video' ? $m->optimizedVideoUrl() : $m->url), 
                         'embed_url' => $m->embed_url
                     ])->toArray();
-                        $galleryThumb = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('card'))->toArray();
-                        $galleryPoster = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('poster'))->toArray();
-                        $galleryBlur = $ev->galleryMedia->map(fn($m) => $m->optimizedUrl('poster_blur'))->toArray();
+                        $galleryThumb = $ev->galleryMedia->map(fn($m) => $m->isVideo() ? $m->videoThumbnailUrl('card') : $m->optimizedUrl('card'))->filter()->toArray();
+                        $galleryPoster = $ev->galleryMedia->map(fn($m) => $m->isVideo() ? $m->videoThumbnailUrl('poster') : $m->optimizedUrl('poster'))->filter()->toArray();
+                        $galleryBlur = $ev->galleryMedia->map(fn($m) => $m->isVideo() ? $m->videoThumbnailUrl('poster_blur') : $m->optimizedUrl('poster_blur'))->filter()->toArray();
                     @endphp
                     <div class="ev-card-normal {{ count($galleryThumb) > 0 ? 'is-clickable' : '' }}" @if(count($galleryLarge) > 0) onclick='openGallery(@json($galleryLarge))' @endif>
                         <div class="ev-card-normal-bg">
-                            @if(count($galleryPoster) > 0)
+                            @if($ev->cover)
+                                <img src="{{ $ev->cover->optimizedUrl('poster_blur') }}" class="ev-card-normal-blur" loading="lazy" decoding="async" />
+
+                                <div class="ev-card-normal-poster">
+                                    <img src="{{ $ev->cover->optimizedUrl('poster') }}" class="pos-abs-cover object-contain" loading="lazy" decoding="async" />
+                                </div>
+                            @elseif(count($galleryPoster) > 0)
                                 @include('components.auto-carousel', [
                                     'images' => $galleryBlur,
                                     'interval' => 3000 + $loop->index * 500,
@@ -93,12 +118,6 @@
                                         'interval' => 3000 + $loop->index * 500,
                                         'objectFit' => 'contain'
                                     ])
-                                </div>
-                            @elseif($ev->cover)
-                                <img src="{{ $ev->cover->optimizedUrl('poster_blur') }}" class="ev-card-normal-blur" loading="lazy" decoding="async" />
-
-                                <div class="ev-card-normal-poster">
-                                    <img src="{{ $ev->cover->optimizedUrl('poster') }}" class="pos-abs-cover object-contain" loading="lazy" decoding="async" />
                                 </div>
                             @else
                                 <div class="ev-card-placeholder"></div>
@@ -120,8 +139,25 @@
                                         {{ (app()->getLocale() === 'en') ? 'To be defined' : 'Da definire' }}
                                     @endif
                                 </span>
-                                <div class="event-desc ev-card-normal-desc">
-                                    {!! clean($ev->getTranslation('description') ?? '') !!}
+                                @php
+                                    $desc = strip_tags(html_entity_decode($ev->getTranslation('description') ?? ''));
+                                    $limit = 120;
+                                    $readMore = app()->getLocale() === 'en' ? 'Read more' : 'Leggi di più';
+                                    $readLess = app()->getLocale() === 'en' ? 'Show less' : 'Riduci';
+                                @endphp
+                                <div class="event-desc ev-card-normal-desc" style="-webkit-line-clamp: unset; display: block;">
+                                    @if(\Illuminate\Support\Str::length($desc) > $limit)
+                                        <div id="evn-desc-trunc-{{ $ev->id }}">
+                                            {{ \Illuminate\Support\Str::limit($desc, $limit, '') }}... 
+                                            <span style="color: var(--gold); font-weight: 500; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); document.getElementById('evn-desc-trunc-{{ $ev->id }}').style.display='none'; document.getElementById('evn-desc-full-{{ $ev->id }}').style.display='block';">{{ $readMore }}</span>
+                                        </div>
+                                        <div id="evn-desc-full-{{ $ev->id }}" style="display: none;">
+                                            {{ $desc }} 
+                                            <span style="color: var(--gold); font-weight: 500; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); document.getElementById('evn-desc-full-{{ $ev->id }}').style.display='none'; document.getElementById('evn-desc-trunc-{{ $ev->id }}').style.display='block';">{{ $readLess }}</span>
+                                        </div>
+                                    @else
+                                        {{ $desc }}
+                                    @endif
                                 </div>
                             </div>
                         </div>

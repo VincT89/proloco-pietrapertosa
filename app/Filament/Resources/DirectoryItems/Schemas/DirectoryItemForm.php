@@ -85,56 +85,8 @@ class DirectoryItemForm
                             $html .= '</div>';
                             return new \Illuminate\Support\HtmlString($html);
                         }),
-                    FileUpload::make('gallery_files')->label('Galleria Immagini/Video (File Locali)')
-                        ->multiple()
-                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'])
-                        ->maxSize(10240)
-                        ->helperText(new \Illuminate\Support\HtmlString(
-                            'Prima del caricamento è consigliato comprimere le immagini o convertirle in JPG/WebP. 
-                            Dimensione consigliata: 500 KB - 2 MB. Evitare file superiori a 10 MB. 
-                            Puoi usare <a href="https://www.iloveimg.com/it" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">iLoveIMG</a>.'
-                        ))
-                        ->getUploadedFileUsing(function (string $file): ?array {
-                            return [
-                                'name' => basename($file),
-                                'size' => 0,
-                                'type' => preg_match('/\.(mp4|webm|mov)$/i', $file) ? 'video/mp4' : 'image/jpeg',
-                                'url' => $file,
-                            ];
-                        })
-                        ->saveUploadedFileUsing(function (UploadedFile $file) {
-                            $media = app(\App\Services\MediaManager::class)->upload($file);
-                            \Illuminate\Support\Facades\Cache::put('last_upload_'.$media->url, $media->id, 300);
-                            return $media->url;
-                        })
-                        ->deleteUploadedFileUsing(function (string $file) {
-                            $mediaId = \Illuminate\Support\Facades\Cache::get('last_upload_'.$file);
-                            if (! $mediaId) return;
-
-                            $media = Media::find($mediaId);
-                            if ($media) {
-                                app(\App\Services\MediaManager::class)->delete($media);
-                            }
-                            \Illuminate\Support\Facades\Cache::forget('last_upload_'.$file);
-                        })
-                        ->afterStateHydrated(function ($component, $record) {
-                            if ($record) {
-                                $component->state($record->galleryMedia->pluck('url')->toArray());
-                            }
-                        })
-                        ->dehydrated(false)
-                        ->saveRelationshipsUsing(function ($record, $state) {
-                            $syncData = [];
-                            if (is_array($state)) {
-                                foreach (array_values($state) as $index => $url) {
-                                    $media = Media::where('url', $url)->first();
-                                    if ($media) {
-                                        $syncData[$media->id] = ['order' => $index, 'collection' => 'gallery'];
-                                    }
-                                }
-                            }
-                            $record->galleryMedia()->sync($syncData);
-                        })
+                    \App\Filament\Components\MediaUpload::make('gallery_files', 'gallery')
+                        ->label('Galleria Immagini/Video (File Locali)')
                         ->columnSpanFull(),
 
                     KeyValue::make('stats')->label('Statistiche')->default(null)->columnSpanFull(),

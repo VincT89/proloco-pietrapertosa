@@ -46,8 +46,49 @@ class ChatbotNavigationClassifier
             }
         }
 
-        // 3. Match Generic Navigation Destinations
         $destinations = config('chatbot_navigation.destinations', []);
+
+        // 2.5. Specific Photo Query check
+        $galleryKeywords = $destinations['gallery']['generic_keywords'][$locale] ?? [];
+        $hasGalleryKeyword = false;
+
+        foreach ($galleryKeywords as $kw) {
+            if (str_contains($messageLower, $kw)) {
+                $hasGalleryKeyword = true;
+                break;
+            }
+        }
+
+        if ($hasGalleryKeyword) {
+            $genericPhotoWords = $locale === 'en'
+                ? ['photos', 'photo', 'gallery', 'images', 'pictures', 'see', 'view', 'show', 'find']
+                : [
+                    'foto',
+                    'galleria',
+                    'immagini',
+                    'fotografie',
+                    'vedere',
+                    'guardare',
+                    'mostrare',
+                    'mostrami',
+                    'avete',
+                    'archivio',
+                    'fotografico'
+                ];
+
+            $specificTerms = array_values(array_diff($originalTerms, $genericPhotoWords));
+
+            if (count($specificTerms) > 0) {
+                return [
+                    'classification' => 'search',
+                    'destination' => null,
+                    'confidence' => 0.75,
+                    'matched_area' => null
+                ];
+            }
+        }
+
+        // 3. Match Generic Navigation Destinations
         
         $matchedDestinations = [];
         foreach ($destinations as $destKey => $destData) {

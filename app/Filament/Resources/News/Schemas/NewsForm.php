@@ -102,7 +102,13 @@ class NewsForm
                         ->label('Galleria Immagini/Video (File Locali)')
                         ->columnSpanFull(),
 
-                    \App\Filament\Components\MediaUpload::make('attachments_files', 'attachments', ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip', 'application/x-zip-compressed'])
+                    \App\Filament\Components\MediaUpload::make(
+                        'attachments_files', 
+                        'attachments', 
+                        ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip', 'application/x-zip-compressed'],
+                        10240,
+                        new \Illuminate\Support\HtmlString('Allegati: massimo 10 MB per file. Consigliato formato PDF o ZIP.')
+                    )
                         ->label('Allegati Scaricabili (PDF/Doc/Zip)')
                         ->columnSpanFull(),
                     Select::make('status')->label('Stato')->options(['draft' => 'Bozza', 'published' => 'Pubblicato', 'archived' => 'Archiviato'])->default('draft')->required(),

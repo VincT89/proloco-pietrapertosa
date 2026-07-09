@@ -41,7 +41,7 @@
         'title' => (app()->getLocale() === 'en') ? "Come and taste" : "Vieni ad assaggiare",
         'text' => (app()->getLocale() === 'en') ? "Discover local restaurants and farms in the area." : "Scopri i ristoranti locali e le aziende agricole del territorio.",
         'btnText' => (app()->getLocale() === 'en') ? "Contact us" : "Contattaci",
-        'btnLink' => url("/" . app()->getLocale() . "/contatti"),
+        'btnLink' => route('proLoco.' . app()->getLocale()) . '#contatti',
         'bgImage' => asset('images/sfondo_cta.jpeg')
     ])
 @endsection

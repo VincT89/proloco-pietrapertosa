@@ -13,17 +13,21 @@ class MediaUpload
     public static function make(
         string $name, 
         string $collection = 'gallery', 
-        array $acceptedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm']
+        array $acceptedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime', 'video/webm'],
+        int $maxSize = 102400,
+        ?\Illuminate\Support\HtmlString $helperText = null
     ): FileUpload {
+        $defaultHelperText = new \Illuminate\Support\HtmlString(
+            'Immagini consigliate: 500 KB - 2 MB, massimo 10 MB.<br>
+            Video: massimo 100 MB. Per video più pesanti, comprimere prima del caricamento.<br>
+            Puoi usare <a href="https://www.iloveimg.com/it" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">iLoveIMG</a> per le immagini.'
+        );
+
         return FileUpload::make($name)
             ->multiple()
             ->acceptedFileTypes($acceptedTypes)
-            ->maxSize(10240)
-            ->helperText(new \Illuminate\Support\HtmlString(
-                'Prima del caricamento è consigliato comprimere le immagini o convertirle in JPG/WebP. 
-                Dimensione consigliata: 500 KB - 2 MB. Evitare file superiori a 10 MB. 
-                Puoi usare <a href="https://www.iloveimg.com/it" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">iLoveIMG</a>.'
-            ))
+            ->maxSize($maxSize)
+            ->helperText($helperText ?? $defaultHelperText)
             ->getUploadedFileUsing(function (string $file): ?array {
                 return [
                     'name' => basename($file),

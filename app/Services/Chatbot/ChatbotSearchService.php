@@ -7,6 +7,7 @@ use App\Models\News;
 use App\Models\DirectoryItem;
 use App\Models\PageSetting;
 use App\Models\FinancialDocument;
+use App\Models\GalleryAlbum;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -74,6 +75,7 @@ class ChatbotSearchService
         $results = $results->merge($this->searchEvents($terms, $locale));
         $results = $results->merge($this->searchNews($terms, $locale));
         $results = $results->merge($this->searchDirectory($terms, $locale));
+        $results = $results->merge($this->searchGalleryAlbums($terms, $locale));
         $results = $results->merge($this->searchPages($terms, $locale));
         $results = $results->merge($this->searchDocuments($terms, $locale));
 
@@ -112,6 +114,15 @@ class ChatbotSearchService
                 }
             })->exists();
         if ($hasEvent) return true;
+
+        // Check GalleryAlbums
+        $hasAlbum = GalleryAlbum::where(function($q) use ($terms) {
+            foreach ($terms as $term) {
+                $q->orWhere('title', 'LIKE', "%{$term}%")
+                  ->orWhere('title_en', 'LIKE', "%{$term}%");
+            }
+        })->exists();
+        if ($hasAlbum) return true;
 
         return false;
     }
@@ -314,6 +325,41 @@ class ChatbotSearchService
                 'description' => Str::limit(strip_tags($intro), 80),
                 'url' => $url,
                 'image' => null,
+                'score' => $score
+            ];
+        });
+    }
+
+    protected function searchGalleryAlbums(array $terms, string $locale): Collection
+    {
+        $query = GalleryAlbum::with('galleryMedia');
+
+        $query->where(function($q) use ($terms) {
+            foreach ($terms as $term) {
+                $q->orWhere('title', 'LIKE', "%{$term}%")
+                  ->orWhere('title_en', 'LIKE', "%{$term}%");
+            }
+        });
+
+        $albums = $query->get();
+
+        return $albums->map(function ($album) use ($terms, $locale) {
+            $title = $locale === 'en' && $album->title_en ? $album->title_en : $album->title;
+
+            $score = $this->calculateScore($terms, [
+                $title => 100,
+                optional($album->section_date)->format('Y') => 40,
+            ]);
+
+            $firstMedia = $album->galleryMedia->first();
+
+            return [
+                'type' => 'card',
+                'title' => $title,
+                'subtitle' => $locale === 'en' ? 'Photo album' : 'Album fotografico',
+                'description' => $album->section_date ? $album->section_date->format('d/m/Y') : '',
+                'url' => route('gallery.' . $locale),
+                'image' => $firstMedia ? $firstMedia->url : null,
                 'score' => $score
             ];
         });

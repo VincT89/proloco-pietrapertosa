@@ -174,11 +174,60 @@ const initApp = () => {
         modal.classList.add('active');
     };
 
-    window.closeGallery = function() {
+    window.stopMediaInside = function(root) {
+        if (!root) return;
+
+        root.querySelectorAll('video').forEach((video) => {
+            try {
+                video.pause();
+                video.currentTime = 0;
+            } catch (e) {}
+        });
+
+        root.querySelectorAll('iframe').forEach((iframe) => {
+            try {
+                iframe.src = 'about:blank';
+            } catch (e) {}
+        });
+    };
+
+    window.closeGallery = function(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
         const modal = document.getElementById('gallery-modal');
-        modal.style.display = 'none';
-        modal.classList.remove('active');
+        const container = document.getElementById('lbMediaContainer');
+
+        if (container) {
+            window.stopMediaInside(container);
+            container.innerHTML = '';
+        }
+
+        if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('active');
+            modal.classList.remove('is-loading');
+        }
+
         window.lbData.images = [];
+    };
+
+    window.closeNewsModal = function(id, e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        const modal = document.getElementById(id);
+        if (!modal) return;
+
+        if (typeof window.stopMediaInside === 'function') {
+            window.stopMediaInside(modal);
+        }
+
+        modal.style.display = 'none';
     };
 
     window.lbPrev = function(e) {

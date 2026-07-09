@@ -28,13 +28,21 @@ class CloudinaryService
      */
     public function uploadMedia(UploadedFile $file, string $folder = 'proloco_pietrapertosana')
     {
-        if ($file->getSize() > 10 * 1024 * 1024) {
+        $mime = $file->getMimeType() ?? '';
+
+        $isVideo = str_starts_with($mime, 'video/');
+
+        $maxBytes = $isVideo
+            ? 100 * 1024 * 1024
+            : 10 * 1024 * 1024;
+
+        if ($file->getSize() > $maxBytes) {
+            $maxMb = $isVideo ? 100 : 10;
+
             throw new \InvalidArgumentException(
-                'Il file "' . $file->getClientOriginalName() . '" supera il limite massimo di 10 MB consentito da Cloudinary.'
+                'Il file "' . $file->getClientOriginalName() . '" supera il limite massimo di ' . $maxMb . ' MB.'
             );
         }
-
-        $mime = $file->getMimeType();
         $isDocument = preg_match('/application\/(pdf|msword|vnd\.openxmlformats-officedocument|zip|rar)/i', $mime);
         
         $response = $this->cloudinary->uploadApi()->upload($file->getRealPath(), [

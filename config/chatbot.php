@@ -25,6 +25,14 @@ return [
         'visitare' => ['visitare', 'scopri', 'luoghi'],
         'volo' => ['volo', 'angelo'],
         'arabata' => ['arabata', 'tracce', 'arabi'],
-        'castello' => ['castello', 'saraceno']
+        'castello' => ['castello', 'saraceno'],
+        'parcheggio' => ['parcheggio', 'parcheggi', 'sosta', 'auto', 'macchina'],
+        'parcheggi' => ['parcheggio', 'parcheggi', 'sosta', 'auto', 'macchina'],
+        'proloco' => ['pro loco', 'proloco'],
+        'contatto' => ['contatti', 'telefono', 'email', 'pro loco'],
+        'foto' => ['foto', 'galleria', 'immagini', 'album'],
+        'galleria' => ['foto', 'galleria', 'immagini', 'album'],
+        'notizie' => ['notizie', 'novità', 'aggiornamenti', 'news'],
+        'eventi' => ['eventi', 'manifestazioni', 'feste']
     ],
 ];

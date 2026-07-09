@@ -49,18 +49,35 @@
                                     <h3 class="ev-card-title">
                                         {{ $notizia->getTranslation('title') }}
                                     </h3>
-                                    <p class="ev-card-desc">
-                                        {{ Str::limit(strip_tags(html_entity_decode($notizia->getTranslation('excerpt') ?: $notizia->getTranslation('content'))), 150) }}
-                                    </p>
+                                    @php
+                                        $desc = strip_tags(html_entity_decode($notizia->getTranslation('excerpt') ?: $notizia->getTranslation('content')));
+                                        $limit = 150;
+                                        $readMore = app()->getLocale() === 'en' ? 'Read more' : 'Leggi di più';
+                                        $readLess = app()->getLocale() === 'en' ? 'Show less' : 'Riduci';
+                                    @endphp
+                                    <div class="ev-card-desc">
+                                        @if(\Illuminate\Support\Str::length($desc) > $limit)
+                                            <div id="news-desc-trunc-{{ $notizia->id }}">
+                                                {{ \Illuminate\Support\Str::limit($desc, $limit, '') }}... 
+                                                <span style="color: var(--gold); font-weight: 500; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); document.getElementById('news-desc-trunc-{{ $notizia->id }}').style.display='none'; document.getElementById('news-desc-full-{{ $notizia->id }}').style.display='block';">{{ $readMore }}</span>
+                                            </div>
+                                            <div id="news-desc-full-{{ $notizia->id }}" style="display: none;">
+                                                {{ $desc }} 
+                                                <span style="color: var(--gold); font-weight: 500; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); document.getElementById('news-desc-full-{{ $notizia->id }}').style.display='none'; document.getElementById('news-desc-trunc-{{ $notizia->id }}').style.display='block';">{{ $readLess }}</span>
+                                            </div>
+                                        @else
+                                            {{ $desc }}
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Modal News -->
-                        <div class="modal lb-modal" id="news-modal-{{ $notizia->id }}" style="display: none; z-index: 1000; padding: 20px;" onclick="this.style.display='none'">
+                        <div class="modal lb-modal" id="news-modal-{{ $notizia->id }}" style="display: none; z-index: 1000; padding: 20px;" onclick="closeNewsModal('news-modal-{{ $notizia->id }}', event)">
                             <div class="ov"></div>
                             <div class="lb-img-wrap" style="flex-direction: column; align-items: flex-start; justify-content: flex-start; max-width: 800px; width: 100%; background: var(--ink); border-radius: 8px; padding: clamp(20px, 4vw, 40px); cursor: default; overflow-y: auto; max-height: 90vh; position: relative;" onclick="event.stopPropagation()">
-                                <button class="x" onclick="document.getElementById('news-modal-{{ $notizia->id }}').style.display='none'" aria-label="Chiudi" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); border-radius: 50%; border: none; color: white; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; z-index: 10;">
+                                <button class="x" onclick="closeNewsModal('news-modal-{{ $notizia->id }}', event)" aria-label="Chiudi" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); border-radius: 50%; border: none; color: white; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; z-index: 10;">
                                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
                                 </button>
                                 
@@ -105,7 +122,20 @@
                                         <div class="nw-gal-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;">
                                             @foreach($allGalleryMedia as $idx => $media)
                                                 <div class="cur fad gal-img-wrap pos-rel" onclick="openGallery({{ $allGalleryMedia->map(fn($m) => ['type' => $m->type, 'provider' => $m->provider, 'url' => $m->type === 'image' ? $m->optimizedUrl('large') : ($m->type === 'video' ? $m->optimizedVideoUrl() : $m->url), 'embed_url' => $m->embed_url])->toJson() }}, {{ $idx }})" style="aspect-ratio: 1; border-radius: 4px; overflow: hidden; position: relative;">
-                                                    <x-media-renderer :media="$media" class="gal-img" style="width: 100%; height: 100%; object-fit: cover;" />
+                                                    @if($media->isVideo())
+                                                        @php
+                                                            $thumb = $media->thumbnail_url ?? $media->videoThumbnailUrl('card');
+                                                        @endphp
+                                                        @if($thumb)
+                                                            <img src="{{ $thumb }}" alt="{{ $media->alt ?? '' }}" class="gal-img" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
+                                                        @else
+                                                            <div class="gal-img video-thumb-fallback" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #333; color: white;">
+                                                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                            </div>
+                                                        @endif
+                                                    @else
+                                                        <x-media-renderer :media="$media" class="gal-img" style="width: 100%; height: 100%; object-fit: cover;" />
+                                                    @endif
                                                 </div>
                                             @endforeach
                                         </div>

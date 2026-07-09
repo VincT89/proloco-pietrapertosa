@@ -10,7 +10,7 @@ use App\Models\Event;
 use App\Models\FinancialDocument;
 use App\Models\Media;
 use Carbon\Carbon;
-
+use App\Models\GalleryAlbum;
 class ChatbotTest extends TestCase
 {
     use RefreshDatabase;
@@ -220,6 +220,137 @@ class ChatbotTest extends TestCase
         $response->assertStatus(200);
         $cards = collect($response->json('cards'));
         $this->assertTrue($cards->contains('title', 'Festa nel weekend'));
+    }
+
+    public function test_contact_variant_contatto_proloco()
+    {
+        $response = $this->postJson('/it/chatbot/message', [
+            'message' => 'come contatto la proloco?'
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertStringContainsString('320 833 7801', $response->json('reply'));
+        $this->assertStringContainsString('prolocopietrapertosa@gmail.com', $response->json('reply'));
+        $this->assertStringContainsString('prolocopietrapertosa@pec.it', $response->json('reply'));
+
+        $links = collect($response->json('links'));
+        $this->assertTrue($links->contains(function ($link) {
+            return str_contains($link['url'], '#contatti');
+        }));
+    }
+
+    public function test_parking_question_returns_prudent_answer()
+    {
+        $response = $this->postJson('/it/chatbot/message', [
+            'message' => 'dove posso parcheggiare?'
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertStringContainsString('Non ho informazioni ufficiali dettagliate sui parcheggi', $response->json('reply'));
+        $this->assertStringContainsString('320 833 7801', $response->json('reply'));
+        $this->assertStringContainsString('prolocopietrapertosa@gmail.com', $response->json('reply'));
+    }
+
+    public function test_arrival_question_returns_address_and_contact_link()
+    {
+        $response = $this->postJson('/it/chatbot/message', [
+            'message' => 'come arrivo alla pro loco?'
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertStringContainsString('Via della Speranza, 159', $response->json('reply'));
+
+        $links = collect($response->json('links'));
+        $this->assertTrue($links->contains(function ($link) {
+            return str_contains($link['url'], '#contatti');
+        }));
+    }
+
+    public function test_hours_question_does_not_invent_hours()
+    {
+        $response = $this->postJson('/it/chatbot/message', [
+            'message' => 'quali sono gli orari della sede?'
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertStringContainsString('Non ho orari ufficiali aggiornati', $response->json('reply'));
+        $this->assertStringContainsString('320 833 7801', $response->json('reply'));
+    }
+
+    public function test_today_events_returns_today_event()
+    {
+        Event::create([
+            'title' => 'Evento di oggi',
+            'slug' => 'evento-di-oggi',
+            'start_date' => now()->setHour(18)->setMinute(0),
+            'status' => 'published'
+        ]);
+
+        $response = $this->postJson('/it/chatbot/message', [
+            'message' => 'ci sono eventi oggi?'
+        ]);
+
+        $response->assertStatus(200);
+
+        $cards = collect($response->json('cards'));
+        $this->assertTrue($cards->contains('title', 'Evento di oggi'));
+    }
+
+    public function test_latest_news_returns_published_news()
+    {
+        \App\Models\News::create([
+            'title' => 'Ultima notizia pubblicata',
+            'slug' => 'ultima-notizia-pubblicata',
+            'content' => 'Contenuto della notizia',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        $response = $this->postJson('/it/chatbot/message', [
+            'message' => 'ultime notizie'
+        ]);
+
+        $response->assertStatus(200);
+
+        $cards = collect($response->json('cards'));
+        $this->assertTrue($cards->contains('title', 'Ultima notizia pubblicata'));
+    }
+
+    public function test_photo_generic_question_navigates_to_gallery()
+    {
+        $response = $this->postJson('/it/chatbot/message', [
+            'message' => 'dove trovo le foto?'
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertStringContainsString('Galleria Fotografica', $response->json('reply'));
+
+        $links = collect($response->json('links'));
+        $this->assertTrue($links->contains('label', 'Galleria Fotografica'));
+    }
+
+    public function test_specific_photo_question_searches_gallery_albums()
+    {
+        GalleryAlbum::create([
+            'title' => 'Festa dell’Arabata',
+            'title_en' => 'Arabata Festival',
+            'section_date' => now(),
+            'sort_order' => 1,
+        ]);
+
+        $response = $this->postJson('/it/chatbot/message', [
+            'message' => 'foto arabata'
+        ]);
+
+        $response->assertStatus(200);
+
+        $cards = collect($response->json('cards'));
+        $this->assertTrue($cards->contains('title', 'Festa dell’Arabata'));
     }
 
     public function test_rate_limit_applies()

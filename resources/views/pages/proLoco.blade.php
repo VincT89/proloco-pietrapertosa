@@ -156,7 +156,7 @@
         </div>
     </section>
 
-    <section class="ed-sec alt proloco-contact-sec">
+    <section id="contatti" class="ed-sec alt proloco-contact-sec">
         <div class="ed-wrap">
             <div class="cont-wrap">
                 <div class="cont">

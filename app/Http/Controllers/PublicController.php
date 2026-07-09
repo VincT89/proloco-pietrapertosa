@@ -16,22 +16,19 @@ class PublicController extends Controller
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'home')->first();
 
-        $monthStart = Carbon::now()->startOfMonth();
-        $monthEnd = Carbon::now()->endOfMonth();
+        $cutoff = Carbon::now()->subWeeks(2);
 
         $events = Event::with('cover')
             ->where('status', 'published')
-            ->where(function ($query) use ($monthStart, $monthEnd) {
-                $query
-                    ->whereBetween('start_date', [$monthStart, $monthEnd])
-                    ->orWhereBetween('end_date', [$monthStart, $monthEnd])
-                    ->orWhere(function ($query) use ($monthStart, $monthEnd) {
-                        $query
-                            ->where('start_date', '<=', $monthStart)
-                            ->where('end_date', '>=', $monthEnd);
-                    });
+            ->where(function ($query) use ($cutoff) {
+                $query->where('end_date', '>=', $cutoff)
+                      ->orWhere(function ($q) use ($cutoff) {
+                          $q->whereNull('end_date')->where('start_date', '>=', $cutoff);
+                      })
+                      ->orWhereNull('start_date');
             })
-            ->orderBy('start_date')
+            ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
+            ->orderBy('start_date', 'asc')
             ->take(3)
             ->get();
         $news = News::with('cover')->where('status', 'published')->orderBy('published_at', 'desc')->take(3)->get();
@@ -107,26 +104,32 @@ class PublicController extends Controller
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'eventi')->first();
 
-        $monthStart = Carbon::now()->startOfMonth();
-        $monthEnd = Carbon::now()->endOfMonth();
+        $cutoff = Carbon::now()->subWeeks(2);
 
         $currentMonthEvents = Event::with(['cover', 'galleryMedia', 'externalMedia'])
             ->where('status', 'published')
-            ->where(function ($query) use ($monthStart, $monthEnd) {
-                $query
-                    ->whereBetween('start_date', [$monthStart, $monthEnd])
-                    ->orWhereBetween('end_date', [$monthStart, $monthEnd])
-                    ->orWhere(function ($query) use ($monthStart, $monthEnd) {
-                        $query
-                            ->where('start_date', '<=', $monthStart)
-                            ->where('end_date', '>=', $monthEnd);
-                    });
+            ->where(function ($query) use ($cutoff) {
+                $query->where('end_date', '>=', $cutoff)
+                      ->orWhere(function ($q) use ($cutoff) {
+                          $q->whereNull('end_date')->where('start_date', '>=', $cutoff);
+                      })
+                      ->orWhereNull('start_date');
             })
-            ->orderBy('start_date')
+            ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
+            ->orderBy('start_date', 'asc')
             ->get();
+
+        $cutoff = Carbon::now()->subWeeks(2);
 
         $events = Event::with(['cover', 'galleryMedia', 'externalMedia'])
             ->where('status', 'published')
+            ->where(function ($query) use ($cutoff) {
+                $query->where('end_date', '>=', $cutoff)
+                      ->orWhere(function ($q) use ($cutoff) {
+                          $q->whereNull('end_date')->where('start_date', '>=', $cutoff);
+                      })
+                      ->orWhereNull('start_date');
+            })
             ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
             ->orderBy('start_date', 'desc')
             ->paginate(9);

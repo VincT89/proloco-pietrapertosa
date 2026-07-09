@@ -1,4 +1,4 @@
-<div class="modal lb-modal" id="gallery-modal" onclick="closeGallery()" style="z-index: 99999;">
+<div class="modal lb-modal" id="gallery-modal" onclick="closeGallery(event)" style="z-index: 99999;">
     <div class="ov"></div>
     <div class="lb-img-wrap" onclick="event.stopPropagation()">
         
@@ -7,7 +7,7 @@
         </button>
 
         <div class="lb-inner">
-            <button class="x lb-close" onclick="closeGallery()" aria-label="Chiudi">
+            <button class="x lb-close" onclick="closeGallery(event)" aria-label="Chiudi">
                 <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
             </button>
             

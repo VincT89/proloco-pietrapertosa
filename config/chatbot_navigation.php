@@ -94,8 +94,12 @@ return [
                 'en' => 'Pro Loco'
             ],
             'generic_keywords' => [
-                'it' => ['pro loco', 'contatti', 'orari', 'sede', 'info point', 'parcheggi', 'come arrivare', 'servizi'],
-                'en' => ['pro loco', 'contacts', 'hours', 'info point', 'parking', 'how to get', 'services']
+                'it' => [
+                    'pro loco', 'proloco', 'contatti', 'contatto', 'orari', 'sede', 'info point', 'parcheggi', 'parcheggio', 'come arrivare', 'servizi'
+                ],
+                'en' => [
+                    'pro loco', 'contacts', 'contact', 'hours', 'info point', 'parking', 'how to get', 'services'
+                ]
             ]
         ],
         'sleep' => [

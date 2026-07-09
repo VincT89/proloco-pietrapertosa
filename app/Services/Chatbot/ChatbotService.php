@@ -4,12 +4,14 @@ namespace App\Services\Chatbot;
 
 use App\Repositories\Chatbot\ChatbotEventRepository;
 use App\Repositories\Chatbot\ChatbotDocumentRepository;
+use App\Repositories\Chatbot\ChatbotNewsRepository;
 
 class ChatbotService
 {
     protected IntentDetectorService $intentDetector;
     protected ChatbotEventRepository $eventRepo;
     protected ChatbotDocumentRepository $documentRepo;
+    protected ChatbotNewsRepository $newsRepo;
     protected ChatbotSearchService $searchService;
     protected ChatbotNavigationClassifier $classifier;
     protected ChatbotNavigationService $navigationService;
@@ -18,6 +20,7 @@ class ChatbotService
         IntentDetectorService $intentDetector,
         ChatbotEventRepository $eventRepo,
         ChatbotDocumentRepository $documentRepo,
+        ChatbotNewsRepository $newsRepo,
         ChatbotSearchService $searchService,
         ChatbotNavigationClassifier $classifier,
         ChatbotNavigationService $navigationService
@@ -25,6 +28,7 @@ class ChatbotService
         $this->intentDetector = $intentDetector;
         $this->eventRepo = $eventRepo;
         $this->documentRepo = $documentRepo;
+        $this->newsRepo = $newsRepo;
         $this->searchService = $searchService;
         $this->classifier = $classifier;
         $this->navigationService = $navigationService;
@@ -94,12 +98,22 @@ class ChatbotService
                 return $this->handleGreeting($locale, $builder);
             case 'help':
                 return $this->handleHelp($locale, $builder);
+            case 'today_events':
+                return $this->handleTodayEvents($locale, $builder);
+            case 'latest_news':
+                return $this->handleLatestNews($locale, $builder);
             case 'next_event':
                 return $this->handleNextEvent($locale, $builder);
             case 'weekend_events':
                 return $this->handleWeekendEvents($locale, $builder);
             case 'contact_info':
                 return $this->handleContactInfo($locale, $builder);
+            case 'parking_info':
+                return $this->handleParkingInfo($locale, $builder);
+            case 'arrival_info':
+                return $this->handleArrivalInfo($locale, $builder);
+            case 'hours_info':
+                return $this->handleHoursInfo($locale, $builder);
             case 'documents':
                 return $this->handleDocuments($message, $locale, $builder);
             case 'fallback_search':
@@ -180,13 +194,136 @@ class ChatbotService
         return $builder;
     }
 
+    protected function handleTodayEvents(string $locale, ChatbotResponseBuilder $builder): ChatbotResponseBuilder
+    {
+        $events = $this->eventRepo->getTodayEvents();
+
+        if ($events->isEmpty()) {
+            $reply = $locale === 'en'
+                ? "There are no events scheduled for today."
+                : "Non ci sono eventi in programma per oggi.";
+
+            $builder->addLink($locale === 'en' ? 'View all events' : 'Vedi tutti gli eventi', route('events.' . $locale));
+
+            return $builder->setReply($reply);
+        }
+
+        $reply = $locale === 'en'
+            ? "Here are today's events:"
+            : "Ecco gli eventi in programma oggi:";
+
+        $builder->setReply($reply);
+
+        foreach ($events as $event) {
+            $title = $locale === 'en' && $event->title_en ? $event->title_en : $event->title;
+            $description = $locale === 'en' && $event->description_en ? $event->description_en : $event->description;
+
+            $builder->addCard([
+                'title' => $title,
+                'subtitle' => $event->start_date ? $event->start_date->format('d/m/Y H:i') : '',
+                'description' => \Illuminate\Support\Str::limit(strip_tags($description), 100),
+                'url' => route('events.' . $locale),
+                'image' => $event->cover ? $event->cover->url : null
+            ]);
+        }
+
+        $builder->addLink($locale === 'en' ? 'View all events' : 'Vedi tutti gli eventi', route('events.' . $locale));
+
+        return $builder;
+    }
+
+    protected function handleLatestNews(string $locale, ChatbotResponseBuilder $builder): ChatbotResponseBuilder
+    {
+        $news = $this->newsRepo->getLatestNews();
+
+        if ($news->isEmpty()) {
+            $reply = $locale === 'en'
+                ? "There are no published news items at the moment."
+                : "Al momento non ci sono notizie pubblicate.";
+
+            $builder->addLink($locale === 'en' ? 'News' : 'Notizie', route('news.' . $locale));
+
+            return $builder->setReply($reply);
+        }
+
+        $reply = $locale === 'en'
+            ? "Here are the latest news items:"
+            : "Ecco le ultime notizie pubblicate:";
+
+        $builder->setReply($reply);
+
+        foreach ($news as $item) {
+            $title = $locale === 'en' && $item->title_en ? $item->title_en : $item->title;
+            $excerpt = $locale === 'en' && $item->excerpt_en ? $item->excerpt_en : $item->excerpt;
+            $content = $locale === 'en' && $item->content_en ? $item->content_en : $item->content;
+
+            $builder->addCard([
+                'title' => $title,
+                'subtitle' => $locale === 'en' ? 'News' : 'Notizia',
+                'description' => \Illuminate\Support\Str::limit(strip_tags($excerpt ?: $content), 100),
+                'url' => route('news.' . $locale),
+                'image' => $item->cover ? $item->cover->url : null
+            ]);
+        }
+
+        $builder->addLink($locale === 'en' ? 'View all news' : 'Vedi tutte le notizie', route('news.' . $locale));
+
+        return $builder;
+    }
+
+    protected function handleParkingInfo(string $locale, ChatbotResponseBuilder $builder): ChatbotResponseBuilder
+    {
+        $reply = $locale === 'en'
+            ? "I do not have official detailed parking information available on the website. To avoid giving outdated directions, please contact Pro Loco Pietrapertosa: phone +39 320 833 7801, email prolocopietrapertosa@gmail.com."
+            : "Non ho informazioni ufficiali dettagliate sui parcheggi disponibili nel sito. Per evitare indicazioni non aggiornate, ti consiglio di contattare la Pro Loco Pietrapertosa: telefono 320 833 7801, email prolocopietrapertosa@gmail.com.";
+
+        $builder->addLink(
+            $locale === 'en' ? 'Pro Loco page' : 'Pagina Pro Loco',
+            route('proLoco.' . $locale) . '#contatti'
+        );
+
+        return $builder->setReply($reply);
+    }
+
+    protected function handleArrivalInfo(string $locale, ChatbotResponseBuilder $builder): ChatbotResponseBuilder
+    {
+        $reply = $locale === 'en'
+            ? "The Pro Loco Pietrapertosa headquarters are in Via della Speranza, 159, 85010 Pietrapertosa (PZ). You can find the map on the Pro Loco page. For updated information about roads, parking or special access, please contact Pro Loco directly."
+            : "La sede della Pro Loco Pietrapertosa si trova in Via della Speranza, 159, 85010 Pietrapertosa (PZ). Nella pagina Pro Loco trovi anche la mappa. Per indicazioni aggiornate su viabilità, parcheggi o accessi particolari, ti consiglio di contattare direttamente la Pro Loco.";
+
+        $builder->addLink(
+            $locale === 'en' ? 'Pro Loco page' : 'Pagina Pro Loco',
+            route('proLoco.' . $locale) . '#contatti'
+        );
+
+        return $builder->setReply($reply);
+    }
+
+    protected function handleHoursInfo(string $locale, ChatbotResponseBuilder $builder): ChatbotResponseBuilder
+    {
+        $reply = $locale === 'en'
+            ? "I do not have official updated opening hours for the headquarters or info point available on the website. Please contact Pro Loco Pietrapertosa by phone at +39 320 833 7801 or by email at prolocopietrapertosa@gmail.com."
+            : "Non ho orari ufficiali aggiornati della sede o dell’info point disponibili nel sito. Per avere conferma, contatta la Pro Loco Pietrapertosa al numero 320 833 7801 o via email a prolocopietrapertosa@gmail.com.";
+
+        $builder->addLink(
+            $locale === 'en' ? 'Pro Loco page' : 'Pagina Pro Loco',
+            route('proLoco.' . $locale) . '#contatti'
+        );
+
+        return $builder->setReply($reply);
+    }
+
     protected function handleContactInfo(string $locale, ChatbotResponseBuilder $builder): ChatbotResponseBuilder
     {
-        $reply = $locale === 'en' 
-            ? "You can contact the Pro Loco via email at prolocopietrapertosa@gmail.com. Visit our contact page for the form and address."
-            : "Puoi contattare la Pro Loco tramite email scrivendo a prolocopietrapertosa@gmail.com. Visita la pagina contatti per usare il form o vedere l'indirizzo.";
-            
-        $builder->addLink($locale === 'en' ? 'Contact Page' : 'Pagina Contatti', route('proLoco.' . $locale));
+        $reply = $locale === 'en'
+            ? "You can contact Pro Loco Pietrapertosa by phone at +39 320 833 7801, by email at prolocopietrapertosa@gmail.com, or by PEC at prolocopietrapertosa@pec.it. The headquarters are in Via della Speranza, 159, 85010 Pietrapertosa (PZ)."
+            : "Puoi contattare la Pro Loco Pietrapertosa al numero 320 833 7801, via email a prolocopietrapertosa@gmail.com oppure via PEC a prolocopietrapertosa@pec.it. La sede è in Via della Speranza, 159, 85010 Pietrapertosa (PZ).";
+
+        $builder->addLink(
+            $locale === 'en' ? 'Pro Loco page' : 'Pagina Pro Loco',
+            route('proLoco.' . $locale) . '#contatti'
+        );
+
         return $builder->setReply($reply);
     }
 
@@ -233,10 +370,15 @@ class ChatbotService
             $results = $this->searchService->search($message, $locale);
             
             if ($results->isEmpty()) {
-                $reply = $locale === 'en' 
-                    ? "I could not find enough specific information on the website to answer this question." 
-                    : "Non ho trovato informazioni specifiche nel sito per rispondere a questa domanda.";
+                $reply = $locale === 'en'
+                    ? "I could not find enough specific information on the website to answer with certainty. You can browse the main sections or contact Pro Loco for confirmation."
+                    : "Non ho trovato informazioni specifiche nel sito per rispondere con certezza. Posso aiutarti a consultare le sezioni principali oppure puoi contattare la Pro Loco per una conferma.";
+
                 $builder->setReply($reply);
+
+                $builder->addLink($locale === 'en' ? 'Pro Loco' : 'Pro Loco', route('proLoco.' . $locale) . '#contatti');
+                $builder->addLink($locale === 'en' ? 'Events' : 'Eventi', route('events.' . $locale));
+                $builder->addLink($locale === 'en' ? 'Discover & Experience' : 'Scopri & Vivi', route('discover.' . $locale));
             } else {
                 $reply = $locale === 'en' ? "Here is what I found:" : "Ecco cosa ho trovato nel sito:";
                 $builder->setReply($reply);
