@@ -2,20 +2,21 @@
 
 namespace App\Filament\Resources\Events\Schemas;
 
-use App\Models\Media;
-use App\Services\CloudinaryService;
+use App\Filament\Components\MediaPicker;
+use App\Filament\Components\MediaRichEditor as RichEditor;
+use App\Filament\Components\MediaUpload;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 
 class EventForm
 {
@@ -27,9 +28,9 @@ class EventForm
                     Tab::make('Italiano')->schema([
                         TextInput::make('title')->label('Titolo')->required()
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function ($state, \Filament\Schemas\Components\Utilities\Set $set, \Filament\Schemas\Components\Utilities\Get $get) {
-                                if (empty($get('slug')) || $get('slug') === \Illuminate\Support\Str::slug($state)) {
-                                    $set('slug', \Illuminate\Support\Str::slug($state));
+                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                if (empty($get('slug')) || $get('slug') === Str::slug($state)) {
+                                    $set('slug', Str::slug($state));
                                 }
                             }),
                         RichEditor::make('description')->label('Descrizione')->default(null)->columnSpanFull(),
@@ -49,61 +50,13 @@ class EventForm
                             ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('seo_description_en', $get('seo_description')))),
                     ]),
                 ])->columnSpanFull(),
-                Grid::make(2)->schema([
+                Grid::make(2)->columnSpanFull()->schema([
                     TextInput::make('slug')->label('Slug (URL)')->required()->unique(ignoreRecord: true),
                     DateTimePicker::make('start_date')->label('Data Inizio')->required(),
                     DateTimePicker::make('end_date')->label('Data Fine'),
-                    Select::make('cover_media_id')->label('Copertina')
-                        ->searchable()
-                        ->getSearchResultsUsing(fn (string $search) =>
-                            \App\Models\Media::query()
-                                ->where('type', 'image')
-                                ->where(function ($q) use ($search) {
-                                    $q->where('alt', 'like', "%{$search}%")
-                                      ->orWhere('public_id', 'like', "%{$search}%");
-                                })
-                                ->limit(20)
-                                ->get()
-                                ->mapWithKeys(fn ($media) => [$media->id => $media->alt ?: "Media #{$media->id}"])
-                                ->toArray()
-                        )
-                        ->getOptionLabelUsing(fn ($value) => 
-                            ($media = \App\Models\Media::find($value)) 
-                                ? ($media->alt ?: "Media #{$media->id}") 
-                                : "Media"
-                        )
-                        ->createOptionForm([
-                            FileUpload::make('file')
-                                ->label('Carica File')
-                                ->image()
-                                ->storeFiles(false)
-                                ->maxSize(10240)
-                                ->helperText(new \Illuminate\Support\HtmlString(
-                                    'Comprimi l’immagine o convertila in JPG/WebP prima del caricamento. 
-                                    Dimensione consigliata: 500 KB - 2 MB. Evitare file superiori a 10 MB. 
-                                    Puoi usare <a href="https://www.iloveimg.com/it" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">iLoveIMG</a>.'
-                                ))
-                                ->required(),
-                            TextInput::make('alt')->label('Testo Alternativo'),
-                        ])
-                        ->createOptionUsing(function (array $data) {
-                            $media = app(\App\Services\MediaManager::class)->upload($data['file']);
-                            if (!empty($data['alt'])) {
-                                $media->update(['alt' => $data['alt']]);
-                            }
-                            return $media->id;
-                        })->reactive(),
-                    \Filament\Forms\Components\Placeholder::make('cover_preview')
-                        ->label('Anteprima Copertina')
-                        ->content(function (\Filament\Schemas\Components\Utilities\Get $get) {
-                            $mediaId = $get('cover_media_id');
-                            if (!$mediaId) return null;
-                            $m = \App\Models\Media::find($mediaId);
-                            if (!$m) return null;
-                            return new \Illuminate\Support\HtmlString('<img src="'.$m->optimizedUrl('small').'" style="max-height: 150px; border-radius: 8px; object-fit: contain;">');
-                        }),
-                    \App\Filament\Components\MediaUpload::make('gallery_files', 'gallery')
-                        ->label('Galleria Immagini/Video (File Locali)')
+                    MediaPicker::make('cover_media_id')->label('Copertina'),
+                    MediaUpload::make('gallery_files', 'gallery')
+                        ->label('Galleria immagini e video')
                         ->columnSpanFull(),
 
                     Select::make('status')->label('Stato')->options(['draft' => 'Bozza', 'published' => 'Pubblicato', 'cancelled' => 'Annullato'])->default('draft')->required(),

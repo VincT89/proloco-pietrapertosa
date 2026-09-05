@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources\DirectoryItems\Schemas;
 
-use App\Models\Media;
-use App\Services\CloudinaryService;
+use App\Filament\Components\MediaRichEditor as RichEditor;
+use App\Filament\Components\MediaUpload;
 use Filament\Actions\Action;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -15,7 +13,6 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
-use Illuminate\Http\UploadedFile;
 
 class DirectoryItemForm
 {
@@ -40,7 +37,7 @@ class DirectoryItemForm
                             ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('contact_info_en', $get('contact_info')))),
                     ]),
                 ])->columnSpanFull(),
-                Grid::make(2)->schema([
+                Grid::make(2)->columnSpanFull()->schema([
                     Select::make('category')->label('Categoria')
                         ->options([
                             'comunita' => 'Comunità',
@@ -54,39 +51,8 @@ class DirectoryItemForm
                         ])
                         ->searchable()
                         ->required(),
-                    Select::make('galleryMedia')->label('Scegli Immagini da Libreria Esistente')
-                        ->relationship('galleryMedia', 'name')
-                        ->multiple()
-                        ->searchable()
-                        ->getOptionLabelFromRecordUsing(fn (\App\Models\Media $record) => $record->alt ?: "Media #{$record->id}")
-                        ->getSearchResultsUsing(fn (string $search) =>
-                            \App\Models\Media::query()
-                                ->where('type', 'image')
-                                ->where(function ($q) use ($search) {
-                                    $q->where('alt', 'like', "%{$search}%")
-                                      ->orWhere('public_id', 'like', "%{$search}%");
-                                })
-                                ->limit(20)
-                                ->get()
-                                ->mapWithKeys(fn ($media) => [$media->id => $media->alt ?: "Media #{$media->id}"])
-                                ->toArray()
-                        )
-                        ->reactive(),
-                    \Filament\Forms\Components\Placeholder::make('galleryMedia_preview')
-                        ->label('Anteprima Selezionati')
-                        ->content(function (\Filament\Schemas\Components\Utilities\Get $get) {
-                            $mediaIds = $get('galleryMedia');
-                            if (!$mediaIds || !is_array($mediaIds) || count($mediaIds) === 0) return null;
-                            $media = \App\Models\Media::whereIn('id', $mediaIds)->get();
-                            $html = '<div style="display: flex; gap: 10px; flex-wrap: wrap;">';
-                            foreach ($media as $m) {
-                                $html .= '<img src="'.$m->optimizedUrl('small').'" style="max-height: 80px; border-radius: 4px; object-fit: cover;">';
-                            }
-                            $html .= '</div>';
-                            return new \Illuminate\Support\HtmlString($html);
-                        }),
-                    \App\Filament\Components\MediaUpload::make('gallery_files', 'gallery')
-                        ->label('Galleria Immagini/Video (File Locali)')
+                    MediaUpload::make('gallery_files', 'gallery')
+                        ->label('Galleria immagini e video')
                         ->columnSpanFull(),
 
                     KeyValue::make('stats')->label('Statistiche')->default(null)->columnSpanFull(),

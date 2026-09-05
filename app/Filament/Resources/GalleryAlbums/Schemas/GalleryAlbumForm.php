@@ -2,18 +2,15 @@
 
 namespace App\Filament\Resources\GalleryAlbums\Schemas;
 
-use App\Models\Media;
-use App\Services\CloudinaryService;
+use App\Filament\Components\MediaUpload;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
-use Illuminate\Http\UploadedFile;
 
 class GalleryAlbumForm
 {
@@ -30,9 +27,9 @@ class GalleryAlbumForm
                             ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('title_en', $get('title')))),
                     ]),
                 ])->columnSpanFull(),
-                Grid::make(2)->schema([
-                    \App\Filament\Components\MediaUpload::make('gallery_files', 'gallery')
-                        ->label('Galleria Immagini/Video (File Locali)')
+                Grid::make(2)->columnSpanFull()->schema([
+                    MediaUpload::make('gallery_files', 'gallery')
+                        ->label('Galleria immagini e video')
                         ->columnSpanFull(),
 
                     DatePicker::make('section_date')->label('Data Sezione'),

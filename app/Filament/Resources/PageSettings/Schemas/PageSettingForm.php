@@ -2,11 +2,10 @@
 
 namespace App\Filament\Resources\PageSettings\Schemas;
 
-use App\Models\Media;
-use App\Services\CloudinaryService;
+use App\Filament\Components\MediaPicker;
+use App\Filament\Components\MediaRichEditor as RichEditor;
 use Filament\Actions\Action;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -14,7 +13,6 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
-use Illuminate\Http\UploadedFile;
 
 class PageSettingForm
 {
@@ -45,7 +43,7 @@ class PageSettingForm
                 ])->columnSpanFull(),
                 Tabs::make('Home Extra')->tabs([
                     Tab::make('Sezioni Extra Home')->schema([
-                        Grid::make(2)->schema([
+                        Grid::make(2)->columnSpanFull()->schema([
                             TextInput::make('data.events_title')->label('Titolo Sezione Eventi')->default('Prossimi Eventi'),
                             TextInput::make('data.events_title_en')->label('Titolo Sezione Eventi (EN)')->default('Upcoming Events'),
                             TextInput::make('data.news_title')->label('Titolo Sezione Notizie')->default('Ultime Notizie e Avvisi'),
@@ -60,121 +58,25 @@ class PageSettingForm
                             TextInput::make('data.discover_cta_text_en')->label('Testo Pulsante Scopri (EN)')->default('Borgo Racconta'),
                             TextInput::make('data.discover_cta_url')->label('URL Pulsante Scopri')->default('https://www.borgoracconta.it/citta/pietrapertosa/')->rule('regex:/^(https?:\/\/|\/)[a-zA-Z0-9\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=\%]+$/i'),
                         ]),
-                        \Filament\Forms\Components\Repeater::make('data.discover_items')->label('Elementi Scopri Pietrapertosa')->schema([
+                        Repeater::make('data.discover_items')->label('Elementi Scopri Pietrapertosa')->schema([
                             TextInput::make('nome')->label('Titolo')->required(),
                             TextInput::make('nome_en')->label('Titolo (EN)'),
-                            Select::make('img_media_id')->label('Immagine (Libreria)')
-                                ->searchable()
-                                ->getSearchResultsUsing(fn (string $search) =>
-                                    \App\Models\Media::query()
-                                        ->where('type', 'image')
-                                        ->where(function ($q) use ($search) {
-                                            $q->where('alt', 'like', "%{$search}%")
-                                              ->orWhere('public_id', 'like', "%{$search}%");
-                                        })
-                                        ->limit(20)
-                                        ->get()
-                                        ->mapWithKeys(fn ($media) => [$media->id => $media->alt ?: "Media #{$media->id}"])
-                                        ->toArray()
-                                )
-                                ->getOptionLabelUsing(fn ($value) => 
-                                    ($media = \App\Models\Media::find($value)) 
-                                        ? ($media->alt ?: "Media #{$media->id}") 
-                                        : "Media"
-                                )
-                                ->createOptionForm([
-                                    FileUpload::make('file')
-                                        ->label('Carica Immagine')
-                                        ->image()
-                                        ->storeFiles(false)
-                                        ->maxSize(10240)
-                                        ->helperText(new \Illuminate\Support\HtmlString(
-                                            'Comprimi l’immagine o convertila in JPG/WebP prima del caricamento. 
-                                            Dimensione consigliata: 500 KB - 2 MB. Evitare file superiori a 10 MB. 
-                                            Puoi usare <a href="https://www.iloveimg.com/it" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">iLoveIMG</a>.'
-                                        ))
-                                        ->required(),
-                                    TextInput::make('alt')->label('Testo Alternativo'),
-                                ])
-                                ->createOptionUsing(function (array $data) {
-                                    $media = app(\App\Services\MediaManager::class)->upload($data['file']);
-                                    if (!empty($data['alt'])) {
-                                        $media->update(['alt' => $data['alt']]);
-                                    }
-                                    return $media->id;
-                                })->reactive(),
-                            \Filament\Forms\Components\Placeholder::make('img_preview')
-                                ->label('Anteprima Immagine')
-                                ->content(function (\Filament\Schemas\Components\Utilities\Get $get) {
-                                    $mediaId = $get('img_media_id');
-                                    if (!$mediaId) return null;
-                                    $m = \App\Models\Media::find($mediaId);
-                                    if (!$m) return null;
-                                    return new \Illuminate\Support\HtmlString('<img src="'.$m->optimizedUrl('small').'" style="max-height: 150px; border-radius: 8px; object-fit: contain;">');
-                                }),
-                        ])->columns(2)->collapsible()
-                    ])
+                            MediaPicker::make('img_media_id')->label('Immagine'),
+                        ])->columns(2)->collapsible(),
+                    ]),
                 ])->visible(fn ($record) => $record?->page_slug === 'home')->columnSpanFull(),
                 Tabs::make('Ringraziamenti Fotografici')->tabs([
                     Tab::make('Contributori fotografici')->schema([
-                        \Filament\Forms\Components\Repeater::make('data.photo_contributors')->label('Fornitori e Contributori')->schema([
+                        Repeater::make('data.photo_contributors')->label('Fornitori e Contributori')->schema([
                             TextInput::make('name')->label('Nome fornitore/contributore')->required(),
                             Textarea::make('description')->label('Descrizione / nota')->required(),
                             Textarea::make('description_en')->label('Descrizione / nota (EN)'),
                             TextInput::make('website_url')->label('Sito web / link')->url(),
-                            Select::make('logo_media_id')->label('Logo Fornitore')
-                                ->searchable()
-                                ->getSearchResultsUsing(fn (string $search) =>
-                                    \App\Models\Media::query()
-                                        ->where('type', 'image')
-                                        ->where(function ($q) use ($search) {
-                                            $q->where('alt', 'like', "%{$search}%")
-                                              ->orWhere('public_id', 'like', "%{$search}%");
-                                        })
-                                        ->limit(20)
-                                        ->get()
-                                        ->mapWithKeys(fn ($media) => [$media->id => $media->alt ?: "Media #{$media->id}"])
-                                        ->toArray()
-                                )
-                                ->getOptionLabelUsing(fn ($value) => 
-                                    ($media = \App\Models\Media::find($value)) 
-                                        ? ($media->alt ?: "Media #{$media->id}") 
-                                        : "Media"
-                                )
-                                ->createOptionForm([
-                                    FileUpload::make('file')
-                                        ->label('Carica Logo')
-                                        ->image()
-                                        ->storeFiles(false)
-                                        ->maxSize(10240)
-                                        ->helperText(new \Illuminate\Support\HtmlString(
-                                            'Comprimi l’immagine o convertila in JPG/WebP prima del caricamento. 
-                                            Dimensione consigliata: 500 KB - 2 MB. Evitare file superiori a 10 MB. 
-                                            Puoi usare <a href="https://www.iloveimg.com/it" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">iLoveIMG</a>.'
-                                        ))
-                                        ->required(),
-                                    TextInput::make('alt')->label('Testo Alternativo'),
-                                ])
-                                ->createOptionUsing(function (array $data) {
-                                    $media = app(\App\Services\MediaManager::class)->upload($data['file']);
-                                    if (!empty($data['alt'])) {
-                                        $media->update(['alt' => $data['alt']]);
-                                    }
-                                    return $media->id;
-                                })->reactive(),
-                            \Filament\Forms\Components\Placeholder::make('logo_preview')
-                                ->label('Anteprima Logo')
-                                ->content(function (\Filament\Schemas\Components\Utilities\Get $get) {
-                                    $mediaId = $get('logo_media_id');
-                                    if (!$mediaId) return null;
-                                    $m = \App\Models\Media::find($mediaId);
-                                    if (!$m) return null;
-                                    return new \Illuminate\Support\HtmlString('<img src="'.$m->optimizedUrl('small').'" style="max-height: 100px; max-width: 150px; border-radius: 4px; object-fit: contain; filter: brightness(0) invert(1); background: #222; padding: 10px;">');
-                                })
-                        ])->columns(1)->collapsible()
-                    ])
+                            MediaPicker::make('logo_media_id')->label('Logo fornitore'),
+                        ])->columns(1)->collapsible(),
+                    ]),
                 ])->visible(fn ($record) => $record?->page_slug === 'ringraziamenti-fotografici')->columnSpanFull(),
-                Grid::make(2)->schema([
+                Grid::make(2)->columnSpanFull()->schema([
                     Select::make('page_slug')
                         ->label('Pagina')
                         ->options([
@@ -191,55 +93,7 @@ class PageSettingForm
                         ])
                         ->required()
                         ->unique(ignoreRecord: true),
-                    Select::make('hero_media_id')->label('Immagine Hero')
-                        ->searchable()
-                        ->getSearchResultsUsing(fn (string $search) =>
-                            \App\Models\Media::query()
-                                ->where('type', 'image')
-                                ->where(function ($q) use ($search) {
-                                    $q->where('alt', 'like', "%{$search}%")
-                                      ->orWhere('public_id', 'like', "%{$search}%");
-                                })
-                                ->limit(20)
-                                ->get()
-                                ->mapWithKeys(fn ($media) => [$media->id => $media->alt ?: "Media #{$media->id}"])
-                                ->toArray()
-                        )
-                        ->getOptionLabelUsing(fn ($value) => 
-                            ($media = \App\Models\Media::find($value)) 
-                                ? ($media->alt ?: "Media #{$media->id}") 
-                                : "Media"
-                        )
-                        ->createOptionForm([
-                            FileUpload::make('file')
-                                ->label('Carica File')
-                                ->image()
-                                ->storeFiles(false)
-                                ->maxSize(10240)
-                                ->helperText(new \Illuminate\Support\HtmlString(
-                                    'Comprimi l’immagine o convertila in JPG/WebP prima del caricamento. 
-                                    Dimensione consigliata: 500 KB - 2 MB. Evitare file superiori a 10 MB. 
-                                    Puoi usare <a href="https://www.iloveimg.com/it" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">iLoveIMG</a>.'
-                                ))
-                                ->required(),
-                            TextInput::make('alt')->label('Testo Alternativo'),
-                        ])
-                        ->createOptionUsing(function (array $data) {
-                            $media = app(\App\Services\MediaManager::class)->upload($data['file']);
-                            if (!empty($data['alt'])) {
-                                $media->update(['alt' => $data['alt']]);
-                            }
-                            return $media->id;
-                        })->reactive(),
-                    \Filament\Forms\Components\Placeholder::make('hero_preview')
-                        ->label('Anteprima Hero')
-                        ->content(function (\Filament\Schemas\Components\Utilities\Get $get) {
-                            $mediaId = $get('hero_media_id');
-                            if (!$mediaId) return null;
-                            $m = \App\Models\Media::find($mediaId);
-                            if (!$m) return null;
-                            return new \Illuminate\Support\HtmlString('<img src="'.$m->optimizedUrl('small').'" style="max-height: 150px; border-radius: 8px; object-fit: contain;">');
-                        }),
+                    MediaPicker::make('hero_media_id')->label('Immagine principale'),
                     TextInput::make('hero_overlay_opacity')->label('Opacità Sfondo Hero')
                         ->numeric()
                         ->default(0.4)

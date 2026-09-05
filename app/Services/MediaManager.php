@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Media;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -22,15 +23,28 @@ class MediaManager
      */
     public function upload(UploadedFile $file, string $folder = 'proloco_pietrapertosana'): Media
     {
+        $hash = app(MediaFingerprint::class)->forUpload($file);
+
+        return Cache::lock('media-upload:'.$hash, 600)->block(20, function () use ($file, $folder, $hash) {
+            if ($existing = Media::where('content_hash', $hash)->oldest('id')->first()) {
+                return $existing;
+            }
+
+            return $this->storeNewUpload($file, $folder, $hash);
+        });
+    }
+
+    private function storeNewUpload(UploadedFile $file, string $folder, string $hash): Media
+    {
         $upload = null;
         try {
             // 1. Upload to Cloudinary first
             $upload = $this->cloudinary->uploadMedia($file, $folder);
-            
+
             // 2. DB Transaction
-            return DB::transaction(function () use ($upload, $file) {
+            return DB::transaction(function () use ($upload, $file, $folder, $hash) {
                 $isVideo = ($upload['resource_type'] ?? null) === 'video';
-                
+
                 return Media::create([
                     'type' => $isVideo ? 'video' : (($upload['resource_type'] ?? '') === 'raw' ? 'document' : 'image'),
                     'provider' => 'cloudinary',
@@ -38,8 +52,11 @@ class MediaManager
                     'url' => $upload['secure_url'],
                     'public_id' => $upload['public_id'],
                     'alt' => $file->getClientOriginalName(),
-                    'thumbnail_url' => $isVideo 
-                        ? str_replace('/video/upload/', '/video/upload/so_1,w_600,h_400,c_fill,f_jpg/', $upload['secure_url']) 
+                    'original_name' => $file->getClientOriginalName(),
+                    'content_hash' => $hash,
+                    'folder' => $folder,
+                    'thumbnail_url' => $isVideo
+                        ? str_replace('/video/upload/', '/video/upload/so_1,w_600,h_400,c_fill,f_jpg/', $upload['secure_url'])
                         : null,
                     'metadata' => [
                         'original_name' => $file->getClientOriginalName(),
@@ -57,7 +74,7 @@ class MediaManager
                 } catch (\Exception $deleteEx) {
                     Log::error('Failed to compensate Cloudinary upload', [
                         'public_id' => $upload['public_id'],
-                        'error' => $deleteEx->getMessage()
+                        'error' => $deleteEx->getMessage(),
                     ]);
                 }
             }
@@ -77,7 +94,7 @@ class MediaManager
 
         try {
             // Delete from Cloudinary first
-            if ($media->public_id) {
+            if ($media->public_id && $media->provider === 'cloudinary') {
                 $this->cloudinary->deleteMedia($media->public_id, $media->resource_type ?? 'image');
             } elseif ($media->url && $media->provider === 'cloudinary') {
                 $this->cloudinary->deleteMediaByUrl($media->url, $media->resource_type ?? 'image');

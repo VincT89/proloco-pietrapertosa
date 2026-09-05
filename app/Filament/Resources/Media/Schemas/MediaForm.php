@@ -2,15 +2,12 @@
 
 namespace App\Filament\Resources\Media\Schemas;
 
-use App\Services\CloudinaryService;
-use Filament\Forms\Components\FileUpload;
+use App\Services\MediaUsage;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Cache;
-use Closure;
 
 class MediaForm
 {
@@ -18,6 +15,7 @@ class MediaForm
     {
         return $schema
             ->components([
+                TextInput::make('original_name')->label('Nome file originale')->disabled()->dehydrated(false),
                 Hidden::make('public_id'),
                 Hidden::make('resource_type')->default('image'),
                 Hidden::make('provider')->default('cloudinary'),
@@ -27,24 +25,22 @@ class MediaForm
                     ->options([
                         'image' => 'Immagine',
                         'video' => 'Video',
+                        'document' => 'Documento',
                     ])
                     ->default('image')
-                    ->live()
-                    ->required(),
+                    ->disabled()->dehydrated(false),
 
-                \Filament\Forms\Components\Placeholder::make('url_display')
+                Placeholder::make('url_display')
                     ->label('File Attuale')
-                    ->content(function ($record) {
-                        if (!$record) return '-';
-                        if ($record->type === 'video') {
-                            return new \Illuminate\Support\HtmlString('<video src="'.$record->optimizedVideoUrl().'" controls style="max-height: 200px; border-radius: 8px;"></video>');
-                        }
-                        return new \Illuminate\Support\HtmlString('<img src="'.$record->optimizedUrl('card').'" style="max-height: 200px; border-radius: 8px;" />');
-                    }),
+                    ->content(fn ($record) => view('filament.components.media-details', ['item' => $record])),
                 TextInput::make('alt')->label('Testo Alternativo')
                     ->default(null),
                 TextInput::make('caption')->label('Didascalia')
                     ->default(null),
+                Placeholder::make('usage')->label('Utilizzato in')
+                    ->content(fn ($record) => view('filament.components.media-usage', [
+                        'uses' => $record ? (app(MediaUsage::class)->forMedia(collect([$record]))[$record->id] ?? []) : [],
+                    ])),
                 TextInput::make('folder')->label('Cartella')
                     ->default(null),
             ]);

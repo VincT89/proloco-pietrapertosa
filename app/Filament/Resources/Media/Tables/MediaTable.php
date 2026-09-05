@@ -2,13 +2,19 @@
 
 namespace App\Filament\Resources\Media\Tables;
 
+use App\Models\Media;
+use App\Services\MediaManager;
+use App\Services\MediaUsage;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 
 class MediaTable
 {
@@ -16,10 +22,14 @@ class MediaTable
     {
         return $table
             ->columns([
+                TextColumn::make('original_name')->label('Nome file')
+                    ->getStateUsing(fn ($record) => $record->displayName())
+                    ->searchable(query: fn ($query, $search) => $query->searchLibrary($search))->wrap(),
                 ImageColumn::make('preview')
                     ->label('Anteprima')
                     ->getStateUsing(function ($record) {
                         $url = $record->thumbnail_url ?: ($record->type === 'image' ? $record->optimizedUrl('small') : null);
+
                         return $url ? (str_starts_with($url, 'http') ? $url : asset($url)) : null;
                     }),
                 TextColumn::make('type')->label('Tipo')
@@ -30,8 +40,7 @@ class MediaTable
                         'document' => 'warning',
                         default => 'gray',
                     }),
-                TextColumn::make('mime_type')->label('Mime Type')
-                    ->searchable()
+                TextColumn::make('metadata.mime_type')->label('Formato file')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('provider')->label('Provider')
                     ->badge()
@@ -54,6 +63,13 @@ class MediaTable
                     ->searchable(),
                 TextColumn::make('caption')->label('Didascalia')
                     ->searchable(),
+                TextColumn::make('usage')->label('Utilizzato in')
+                    ->getStateUsing(function ($record, $livewire) {
+                        $records = $livewire->getTableRecords();
+                        $records = $records instanceof Collection ? $records : $records->getCollection();
+
+                        return app(MediaUsage::class)->forMedia($records)[$record->id] ?? [];
+                    })->listWithLineBreaks()->wrap()->placeholder('Nessun utilizzo nei contenuti salvati'),
                 TextColumn::make('folder')->label('Cartella')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -66,14 +82,15 @@ class MediaTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('type')->label('Tipo di file')
+                    ->options(['image' => 'Immagini', 'video' => 'Video', 'document' => 'Documenti']),
             ])
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make()
-                    ->using(function (\App\Models\Media $record, DeleteAction $action) {
-                        if (! app(\App\Services\MediaManager::class)->delete($record)) {
-                            \Filament\Notifications\Notification::make()
+                    ->using(function (Media $record, DeleteAction $action) {
+                        if (! app(MediaManager::class)->delete($record)) {
+                            Notification::make()
                                 ->danger()
                                 ->title('Impossibile eliminare')
                                 ->body('Il media è in uso e non può essere cancellato.')
@@ -88,19 +105,19 @@ class MediaTable
                         ->action(function ($records, DeleteBulkAction $action) {
                             $failed = 0;
                             foreach ($records as $record) {
-                                if (! app(\App\Services\MediaManager::class)->delete($record)) {
+                                if (! app(MediaManager::class)->delete($record)) {
                                     $failed++;
                                 }
                             }
-                            
+
                             if ($failed > 0) {
-                                \Filament\Notifications\Notification::make()
+                                Notification::make()
                                     ->warning()
                                     ->title('Attenzione')
                                     ->body("$failed media non eliminati perché attualmente in uso.")
                                     ->send();
                             } else {
-                                \Filament\Notifications\Notification::make()
+                                Notification::make()
                                     ->success()
                                     ->title('Eliminati')
                                     ->body('I media selezionati sono stati eliminati.')
