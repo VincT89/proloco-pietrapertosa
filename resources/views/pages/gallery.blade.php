@@ -13,7 +13,7 @@
         'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaGalleria.jpg')
     ])
     
-    <section class="wrap pb-80 pt-40">
+    <section id="gallery-list" class="wrap pb-80 pt-40">
         @if(count($albums) > 0)
             <div class="flex-col-60">
                 @foreach($albums as $album)
@@ -36,68 +36,13 @@
                                 </div>
                             @endif
                             
-                            <div class="gal-grid mb-60">
-                                @php
-                                    $galleryJsonData = $allGalleryMedia->map(fn($m) => [
-                                        'type' => $m->type,
-                                        'provider' => $m->provider,
-                                        'url' => $m->type === 'image' ? $m->optimizedUrl('large') : ($m->type === 'video' ? $m->optimizedVideoUrl() : $m->url),
-                                        'embed_url' => $m->embed_url
-                                    ])->toJson();
-                                @endphp
-                                <script>
-                                    window.galleries = window.galleries || {};
-                                    window.galleries['album-{{ $album->id }}'] = {!! $galleryJsonData !!};
-                                </script>
-
-                                @foreach($allGalleryMedia->take(8) as $idx => $media)
-                                    <div class="cur fad gal-img-wrap pos-rel"
-                                         onclick="if(typeof openGallery === 'function') openGallery(window.galleries['album-{{ $album->id }}'], {{ $idx }})"
-                                         onmouseenter="this.querySelector('.gal-overlay').style.opacity = '1'"
-                                         onmouseleave="this.querySelector('.gal-overlay').style.opacity = '0'">
-                                        
-                                        @if($media->isVideo())
-                                            @php
-                                                $thumb = $media->thumbnail_url ?? $media->videoThumbnailUrl('card');
-                                            @endphp
-                                            @if($thumb)
-                                                <img src="{{ $thumb }}" alt="{{ $media->alt ?? '' }}" class="gal-img" loading="lazy" decoding="async">
-                                            @else
-                                                <div class="gal-img video-thumb-fallback" style="display: flex; align-items: center; justify-content: center; background: #333; color: white; width: 100%; height: 100%;">
-                                                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                </div>
-                                            @endif
-                                        @else
-                                            <x-media-renderer :media="$media" class="gal-img" />
-                                        @endif
-                                        
-                                        @if($media->type === 'video')
-                                            <div class="gal-video-badge">
-                                                <svg class="gal-video-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                Video
-                                            </div>
-                                        @endif
-
-                                        <div class="gal-overlay">
-                                            <span class="gal-overlay-text">{{ $dateStr }}</span>
-                                        </div>
-                                    </div>
-                                @endforeach
-                                
-                                @if($allGalleryMedia->count() > 8)
-                                    <div class="cur fad gal-img-wrap pos-rel"
-                                         style="display: flex; align-items: center; justify-content: center; background: var(--ink); border: 1px solid var(--gray); border-radius: 8px;"
-                                         onclick="if(typeof openGallery === 'function') openGallery(window.galleries['album-{{ $album->id }}'], 8)">
-                                        <span style="color: var(--gold); font-size: 1.5rem; font-weight: 600;">+{{ $allGalleryMedia->count() - 8 }} {{ (app()->getLocale() === 'en') ? 'photos' : 'foto' }}</span>
-                                    </div>
-                                @endif
-                            </div>
+                            @include('components.media-gallery', ['mediaItems' => $allGalleryMedia, 'galleryTitle' => $title ?: __('navigation.gallery'), 'previewLimit' => 8])
                         </div>
                     @endif
                 @endforeach
             </div>
             <div style="margin-top: 40px;">
-                {{ $albums->links('pagination::bootstrap-5') }}
+                {{ $albums->links('components.pagination') }}
             </div>
         @else
             <div class="gal-empty">
@@ -134,4 +79,3 @@
     ])
 
 @endsection
-

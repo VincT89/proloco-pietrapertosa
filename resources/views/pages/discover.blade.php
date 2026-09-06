@@ -32,7 +32,7 @@
     </section>
 
     <!-- Sezione Ospitalità e Ristorazione - Redirect a Borgo Racconta -->
-    <section class="wrap scopri-section-2">
+    <section id="ospitalita" class="wrap scopri-section-2">
         <div class="scopri-box-outline">
             <h2 class="scopri-box-title">
                 {{ (app()->getLocale() === 'en') ? "Where to Eat and Sleep" : "Dove Mangiare e Dormire" }}

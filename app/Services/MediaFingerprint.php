@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\MediaUploadException;
 use App\Models\Media;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
@@ -11,9 +12,14 @@ class MediaFingerprint
 {
     public function forUpload(UploadedFile $file): string
     {
-        $hash = hash_file('sha256', $file->getRealPath());
+        $path = $file->getRealPath();
+        if (! $path || ! is_file($path) || ! is_readable($path)) {
+            throw new MediaUploadException('Il file temporaneo non è più disponibile. Rimuovilo e selezionalo di nuovo.');
+        }
+
+        $hash = hash_file('sha256', $path);
         if ($hash === false) {
-            throw new RuntimeException('Impossibile leggere il file selezionato.');
+            throw new MediaUploadException('Impossibile leggere il file selezionato. Rimuovilo e selezionalo di nuovo.');
         }
 
         return $hash;

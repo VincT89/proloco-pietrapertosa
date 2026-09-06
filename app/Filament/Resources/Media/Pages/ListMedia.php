@@ -29,7 +29,7 @@ class ListMedia extends ListRecords
                     } catch (\Throwable $exception) {
                         report($exception);
                         Notification::make()->danger()->title('Caricamento non riuscito')
-                            ->body('Controlla formato e dimensione dei file e riprova.')->send();
+                            ->body(MediaPicker::uploadErrorMessage($exception))->send();
                         $action->halt();
                     }
                 }),

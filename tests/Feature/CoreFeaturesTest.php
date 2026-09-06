@@ -91,5 +91,7 @@ class CoreFeaturesTest extends TestCase
         
         // Ensure pagination is happening (9 per page)
         $this->assertCount(9, $response->viewData('news'));
+        $response->assertSee(route('news.it').'?page=2#news-list', false);
+        $this->get('/it/notizie?page=2')->assertOk()->assertSee('News 10')->assertSee('Pagina 2 di 2');
     }
 }

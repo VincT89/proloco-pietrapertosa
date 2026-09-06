@@ -111,7 +111,7 @@
                     </div>
 
                     @if(session('success'))
-                        <div class="form-success-msg">
+                        <div class="form-success-msg" role="status">
                             {{ session('success') }}
                         </div>
                     @endif
@@ -123,17 +123,25 @@
                     @endif
 
                     <div class="proloco-form-grid">
-                        <input type="text" name="name" required placeholder="{{ (app()->getLocale() === 'en') ? 'Full Name' : 'Nome e Cognome' }}" class="ed-input" value="{{ old('name') }}" />
-                        <input type="email" name="email" required placeholder="Email" class="ed-input" value="{{ old('email') }}" />
+                        <label class="form-field" for="contact-name"><span>{{ app()->getLocale() === 'en' ? 'Full name' : 'Nome e cognome' }}</span>
+                        <input type="text" name="name" id="contact-name" autocomplete="name" @error('name') aria-invalid="true" aria-describedby="error-name" @enderror required placeholder="{{ (app()->getLocale() === 'en') ? 'Full Name' : 'Nome e Cognome' }}" class="ed-input" value="{{ old('name') }}" />
+                    </label>
+                        <label class="form-field" for="contact-email"><span>Email</span>
+                        <input type="email" name="email" id="contact-email" autocomplete="email" @error('email') aria-invalid="true" aria-describedby="error-email" @enderror required placeholder="Email" class="ed-input" value="{{ old('email') }}" />
+                    </label>
                     </div>
-                    @error('name')<div class="form-error-msg">{{ $message }}</div>@enderror
-                    @error('email')<div class="form-error-msg">{{ $message }}</div>@enderror
+                    @error('name')<div class="form-error-msg" id="error-name">{{ $message }}</div>@enderror
+                    @error('email')<div class="form-error-msg" id="error-email">{{ $message }}</div>@enderror
 
-                    <input type="text" name="subject" placeholder="{{ (app()->getLocale() === 'en') ? 'Subject (e.g. Membership)' : 'Oggetto (es. Tesseramento)' }}" class="ed-input mt-15" value="{{ old('subject') }}" />
-                    @error('subject')<div class="form-error-msg">{{ $message }}</div>@enderror
+                    <label class="form-field" for="contact-subject"><span>{{ app()->getLocale() === 'en' ? 'Subject (optional)' : 'Oggetto (facoltativo)' }}</span>
+                        <input type="text" name="subject" id="contact-subject" autocomplete="off" @error('subject') aria-invalid="true" aria-describedby="error-subject" @enderror placeholder="{{ (app()->getLocale() === 'en') ? 'Subject (e.g. Membership)' : 'Oggetto (es. Tesseramento)' }}" class="ed-input mt-15" value="{{ old('subject') }}" />
+                    </label>
+                    @error('subject')<div class="form-error-msg" id="error-subject">{{ $message }}</div>@enderror
 
-                    <textarea name="message" required placeholder="{{ (app()->getLocale() === 'en') ? 'Your message' : 'Il tuo messaggio' }}" class="ed-input mt-15" rows="4">{{ old('message') }}</textarea>
-                    @error('message')<div class="form-error-msg">{{ $message }}</div>@enderror
+                    <label class="form-field" for="contact-message"><span>{{ app()->getLocale() === 'en' ? 'Message' : 'Messaggio' }}</span>
+                        <textarea name="message" id="contact-message" autocomplete="off" @error('message') aria-invalid="true" aria-describedby="error-message" @enderror required placeholder="{{ (app()->getLocale() === 'en') ? 'Your message' : 'Il tuo messaggio' }}" class="ed-input mt-15" rows="4">{{ old('message') }}</textarea>
+                    </label>
+                    @error('message')<div class="form-error-msg" id="error-message">{{ $message }}</div>@enderror
 
                     <div class="proloco-form-privacy mt-15">
                         <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ed-color-theme); cursor: pointer;">
@@ -193,4 +201,3 @@
         </div>
     </section>
 @endsection
-

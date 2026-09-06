@@ -1,11 +1,11 @@
-<div id="cookieBanner" class="cookie-banner is-hidden">
+<div id="cookieBanner" class="cookie-banner is-hidden" role="region" aria-labelledby="cookie-title">
     <div class="cookie-banner-inner">
-        <h4 class="cookie-banner-title">{{ __('legal.cookie_banner_title') }}</h4>
+        <h4 class="cookie-banner-title" id="cookie-title">{{ __('legal.cookie_banner_title') }}</h4>
         <p class="cookie-banner-text">
             {{ __('legal.cookie_banner_text') }}
             <a href="{{ url('/' . app()->getLocale() . '/privacy') }}" class="cookie-link">{{ __('legal.privacy') }}</a>
             ·
-            <a href="{{ url('/' . app()->getLocale() . '/cookie') }}" class="cookie-link">{{ __('legal.cookie') }}</a>
+            <a href="{{ route('cookie.' . app()->getLocale()) }}" class="cookie-link">{{ __('legal.cookie') }}</a>
         </p>
         <div class="cookie-actions">
             <button type="button" class="cookie-btn cookie-btn-accept" id="cookieAcceptBtn">{{ __('legal.accept_external') }}</button>

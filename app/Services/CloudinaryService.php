@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Exceptions\MediaUploadException;
+use App\Models\Media;
 use Cloudinary\Cloudinary;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 
 class CloudinaryService
 {
@@ -39,15 +42,15 @@ class CloudinaryService
         if ($file->getSize() > $maxBytes) {
             $maxMb = $isVideo ? 100 : 10;
 
-            throw new \InvalidArgumentException(
-                'Il file "' . $file->getClientOriginalName() . '" supera il limite massimo di ' . $maxMb . ' MB.'
+            throw new MediaUploadException(
+                'Il file "'.$file->getClientOriginalName().'" supera il limite massimo di '.$maxMb.' MB.'
             );
         }
         $isDocument = preg_match(
             '/application\/(pdf|msword|vnd\.openxmlformats-officedocument|zip|x-zip-compressed|rar)/i',
             $mime
         );
-        
+
         $response = $this->cloudinary->uploadApi()->upload($file->getRealPath(), [
             'folder' => $folder,
             'resource_type' => $isDocument ? 'raw' : 'auto',
@@ -94,18 +97,20 @@ class CloudinaryService
      */
     public function cleanupTemporaryUpload(string $url)
     {
-        $cachedId = \Illuminate\Support\Facades\Cache::get('last_upload_'.$url);
+        $cachedId = Cache::get('last_upload_'.$url);
         if ($cachedId) {
-            $media = \App\Models\Media::find($cachedId);
+            $media = Media::find($cachedId);
             if ($media) {
                 $this->deleteMediaByUrl($media->url, $media->resource_type ?? 'image');
                 $media->delete();
             } else {
                 $this->deleteMediaByUrl($url);
             }
-            \Illuminate\Support\Facades\Cache::forget('last_upload_'.$url);
+            Cache::forget('last_upload_'.$url);
+
             return true;
         }
+
         return false;
     }
 }

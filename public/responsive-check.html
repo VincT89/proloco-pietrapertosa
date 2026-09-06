@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verifica locale responsive</title>
+<style>body{margin:0;background:#30343a;color:#fff;font:16px system-ui}form{display:flex;gap:16px;padding:12px;flex-wrap:wrap}input,select,button{font:inherit}iframe{display:block;border:0;margin:0 auto;background:#0d1014;max-width:none}</style>
+<form id="controls"><label>Larghezza <select id="width"><option>360</option><option selected>390</option><option>768</option><option>1440</option></select></label><label>Pagina <input id="page" value="/it/notizie/bando" size="36"></label><button>Apri</button></form>
+<iframe id="site" title="Anteprima del sito" width="390" height="844" src="/it/notizie/bando"></iframe>
+<script>document.querySelector('#width').onchange=e=>document.querySelector('#site').width=e.target.value;document.querySelector('#controls').onsubmit=e=>{e.preventDefault();document.querySelector('#site').src=document.querySelector('#page').value;};</script>
+</html>

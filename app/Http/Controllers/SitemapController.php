@@ -2,29 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\DirectoryItem;
+use App\Models\Event;
+use App\Models\News;
+use App\Models\PageSetting;
+use Carbon\Carbon;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
-use App\Models\PageSetting;
-use App\Models\DirectoryItem;
-use App\Models\News;
-use App\Models\Event;
-use Carbon\Carbon;
 
 class SitemapController extends Controller
 {
     public function index()
     {
         $sitemap = Sitemap::create();
-        
+
         // Calculate the maximum updated_at across all content models
         $lastmod = collect([
             PageSetting::max('updated_at'),
             DirectoryItem::max('updated_at'),
             News::max('updated_at'),
-            Event::max('updated_at')
+            Event::max('updated_at'),
         ])->filter()->max();
-        
+
         $lastmod = $lastmod ? Carbon::parse($lastmod) : Carbon::now();
 
         // 1. Home (Priority 1.0, Daily)
@@ -54,8 +53,20 @@ class SitemapController extends Controller
         // 7. Altre pagine (Priority 0.7, Monthly)
         $pages = ['community', 'gallery', 'proLoco', 'photo-thanks', 'privacy', 'cookie'];
         foreach ($pages as $page) {
-            $sitemap->add(Url::create(route($page . '.it'))->setLastModificationDate($lastmod)->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)->setPriority(0.7));
-            $sitemap->add(Url::create(route($page . '.en'))->setLastModificationDate($lastmod)->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)->setPriority(0.7));
+            $sitemap->add(Url::create(route($page.'.it'))->setLastModificationDate($lastmod)->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)->setPriority(0.7));
+            $sitemap->add(Url::create(route($page.'.en'))->setLastModificationDate($lastmod)->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)->setPriority(0.7));
+        }
+
+        foreach (['it', 'en'] as $locale) {
+            foreach (News::where('status', 'published')->select(['slug', 'updated_at'])->cursor() as $news) {
+                $sitemap->add(Url::create(route('news.show.'.$locale, $news->slug))->setLastModificationDate($news->updated_at));
+            }
+            foreach (Event::where('status', 'published')->select(['slug', 'updated_at'])->cursor() as $event) {
+                $sitemap->add(Url::create(route('events.show.'.$locale, $event->slug))->setLastModificationDate($event->updated_at));
+            }
+            foreach (DirectoryItem::where('category', 'eventi_annuali')->select(['id', 'updated_at'])->cursor() as $tradition) {
+                $sitemap->add(Url::create(route('traditions.show.'.$locale, $tradition->id))->setLastModificationDate($tradition->updated_at));
+            }
         }
 
         return $sitemap->toResponse(request());

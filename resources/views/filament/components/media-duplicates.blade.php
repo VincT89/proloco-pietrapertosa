@@ -1,3 +1,6 @@
+@if ($error ?? null)
+    <p class="media-picker-help" role="alert">{{ $error }}</p>
+@endif
 @if ($matches->isNotEmpty())
     <div class="media-upload-duplicates" role="status">
         <p>Questi file sono già nella libreria. Confermando verranno riutilizzati, senza caricare altre copie.</p>

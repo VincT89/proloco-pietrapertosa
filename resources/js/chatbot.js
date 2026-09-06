@@ -17,7 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let isTyping = false;
 
     // Load history from session storage
-    let messageHistory = JSON.parse(sessionStorage.getItem('chatbotHistory')) || [];
+    let messageHistory = [];
+    try { messageHistory = JSON.parse(sessionStorage.getItem('chatbotHistory')) || []; } catch { /* Ignore an unavailable or invalid saved history. */ }
+    chatbotPanel.inert = true;
+    chatbotToggle.setAttribute('aria-controls', 'chatbotPanel');
+    chatbotToggle.setAttribute('aria-expanded', 'false');
+    chatbotToggle.setAttribute('aria-label', locale === 'en' ? 'Open chat' : 'Apri assistente');
+    chatbotClose.setAttribute('aria-label', locale === 'en' ? 'Close chat' : 'Chiudi assistente');
 
     // Initialize
     function init() {
@@ -48,17 +54,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function toggleChat() {
-        chatbotPanel.classList.toggle('is-open');
+        const open = !chatbotPanel.classList.contains('is-open');
+        chatbotPanel.classList.toggle('is-open', open);
+        chatbotPanel.inert = !open;
+        chatbotToggle.setAttribute('aria-expanded', String(open));
+        if (open) chatbotInput.focus();
     }
 
     function closeChat() {
         chatbotPanel.classList.remove('is-open');
+        chatbotPanel.inert = true;
+        chatbotToggle.setAttribute('aria-expanded', 'false');
+        chatbotToggle.focus();
     }
 
     const chatbotClear = document.getElementById('chatbotClear');
 
     chatbotToggle.addEventListener('click', toggleChat);
     chatbotClose.addEventListener('click', closeChat);
+    chatbotPanel.addEventListener('keydown', event => { if (event.key === 'Escape') closeChat(); });
 
     if (chatbotClear) {
         chatbotClear.addEventListener('click', () => {

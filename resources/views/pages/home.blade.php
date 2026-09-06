@@ -3,19 +3,6 @@
 @section('title', 'Proloco Pietrapertosana')
 
 @php
-    $eventsToDisplay = $events->map(function($ev) {
-        return (object)[
-            'id' => $ev->id,
-            'title' => $ev->title,
-            'title_en' => $ev->title_en,
-            'cover_url' => $ev->cover ? asset($ev->cover->optimizedUrl('card')) : null,
-            'cover_blur_url' => $ev->cover ? asset($ev->cover->optimizedUrl('poster_blur')) : null,
-            'cover_poster_url' => $ev->cover ? asset($ev->cover->optimizedUrl('poster')) : null,
-            'start_date' => $ev->start_date,
-            'fallback_date' => null
-        ];
-    });
-
     $scopriData = $page?->data['discover_items'] ?? null;
     $fallbackScopri = [];
     if ($scopriData && is_array($scopriData) && count($scopriData) > 0) {
@@ -79,7 +66,7 @@
         <div class="hero-scroll"><i></i></div>
     </header>
 
-    @if(count($eventsToDisplay) > 0)
+    @if(count($events) > 0)
         <section class="ed-sec">
             <div class="ed-wrap">
                 <div class="ed-section-header">
@@ -92,32 +79,9 @@
                     <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'events' : 'eventi')) }}" class="ed-link-more">@lang('home.see_all')</a>
                 </div>
                 
-                <div class="ed-grid">
-                    @foreach($eventsToDisplay as $ev)
-                        <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'events' : 'eventi')) }}" class="ed-link-clean">
-                            <div class="ed-card">
-                                <div class="ed-img-box tall" style="background-color: var(--ink);">
-                                    @if(!empty($ev->cover_url))
-                                        <img src="{{ $ev->cover_blur_url }}" class="ev-card-normal-blur" loading="lazy" decoding="async" />
-                                        <div class="ev-card-normal-poster">
-                                            <img src="{{ $ev->cover_poster_url }}" class="pos-abs-cover object-contain" loading="lazy" decoding="async" />
-                                        </div>
-                                    @else
-                                        <img src="https://placehold.co/400x600/14181f/d9aa63?text=Locandina" alt="{{ app()->getLocale() === 'en' && !empty($ev->title_en) ? $ev->title_en : $ev->title }}" loading="lazy" decoding="async" />
-                                    @endif
-                                </div>
-                                <div class="ed-glass-cap">
-                                    <span>
-                                        @if($ev->start_date)
-                                            {{ \Carbon\Carbon::parse($ev->start_date)->format((app()->getLocale() === 'en') ? 'M d, Y' : 'd/m/Y') }}
-                                        @else
-                                            {{ $ev->fallback_date }}
-                                        @endif
-                                    </span>
-                                    <h3 class="ed-title">{{ app()->getLocale() === 'en' && !empty($ev->title_en) ? $ev->title_en : $ev->title }}</h3>
-                                </div>
-                            </div>
-                        </a>
+                <div class="content-grid">
+                    @foreach($events as $item)
+                        @include('components.content-card', ['kind' => 'event'])
                     @endforeach
                 </div>
             </div>
@@ -133,33 +97,12 @@
                 </div>
             </div>
             
-            <div class="ed-list ed-list-wrapper">
-                @if($news->isEmpty())
-                    <div class="ed-empty-msg">
-                        @lang('home.no_news')
-                    </div>
-                @else
-                    @foreach($news as $notizia)
-                        <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'news' : 'notizie')) }}" class="ed-link-clean">
-                            <div class="ed-list-item ed-list-item-hover">
-                                <div class="ed-item-row">
-                                    <div class="ed-item-date">
-                                        {{ \Carbon\Carbon::parse($notizia->published_at ?? $notizia->created_at)->format((app()->getLocale() === 'en') ? 'M d, Y' : 'd/m/Y') }}
-                                    </div>
-                                    <div>
-                                        <h4 class="ed-item-title">
-                                            {{ $notizia->getTranslation('title') }}
-                                        </h4>
-                                        <p class="ed-item-category">
-                                            {{ (app()->getLocale() === 'en') ? 'News' : 'Avviso' }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <span class="ed-item-arrow">→</span>
-                            </div>
-                        </a>
-                    @endforeach
-                @endif
+            <div class="content-grid">
+                @forelse($news as $item)
+                    @include('components.content-card', ['kind' => 'news'])
+                @empty
+                    <p>@lang('home.no_news')</p>
+                @endforelse
             </div>
         </div>
     </section>
@@ -213,6 +156,7 @@
                                 type="button"
                                 class="rotating-collage-item {{ $index === 0 ? 'bi1 is-active' : ($index === 1 ? 'bi2' : 'bi3') }}"
                                 data-index="{{ $index }}"
+                                data-gallery='@json($collageItems->map(fn ($photo) => ["type" => "image", "url" => $photo->img, "alt" => app()->getLocale() === "en" && !empty($photo->nome_en) ? $photo->nome_en : $photo->nome]))'
                                 aria-label="{{ app()->getLocale() === 'en' && !empty($item->nome_en) ? $item->nome_en : $item->nome }}"
                             >
                                 <img

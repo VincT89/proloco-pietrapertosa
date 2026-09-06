@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\DirectoryItem;
 use App\Models\Event;
+use App\Models\FinancialDocument;
 use App\Models\GalleryAlbum;
 use App\Models\News;
 use App\Models\PageSetting;
-use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class PublicController extends Controller
@@ -16,16 +16,16 @@ class PublicController extends Controller
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'home')->first();
 
-        $cutoff = Carbon::now()->subDay();
+        $cutoff = Carbon::today();
 
         $events = Event::with('cover')
             ->where('status', 'published')
             ->where(function ($query) use ($cutoff) {
                 $query->where('end_date', '>=', $cutoff)
-                      ->orWhere(function ($q) use ($cutoff) {
-                          $q->whereNull('end_date')->where('start_date', '>=', $cutoff);
-                      })
-                      ->orWhereNull('start_date');
+                    ->orWhere(function ($q) use ($cutoff) {
+                        $q->whereNull('end_date')->where('start_date', '>=', $cutoff);
+                    })
+                    ->orWhere(fn ($q) => $q->whereNull('start_date')->whereNull('end_date'));
             })
             ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
             ->orderBy('start_date', 'asc')
@@ -39,8 +39,8 @@ class PublicController extends Controller
     public function proLoco()
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'pro-loco')->first();
-        
-        $financialDocuments = \App\Models\FinancialDocument::with('media')
+
+        $financialDocuments = FinancialDocument::with('media')
             ->where('is_published', true)
             ->whereNotNull('media_id')
             ->orderBy('year', 'desc')
@@ -81,7 +81,7 @@ class PublicController extends Controller
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'scopri')->first();
 
-        $luoghi = DirectoryItem::with('galleryMedia')
+        $luoghi = DirectoryItem::with(['galleryMedia', 'externalMedia'])
             ->where('category', 'scopri_luoghi')
             ->orderBy('sort_order')
             ->get();
@@ -92,53 +92,67 @@ class PublicController extends Controller
     public function news()
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'notizie')->first();
-        $news = News::with(['cover', 'attachmentsMedia', 'galleryMedia', 'externalMedia'])
+        $news = News::with('cover')
             ->where('status', 'published')
             ->orderBy('published_at', 'desc')
-            ->paginate(9);
+            ->paginate(9)->withQueryString()->fragment('news-list');
 
         return view('pages.news', compact('page', 'news'));
+    }
+
+    public function newsShow(News $news)
+    {
+        abort_unless($news->status === 'published', 404);
+        $news->load(['cover', 'attachmentsMedia', 'galleryMedia', 'externalMedia']);
+
+        return view('pages.content-detail', ['item' => $news, 'kind' => 'news']);
+    }
+
+    public function eventShow(Event $event)
+    {
+        abort_unless($event->status === 'published', 404);
+        $event->load(['cover', 'galleryMedia', 'externalMedia']);
+
+        return view('pages.content-detail', ['item' => $event, 'kind' => 'event']);
+    }
+
+    public function traditionShow(DirectoryItem $tradition)
+    {
+        abort_unless($tradition->category === 'eventi_annuali', 404);
+        $tradition->load(['galleryMedia', 'externalMedia']);
+
+        return view('pages.content-detail', ['item' => $tradition, 'kind' => 'tradition']);
     }
 
     public function events()
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'eventi')->first();
 
-        $cutoff = Carbon::now()->subDay();
+        $cutoff = Carbon::today();
 
-        $currentMonthEvents = Event::with(['cover', 'galleryMedia', 'externalMedia'])
+        $events = Event::with('cover')
             ->where('status', 'published')
             ->where(function ($query) use ($cutoff) {
                 $query->where('end_date', '>=', $cutoff)
-                      ->orWhere(function ($q) use ($cutoff) {
-                          $q->whereNull('end_date')->where('start_date', '>=', $cutoff);
-                      })
-                      ->orWhereNull('start_date');
+                    ->orWhere(fn ($query) => $query->whereNull('end_date')->where('start_date', '>=', $cutoff))
+                    ->orWhere(fn ($query) => $query->whereNull('start_date')->whereNull('end_date'));
             })
             ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
-            ->orderBy('start_date', 'asc')
-            ->get();
+            ->orderBy('start_date')
+            ->paginate(9)->withQueryString()->fragment('upcoming-title');
 
-        $cutoff = Carbon::now()->subDay();
-
-        $events = Event::with(['cover', 'galleryMedia', 'externalMedia'])
-            ->where('status', 'published')
+        $pastEvents = Event::where('status', 'published')
             ->where(function ($query) use ($cutoff) {
-                $query->where('end_date', '>=', $cutoff)
-                      ->orWhere(function ($q) use ($cutoff) {
-                          $q->whereNull('end_date')->where('start_date', '>=', $cutoff);
-                      })
-                      ->orWhereNull('start_date');
+                $query->where('end_date', '<', $cutoff)
+                    ->orWhere(fn ($query) => $query->whereNull('end_date')->where('start_date', '<', $cutoff));
             })
-            ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
             ->orderBy('start_date', 'desc')
-            ->paginate(9);
-        $annualEvents = DirectoryItem::with('galleryMedia')
-            ->where('category', 'eventi_annuali')
-            ->orderBy('sort_order')
-            ->get();
+            ->paginate(12, ['*'], 'archive')->withQueryString()->fragment('past-events-title');
 
-        return view('pages.events', compact('page', 'events', 'annualEvents', 'currentMonthEvents'));
+        $annualEvents = DirectoryItem::with('galleryMedia')
+            ->where('category', 'eventi_annuali')->orderBy('sort_order')->get();
+
+        return view('pages.events', compact('page', 'events', 'annualEvents', 'pastEvents'));
     }
 
     public function gallery()
@@ -148,7 +162,7 @@ class PublicController extends Controller
             ->orderByRaw('CASE WHEN section_date IS NULL THEN 1 ELSE 0 END')
             ->orderBy('section_date', 'desc')
             ->orderBy('created_at', 'desc')
-            ->paginate(12);
+            ->paginate(12)->withQueryString()->fragment('gallery-list');
 
         return view('pages.gallery', compact('page', 'albums'));
     }

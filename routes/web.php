@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\PublicController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PublicController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -22,7 +22,10 @@ Route::middleware(['setLocale'])->group(function () {
         Route::get('/scopri', [PublicController::class, 'discover'])->name('discover.it');
 
         Route::get('/notizie', [PublicController::class, 'news'])->name('news.it');
+        Route::get('/notizie/{news:slug}', [PublicController::class, 'newsShow'])->name('news.show.it');
         Route::get('/eventi', [PublicController::class, 'events'])->name('events.it');
+        Route::get('/eventi/tradizioni/{tradition}', [PublicController::class, 'traditionShow'])->name('traditions.show.it');
+        Route::get('/eventi/{event:slug}', [PublicController::class, 'eventShow'])->name('events.show.it');
         Route::get('/galleria', [PublicController::class, 'gallery'])->name('gallery.it');
         Route::get('/ringraziamenti-fotografici', [PublicController::class, 'photoThanks'])->name('photo-thanks.it');
         Route::post('/pro-loco/contact', [ContactController::class, 'send'])
@@ -51,7 +54,10 @@ Route::middleware(['setLocale'])->group(function () {
         Route::get('/discover', [PublicController::class, 'discover'])->name('discover.en');
 
         Route::get('/news', [PublicController::class, 'news'])->name('news.en');
+        Route::get('/news/{news:slug}', [PublicController::class, 'newsShow'])->name('news.show.en');
         Route::get('/events', [PublicController::class, 'events'])->name('events.en');
+        Route::get('/events/traditions/{tradition}', [PublicController::class, 'traditionShow'])->name('traditions.show.en');
+        Route::get('/events/{event:slug}', [PublicController::class, 'eventShow'])->name('events.show.en');
         Route::get('/gallery', [PublicController::class, 'gallery'])->name('gallery.en');
         Route::get('/photo-thanks', [PublicController::class, 'photoThanks'])->name('photo-thanks.en');
         Route::post('/pro-loco/contact', [ContactController::class, 'send'])

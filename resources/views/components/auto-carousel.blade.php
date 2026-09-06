@@ -11,7 +11,7 @@
     @if(count($images) > 1)
         <div class="carousel-dots">
             @foreach($images as $idx => $imgUrl)
-                <div class="carousel-dot {{ $idx === 0 ? 'active' : '' }}" data-index="{{ $idx }}"></div>
+                <button type="button" class="carousel-dot {{ $idx === 0 ? 'active' : '' }}" data-index="{{ $idx }}" aria-label="{{ (app()->getLocale() === 'en' ? 'View image ' : 'Mostra immagine ').($idx + 1) }}"></button>
             @endforeach
         </div>
     @endif

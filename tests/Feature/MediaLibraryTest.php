@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Exceptions\MediaUploadException;
 use App\Filament\Components\MediaPicker;
 use App\Filament\Components\MediaRichEditor;
 use App\Filament\Resources\DirectoryItems\Pages\CreateDirectoryItem;
@@ -60,6 +61,84 @@ class MediaLibraryTest extends TestCase
                 'resource_type' => 'image', 'format' => 'jpg',
             ]);
         });
+    }
+
+    public function test_library_accepts_a_livewire_temporary_upload_before_saving_the_action(): void
+    {
+        $this->mockUpload();
+        $upload = UploadedFile::fake()->createWithContent('foto.png', file_get_contents(public_path('favicon-96x96.png')));
+        Livewire::test(ListMedia::class)
+            ->mountAction('upload')
+            ->set('mountedActions.0.data.files', [$upload])
+            ->callMountedAction()
+            ->assertHasNoActionErrors()
+            ->assertNotified('File aggiunti alla libreria');
+        $this->assertDatabaseHas('media', ['original_name' => 'foto.png']);
+    }
+
+    public function test_new_gallery_album_uploads_photos_saves_them_and_displays_them_publicly(): void
+    {
+        $this->mockUpload(2);
+        $first = UploadedFile::fake()->createWithContent('prima.png', file_get_contents(public_path('favicon-48x48.png')));
+        $second = UploadedFile::fake()->createWithContent('seconda.png', file_get_contents(public_path('favicon-96x96.png')));
+        Livewire::test(CreateGalleryAlbum::class)
+            ->fillForm(['title' => 'Album di verifica'])
+            ->mountAction(TestAction::make('uploadMedia')->schemaComponent('gallery_files'))
+            ->set('mountedActions.0.data.files', [$first, $second])
+            ->callMountedAction()->assertHasNoActionErrors()
+            ->call('create')->assertHasNoFormErrors();
+
+        $album = GalleryAlbum::where('title', 'Album di verifica')->firstOrFail();
+        $this->assertSame(['prima.png', 'seconda.png'], $album->galleryMedia->pluck('original_name')->all());
+        $this->get('/it/galleria')->assertOk()->assertSee('Album di verifica')->assertSee('Apri foto 2');
+    }
+
+    public function test_edit_gallery_upload_keeps_previous_photos_and_reuses_renamed_duplicates(): void
+    {
+        $this->mockUpload();
+        $bytes = file_get_contents(public_path('favicon-96x96.png'));
+        $existing = $this->media(['content_hash' => hash('sha256', $bytes), 'original_name' => 'esistente.png']);
+        $album = GalleryAlbum::create(['title' => 'Album esistente']);
+        $album->galleryMedia()->attach($existing->id, ['collection' => 'gallery', 'order' => 0]);
+        Livewire::test(EditGalleryAlbum::class, ['record' => $album->id])
+            ->mountAction(TestAction::make('uploadMedia')->schemaComponent('gallery_files'))
+            ->set('mountedActions.0.data.files', [
+                UploadedFile::fake()->createWithContent('rinominata.png', $bytes),
+                UploadedFile::fake()->createWithContent('nuova.png', file_get_contents(public_path('favicon-48x48.png'))),
+            ])
+            ->callMountedAction()->assertHasNoActionErrors()
+            ->call('save')->assertHasNoFormErrors();
+        $this->assertSame(['esistente.png', 'nuova.png'], $album->fresh()->galleryMedia->pluck('original_name')->all());
+        $this->assertDatabaseCount('media', 2);
+    }
+
+    public function test_library_rejects_a_document_over_ten_mb_before_calling_cloudinary(): void
+    {
+        $this->mock(CloudinaryService::class, fn ($mock) => $mock->shouldNotReceive('uploadMedia'));
+        Livewire::test(ListMedia::class)->mountAction('upload')
+            ->set('mountedActions.0.data.files', [UploadedFile::fake()->create('documento.pdf', 10241, 'application/pdf')])
+            ->callMountedAction()->assertHasActionErrors(['files']);
+        $this->assertDatabaseCount('media', 0);
+    }
+
+    public function test_an_empty_upload_does_not_report_success(): void
+    {
+        $this->expectException(MediaUploadException::class);
+        MediaPicker::uploadFiles([]);
+    }
+
+    public function test_an_expired_file_has_an_actionable_error(): void
+    {
+        $file = UploadedFile::fake()->createWithContent('temporaneo.png', 'test');
+        unlink($file->getRealPath());
+        $this->expectException(MediaUploadException::class);
+        $this->expectExceptionMessage('selezionalo di nuovo');
+        app(MediaFingerprint::class)->forUpload($file);
+    }
+
+    public function test_upload_errors_do_not_expose_service_configuration(): void
+    {
+        $this->assertStringNotContainsString('secret-value', MediaPicker::uploadErrorMessage(new \InvalidArgumentException('api_secret=secret-value')));
     }
 
     public function test_identical_renamed_upload_reuses_media_and_preserves_its_description(): void

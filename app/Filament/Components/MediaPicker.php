@@ -2,7 +2,9 @@
 
 namespace App\Filament\Components;
 
+use App\Exceptions\MediaUploadException;
 use App\Models\Media;
+use App\Rules\MediaUploadRule;
 use App\Services\MediaFingerprint;
 use App\Services\MediaManager;
 use Filament\Actions\Action;
@@ -15,8 +17,11 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
+use GuzzleHttp\Exception\ConnectException;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 
 class MediaPicker extends Field
@@ -76,7 +81,7 @@ class MediaPicker extends Field
                     } catch (\Throwable $exception) {
                         report($exception);
                         Notification::make()->danger()->title('Caricamento non riuscito')
-                            ->body('I file non sono stati aggiunti alla selezione. Controlla formato e dimensione e riprova.')->send();
+                            ->body(self::uploadErrorMessage($exception))->send();
                         $action->halt();
 
                         return;
@@ -187,12 +192,26 @@ class MediaPicker extends Field
             FileUpload::make('files')->label('File dal computer')->multiple($multiple)
                 ->acceptedFileTypes($mimeTypes)->maxSize($limit)->maxFiles($multiple ? 20 : 1)
                 ->storeFiles(false)->required()->live()->imagePreviewHeight(140)
-                ->helperText('Immagini e documenti: massimo 10 MB per file. Video: massimo 100 MB, nei campi che li accettano.'),
+                ->rules([new MediaUploadRule])
+                ->helperText(($multiple ? 'Fino a 20 file alla volta. ' : '').'Immagini e documenti: massimo 10 MB per file. Video: massimo 100 MB, nei campi che li accettano.'),
             Placeholder::make('duplicate_preview')->hiddenLabel()
                 ->content(function (Get $get) {
+                    if (! Schema::hasColumn('media', 'content_hash')) {
+                        return view('filament.components.media-duplicates', [
+                            'matches' => collect(), 'pending' => false,
+                            'error' => 'La libreria richiede un aggiornamento del database. Esegui le migrazioni prima di caricare nuovi file.',
+                        ]);
+                    }
                     $files = $get('files');
                     $matches = collect(is_array($files) ? $files : [$files])->filter(fn ($file) => $file instanceof UploadedFile)
-                        ->map(fn ($file) => app(MediaFingerprint::class)->findUpload($file))->filter()->unique('id');
+                        ->map(function ($file) {
+                            try {
+                                return app(MediaFingerprint::class)->findUpload($file);
+                            } catch (MediaUploadException) {
+                                // Let field validation explain expired uploads instead of breaking the modal render.
+                                return null;
+                            }
+                        })->filter()->unique('id');
 
                     return view('filament.components.media-duplicates', [
                         'matches' => $matches,
@@ -204,9 +223,26 @@ class MediaPicker extends Field
 
     public static function uploadFiles(mixed $files): Collection
     {
-        return collect(is_array($files) ? $files : [$files])
-            ->filter(fn ($file) => $file instanceof UploadedFile)
+        $uploads = collect(is_array($files) ? $files : [$files])->filter(fn ($file) => $file instanceof UploadedFile);
+        if ($uploads->isEmpty()) {
+            throw new MediaUploadException('Nessun file pronto per il caricamento. Attendi la fine del trasferimento o seleziona di nuovo il file.');
+        }
+        if (! Schema::hasColumn('media', 'content_hash')) {
+            throw new MediaUploadException('La libreria richiede un aggiornamento del database. Esegui le migrazioni prima di caricare nuovi file.');
+        }
+
+        return $uploads
             ->map(fn ($file) => app(MediaManager::class)->upload($file));
+    }
+
+    public static function uploadErrorMessage(\Throwable $exception): string
+    {
+        return match (true) {
+            $exception instanceof MediaUploadException => $exception->getMessage(),
+            $exception instanceof LockTimeoutException => 'Un altro caricamento dello stesso file è in corso. Attendi qualche secondo e riprova.',
+            $exception instanceof ConnectException => 'Il servizio immagini non è raggiungibile. I file selezionati sono conservati: riprova tra poco.',
+            default => 'Il caricamento non è stato completato. I dettagli sono stati registrati nel log del server; puoi riprovare senza duplicare i file già salvati.',
+        };
     }
 
     public static function notifyUpload(Collection $media): void

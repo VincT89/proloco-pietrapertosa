@@ -1,27 +1,14 @@
-<div class="modal lb-modal" id="gallery-modal" onclick="closeGallery(event)" style="z-index: 99999;">
-    <div class="ov"></div>
-    <div class="lb-img-wrap" onclick="event.stopPropagation()">
-        
-        <button id="lb-prev" class="lb-btn lb-prev" onclick="lbPrev(event)" aria-label="Precedente">
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"></path></svg>
-        </button>
-
-        <div class="lb-inner">
-            <button class="x lb-close" onclick="closeGallery(event)" aria-label="Chiudi">
-                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-            </button>
-            
-            <div id="lbLoader" class="lb-loader" aria-hidden="true"></div>
-            <div id="lbMediaContainer" class="lb-media-container"></div>
-            
-            <div class="lb-caption-wrap" id="lbCap">
-                <span id="lbCapText"></span>
-                <span id="lbCapCount" class="lb-caption-count"></span>
-            </div>
-        </div>
-
-        <button id="lb-next" class="lb-btn lb-next" onclick="lbNext(event)" aria-label="Successiva">
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"></path></svg>
-        </button>
+<dialog id="gallery-modal" class="media-dialog" aria-label="{{ app()->getLocale() === 'en' ? 'Photo and video viewer' : 'Visualizzatore foto e video' }}">
+    <div class="media-dialog-toolbar">
+        <p id="lbCap" aria-live="polite"><span id="lbCapText"></span> <span id="lbCapCount"></span></p>
+        <button type="button" class="media-dialog-close" onclick="closeGallery()" autofocus>{{ app()->getLocale() === 'en' ? 'Close' : 'Chiudi' }} <span aria-hidden="true">×</span></button>
     </div>
-</div>
+    <div class="media-dialog-stage">
+        <div id="lbLoader" class="media-dialog-loading" role="status">{{ app()->getLocale() === 'en' ? 'Loading…' : 'Caricamento…' }}</div>
+        <div id="lbMediaContainer"></div>
+    </div>
+    <div class="media-dialog-controls">
+        <button type="button" id="lb-prev" onclick="lbPrev()">{{ app()->getLocale() === 'en' ? 'Previous' : 'Precedente' }}</button>
+        <button type="button" id="lb-next" onclick="lbNext()">{{ app()->getLocale() === 'en' ? 'Next' : 'Successiva' }}</button>
+    </div>
+</dialog>

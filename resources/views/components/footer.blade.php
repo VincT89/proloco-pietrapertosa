@@ -14,7 +14,7 @@
                 <ul class="fu">
                     <li><a href="mailto:prolocopietrapertosa@gmail.com">prolocopietrapertosa@gmail.com</a></li>
                     <li><a href="mailto:prolocopietrapertosa@pec.it">prolocopietrapertosa@pec.it</a></li>
-                    <li>320 833 7801</li>
+                    <li><a href="tel:+393208337801">320 833 7801</a></li>
                 </ul>
                 <p>@lang('navigation.association_desc')</p>
                 <div class="footer-address">
@@ -56,7 +56,7 @@
             <h5>@lang('navigation.follow_us')</h5>
             <a href="https://www.facebook.com/prolocopietrapertosa1/?locale=it_IT" target="_blank" rel="noopener noreferrer">Facebook</a>
             <a href="https://www.instagram.com/proloco_pietrapertosa/" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'gallery' : 'galleria')) }}">Il nostro archivio</a>
+            <a href="{{ url("/" . app()->getLocale() . "/" . ((app()->getLocale() === 'en') ? 'gallery' : 'galleria')) }}">{{ app()->getLocale() === 'en' ? 'Our archive' : 'Il nostro archivio' }}</a>
         </div>
     </div>
 

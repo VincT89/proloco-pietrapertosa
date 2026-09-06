@@ -24,9 +24,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="ready">
+    <a href="#main-content" class="skip-link">{{ app()->getLocale() === 'en' ? 'Skip to content' : 'Vai al contenuto' }}</a>
     @include('components.header')
     
-    @yield('content')
+    <main id="main-content" tabindex="-1">
+        @yield('content')
+    </main>
 
     @include('components.footer')
     @include('components.lightbox')

@@ -38,19 +38,8 @@
                     @endif
                 </div>
 
-                <div class="sticky-imgs">
-                    @if(count($gallery) > 0)
-                        @foreach($gallery as $i => $img)
-                            <div class="sticky-img-box cur" onclick='openGallery(@json($gallery), {{ $i }})'>
-                                <img src="{{ $thumbs[$i] }}" alt="{{ $asso->title }} {{ $i + 1 }}" class="cm-img" loading="lazy" decoding="async" />
-                                <div class="cm-img-overlay"></div>
-                            </div>
-                        @endforeach
-                    @else
-                        <div class="sticky-img-box cm-img-empty">
-                            <span class="cm-empty-text">{{ (app()->getLocale() === 'en') ? "No image" : "Nessuna immagine" }}</span>
-                        </div>
-                    @endif
+                <div class="community-media">
+                    @include('components.media-gallery', ['mediaItems' => $asso->galleryMedia, 'galleryTitle' => $asso->getTranslation('title'), 'previewLimit' => 3])
                 </div>
             </div>
         @endforeach

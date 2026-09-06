@@ -40,9 +40,8 @@
         'subtitle' => (app()->getLocale() === 'en') ? "Tradition at the table" : "Tradizione a tavola",
         'title' => (app()->getLocale() === 'en') ? "Come and taste" : "Vieni ad assaggiare",
         'text' => (app()->getLocale() === 'en') ? "Discover local restaurants and farms in the area." : "Scopri i ristoranti locali e le aziende agricole del territorio.",
-        'btnText' => (app()->getLocale() === 'en') ? "Contact us" : "Contattaci",
-        'btnLink' => route('proLoco.' . app()->getLocale()) . '#contatti',
+        'btnText' => (app()->getLocale() === 'en') ? "Where to eat" : "Dove mangiare",
+        'btnLink' => route('discover.' . app()->getLocale()) . '#ospitalita',
         'bgImage' => asset('images/sfondo_cta.jpeg')
     ])
 @endsection
-

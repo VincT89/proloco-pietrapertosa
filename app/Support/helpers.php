@@ -1,13 +1,23 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 if (! function_exists('localized_route')) {
     /**
      * Mappa l'URL corrente verso la lingua desiderata, preservando le query string.
      */
     function localized_route(string $currentPath, string $targetLocale): string
     {
+        $current = request()->route();
+        if ($current && $current->getName()) {
+            $name = preg_replace('/\.(it|en)$/', '.'.$targetLocale, $current->getName());
+            if (Route::has($name)) {
+                return route($name, array_merge(request()->query(), $current->parameters()));
+            }
+        }
+
         $segments = explode('/', ltrim($currentPath, '/'));
-        
+
         // Remove current locale
         if (isset($segments[0]) && in_array($segments[0], ['it', 'en'])) {
             array_shift($segments);
@@ -44,11 +54,11 @@ if (! function_exists('localized_route')) {
         }
 
         $newPath = implode('/', $segments);
-        $baseUrl = url("/{$targetLocale}" . ($newPath ? '/' . $newPath : ''));
+        $baseUrl = url("/{$targetLocale}".($newPath ? '/'.$newPath : ''));
 
         $queryString = request()->getQueryString();
         if ($queryString) {
-            $baseUrl .= '?' . $queryString;
+            $baseUrl .= '?'.$queryString;
         }
 
         return $baseUrl;
