@@ -6,11 +6,13 @@ use App\Filament\Components\MediaPicker;
 use App\Filament\Components\MediaRichEditor;
 use App\Filament\Resources\DirectoryItems\Pages\CreateDirectoryItem;
 use App\Filament\Resources\DirectoryItems\Pages\EditDirectoryItem;
+use App\Filament\Resources\Events\Pages\EditEvent;
 use App\Filament\Resources\GalleryAlbums\Pages\CreateGalleryAlbum;
 use App\Filament\Resources\GalleryAlbums\Pages\EditGalleryAlbum;
 use App\Filament\Resources\Media\Pages\ListMedia;
 use App\Filament\Resources\News\Pages\EditNews;
 use App\Models\DirectoryItem;
+use App\Models\Event;
 use App\Models\GalleryAlbum;
 use App\Models\Media;
 use App\Models\News;
@@ -177,6 +179,42 @@ class MediaLibraryTest extends TestCase
         $photo = $this->media(['original_name' => 'panorama-originale.jpg', 'alt' => 'Vista del borgo']);
         $this->assertSame([$photo->id], Media::searchLibrary('panorama-originale')->pluck('id')->all());
         Livewire::test(ListMedia::class)->searchTable('panorama-originale')->assertCanSeeTableRecords([$photo]);
+    }
+
+    public function test_library_picker_can_browse_older_photos_without_losing_the_selection(): void
+    {
+        $oldest = $this->media(['original_name' => 'foto-meno-recente.jpg']);
+        for ($index = 0; $index < 18; $index++) {
+            $latest = $this->media(['original_name' => "foto-recente-{$index}.jpg"]);
+        }
+
+        Livewire::test(CreateGalleryAlbum::class)
+            ->mountAction(TestAction::make('chooseMedia')->schemaComponent('gallery_files'))
+            ->assertMountedActionModalSee('Pagina 1 di 2')
+            ->assertMountedActionModalSee($latest->original_name)->assertMountedActionModalDontSee($oldest->original_name)
+            ->set('mountedActions.0.data.selection', [$latest->id])
+            ->set('mountedActions.0.data.page', 2)
+            ->assertMountedActionModalSee('Pagina 2 di 2')
+            ->assertMountedActionModalSee($oldest->original_name)->assertMountedActionModalDontSee($latest->original_name)
+            ->assertSet('mountedActions.0.data.selection', [$latest->id]);
+    }
+
+    public function test_library_picker_search_resets_the_page_and_finds_older_photos(): void
+    {
+        $oldest = $this->media(['original_name' => 'panorama-del-borgo.jpg', 'alt' => 'Vista del castello']);
+        for ($index = 0; $index < 18; $index++) {
+            $latest = $this->media(['original_name' => "foto-recente-{$index}.jpg"]);
+        }
+
+        $event = Event::create(['title' => 'Evento di prova', 'slug' => 'prova-libreria', 'start_date' => now()]);
+        Livewire::test(EditEvent::class, ['record' => $event->id])
+            ->mountAction(TestAction::make('chooseMedia')->schemaComponent('gallery_files'))
+            ->set('mountedActions.0.data.page', 2)
+            ->set('mountedActions.0.data.selection', [$latest->id])
+            ->set('mountedActions.0.data.search', 'panorama-del-borgo')
+            ->assertSet('mountedActions.0.data.page', 1)
+            ->assertMountedActionModalSee($oldest->original_name)->assertMountedActionModalDontSee($latest->original_name)
+            ->assertSet('mountedActions.0.data.selection', [$latest->id]);
     }
 
     public function test_rich_editor_resolves_central_library_images(): void
