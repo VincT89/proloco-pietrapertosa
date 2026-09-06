@@ -1,0 +1,45 @@
+/* Page-specific content which previously carried inline presentation styles. */
+.hero-action .ed-btn { margin-top: 0; }
+.document-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.document-actions .ed-btn { margin-top: 0; }
+.ed-btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold-soft); }
+.ed-btn-outline:hover { background: var(--gold); color: var(--ink); }
+.financial-documents { max-width: var(--reading-width); margin: 0 auto; display: grid; gap: var(--section-gap); }
+.financial-year { font-size: var(--text-card); color: var(--gold-soft); margin-bottom: var(--block-gap); padding-bottom: 12px; border-bottom: 1px solid var(--hair); }
+.financial-list { display: grid; gap: 16px; }
+.financial-document { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px; background: var(--ink-2); text-decoration: none; border: 1px solid var(--hair); }
+.financial-document:hover { border-color: var(--gold); }
+.financial-document > div:first-child { min-width: 0; }
+.financial-document-title { font-weight: 500; color: var(--paper); font-size: var(--text-body); line-height: 1.4; margin-bottom: 8px; overflow-wrap: anywhere; }
+.financial-document-meta { font-size: var(--text-small); color: var(--stone); display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 16px; }
+.financial-document-type { color: var(--gold-soft); font-weight: 500; }
+.financial-document-icon { color: var(--gold-soft); display: flex; flex-shrink: 0; }
+.ed-sec.paper .proloco-center-desc { color: #494e53; }
+.proloco-form-privacy label { display: flex; align-items: flex-start; gap: 12px; font-size: var(--text-small); color: var(--ink); cursor: pointer; }
+.proloco-form-privacy input { margin-top: 5px; width: 18px; height: 18px; flex-shrink: 0; accent-color: #805923; }
+.proloco-form-privacy a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+.proloco-form-error { margin-bottom: 16px; }
+
+.gallery-pagination { margin-top: var(--section-gap); }
+.gallery-credits { max-width: calc(var(--reading-width) + 2 * var(--gutter)); margin: 0 auto var(--section-space); padding-inline: var(--gutter); text-align: center; }
+.gallery-credits p { color: var(--stone); font-size: var(--text-small); line-height: var(--leading-body); }
+.gallery-credits a { color: var(--gold-soft); text-decoration: underline; text-underline-offset: 3px; }
+
+.photo-contributors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: var(--section-gap); align-items: stretch; }
+.contributor-card { min-width: 0; width: 100%; max-width: 520px; justify-self: center; background: rgba(255,255,255,.03); border: 1px solid var(--hair); display: flex; flex-direction: column; }
+.contributor-img { height: 220px; border-bottom: 1px solid var(--hair); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.contributor-img img { max-height: 100%; max-width: 100%; object-fit: contain; filter: brightness(0) invert(1); }
+.contributor-body { padding: clamp(20px, 3vw, 32px); flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.contributor-name { font-family: var(--font-heading); font-size: var(--text-card); font-weight: 500; line-height: var(--leading-heading); color: var(--paper); margin-bottom: var(--heading-gap); }
+.contributor-description { font-size: var(--text-body); line-height: var(--leading-body); color: #d5d3ce; margin-bottom: var(--block-gap); max-width: var(--reading-width); }
+.contributor-description:last-child { margin-bottom: 0; }
+.contributor-action { margin-top: auto; }
+.contributor-action .ed-btn { margin-top: 0; }
+.contributors-empty { text-align: center; padding-block: var(--section-gap); color: var(--stone); }
+.policy-content a { color: var(--gold-soft); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.policy-preferences { margin-top: var(--section-gap); padding-top: var(--block-gap); border-top: 1px solid var(--hair); }
+
+@media (max-width: 700px) {
+  .document-actions { align-items: stretch; }
+  .financial-document { padding: 16px; gap: 12px; }
+}

@@ -33,7 +33,7 @@
         <h2>Cloudinary come CDN</h2>
         <p>Le immagini native caricate sul nostro sito sono fornite attraverso Cloudinary. Poiché Cloudinary funge da rete per la consegna dei contenuti (CDN), la semplice visualizzazione delle immagini comporta il passaggio dei dati attraverso i loro server, che potrebbero registrare log tecnici anonimi ai fini operativi.</p>
 
-        <div class="mt-40 pt-40" style="border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="policy-preferences">
             <button onclick="window.manageCookiePreferences()" class="scopri-btn-outline" id="reopenCookieBanner">{{ __('legal.manage_preferences') }}</button>
         </div>
     </div>

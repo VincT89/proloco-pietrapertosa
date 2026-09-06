@@ -28,9 +28,11 @@
         </header>
         <div class="detail-layout {{ $cover ? '' : 'without-cover' }}">
             @if($cover)
+                @php($coverUrl = $cover->optimizedUrl('large'))
                 <figure class="detail-cover">
-                    <button type="button" data-gallery='@json([['type' => 'image', 'url' => $cover->optimizedUrl('large'), 'alt' => $title]])' aria-label="{{ (app()->getLocale() === 'en' ? 'Enlarge image: ' : 'Ingrandisci immagine: ').$title }}">
-                        <img src="{{ $cover->optimizedUrl('large') }}" alt="{{ $title }}" fetchpriority="high" decoding="async">
+                    <button type="button" class="cover-frame" data-gallery='@json([['type' => 'image', 'url' => $coverUrl, 'alt' => $title]])' aria-label="{{ (app()->getLocale() === 'en' ? 'Enlarge image: ' : 'Ingrandisci immagine: ').$title }}">
+                        <img class="cover-backdrop" src="{{ $coverUrl }}" alt="" aria-hidden="true" decoding="async">
+                        <img class="cover-foreground" src="{{ $coverUrl }}" alt="{{ $title }}" fetchpriority="high" decoding="async">
                     </button>
                     <figcaption>{{ app()->getLocale() === 'en' ? 'Select the image to enlarge it' : 'Seleziona l’immagine per ingrandirla' }}</figcaption>
                 </figure>

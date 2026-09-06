@@ -16,7 +16,7 @@
         <p>
             <strong>Pro Loco Pietrapertosana</strong><br>
             Via della Speranza, 159, 85010 Pietrapertosa (PZ)<br>
-            Email: <a href="mailto:{{ config('services.proloco.contact_email', 'prolocopietrapertosa@gmail.com') }}" style="color: var(--gold-soft); text-decoration: none;">{{ config('services.proloco.contact_email', 'prolocopietrapertosa@gmail.com') }}</a>
+            Email: <a href="mailto:{{ config('services.proloco.contact_email', 'prolocopietrapertosa@gmail.com') }}">{{ config('services.proloco.contact_email', 'prolocopietrapertosa@gmail.com') }}</a>
         </p>
 
         <h2>Finalità e Base Giuridica del Trattamento</h2>

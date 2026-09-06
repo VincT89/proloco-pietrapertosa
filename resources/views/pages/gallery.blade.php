@@ -41,7 +41,7 @@
                     @endif
                 @endforeach
             </div>
-            <div style="margin-top: 40px;">
+            <div class="gallery-pagination">
                 {{ $albums->links('components.pagination') }}
             </div>
         @else
@@ -51,11 +51,11 @@
         @endif
     </section>
 
-    <div class="wrap" style="text-align: center; max-width: 800px; margin: 0 auto 60px;">
-        <p style="color: var(--stone); font-size: 0.95rem; line-height: 1.5; margin: 0; font-style: italic;">
+    <div class="wrap gallery-credits">
+        <p>
             {!! (app()->getLocale() === 'en')
-                ? '(In addition to our historical archive, many of the photos in our gallery have been kindly provided by passionate photographers and friends of the Pro Loco. We invite you to visit our <a href="'.route('photo-thanks.en').'" style="color: var(--gold); text-decoration: underline; font-weight: 500;">Photographic Credits</a> page to see who contributed to telling the story of our village.)'
-                : '(Oltre che dal nostro archivio storico, molte delle foto presenti nella galleria sono state gentilmente concesse da fotografi appassionati e amici della Pro Loco. Ti invitiamo a visitare la pagina dei <a href="'.route('photo-thanks.it').'" style="color: var(--gold); text-decoration: underline; font-weight: 500;">Ringraziamenti Fotografici</a> per scoprire chi ha contribuito a raccontare il nostro borgo.)'
+                ? '(In addition to our historical archive, many of the photos in our gallery have been kindly provided by passionate photographers and friends of the Pro Loco. We invite you to visit our <a href="'.route('photo-thanks.en').'">Photographic Credits</a> page to see who contributed to telling the story of our village.)'
+                : '(Oltre che dal nostro archivio storico, molte delle foto presenti nella galleria sono state gentilmente concesse da fotografi appassionati e amici della Pro Loco. Ti invitiamo a visitare la pagina dei <a href="'.route('photo-thanks.it').'">Ringraziamenti Fotografici</a> per scoprire chi ha contribuito a raccontare il nostro borgo.)'
             !!}
         </p>
     </div>

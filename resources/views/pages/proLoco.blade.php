@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @php
-    
+
 
 @endphp
 
@@ -13,7 +13,7 @@
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? ((app()->getLocale() === 'en') ? "THE ENGINE OF OUR COMMUNITY" : "MOTORE DELLA NOSTRA COMUNITÀ"),
         'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/pietrapertosaProloco.jpg')
     ])
-    
+
     @include('components.page-intro', [
         'title' => $page?->getTranslation('intro_title') ?? ((app()->getLocale() === 'en') ? "Who We Are" : "Chi Siamo"),
         'text' => $page?->getTranslation('intro_text') ?? ((app()->getLocale() === 'en') ? "We are a group of citizens in love with our village, united by the goal of promoting and enhancing the cultural, historical and human heritage of Pietrapertosa." : "Siamo un gruppo di cittadini innamorati del proprio paese, uniti dall'obiettivo di promuovere e valorizzare il patrimonio culturale, storico e umano di Pietrapertosa.")
@@ -35,12 +35,12 @@
                     <p class="proloco-desc-short">
                         {{ (app()->getLocale() === 'en') ? "We operate in full compliance with the regulations for the Third Sector. The official statute and the minutes of the assemblies are always available to our members." : "Operiamo nel massimo rispetto delle normative per il Terzo Settore. Lo statuto ufficiale e i verbali delle assemblee sono sempre a disposizione dei nostri tesserati." }}
                     </p>
-                    <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start;">
+                    <div class="document-actions">
                         <a href="{{ asset('images/Statuto_ProLoco_Pietrapertosa_Leggibile.pdf') }}" target="_blank" rel="noopener noreferrer" class="ed-btn proloco-btn-pad">
                             <svg width="18" height="18" class="proloco-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
                             {{ (app()->getLocale() === 'en') ? "View the Statute (PDF)" : "Visualizza lo Statuto (PDF)" }}
                         </a>
-                        <a href="{{ asset('images/Atto_Costitutivo_Proloco_Pietrapertosana.pdf') }}" target="_blank" rel="noopener noreferrer" class="ed-btn proloco-btn-pad" style="background: transparent; border: 1px solid var(--gold); color: var(--gold);" onmouseover="this.style.background='var(--gold)'; this.style.color='var(--ink)'" onmouseout="this.style.background='transparent'; this.style.color='var(--gold)'">
+                        <a href="{{ asset('images/Atto_Costitutivo_Proloco_Pietrapertosana.pdf') }}" target="_blank" rel="noopener noreferrer" class="ed-btn ed-btn-outline proloco-btn-pad">
                             <svg width="18" height="18" class="proloco-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
                             {{ (app()->getLocale() === 'en') ? "View Deed of Incorporation (PDF)" : "Visualizza l'Atto di Costituzione (PDF)" }}
                         </a>
@@ -53,31 +53,31 @@
     @if(isset($financialDocuments) && $financialDocuments->count() > 0)
     <section class="ed-sec bg-mut">
         <div class="ed-wrap">
-            <div class="proloco-center-box" style="margin-bottom: 40px;">
+            <div class="proloco-center-box">
                 <span class="ed-subtitle">{{ (app()->getLocale() === 'en') ? "Transparency" : "Trasparenza" }}</span>
                 <h2 class="ed-title">{{ (app()->getLocale() === 'en') ? "Financial Reports & Documents" : "Bilanci e Rendiconti" }}</h2>
-                <p class="proloco-center-desc" style="max-width: 600px; margin: 0 auto;">
+                <p class="proloco-center-desc">
                     {{ (app()->getLocale() === 'en') ? "Financial documents and reports of the Pro Loco Pietrapertosana." : "Bilanci e documenti della Pro Loco Pietrapertosana per la trasparenza amministrativa." }}
                 </p>
             </div>
 
-            <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px;">
+            <div class="financial-documents">
                 @foreach($financialDocuments as $year => $documents)
                     <div>
-                        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--gold); margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">{{ $year }}</h3>
-                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <h3 class="financial-year">{{ $year }}</h3>
+                        <div class="financial-list">
                             @foreach($documents as $doc)
-                                <a href="{{ $doc->media ? $doc->media->url : '#' }}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: space-between; padding: 20px; background: var(--ink-2); border-radius: 8px; text-decoration: none; border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='rgba(255,255,255,0.05)'; this.style.transform='translateY(0)';">
+                                <a href="{{ $doc->media ? $doc->media->url : '#' }}" target="_blank" rel="noopener noreferrer" class="financial-document">
                                     <div>
-                                        <div style="font-weight: 500; color: var(--paper); font-size: 1.15rem; margin-bottom: 8px;">{{ $doc->getTranslation('title', app()->getLocale(), false) ?: $doc->title }}</div>
-                                        <div style="font-size: 0.9rem; color: var(--stone); display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
-                                            <span style="display: inline-block; padding: 4px 10px; background: rgba(217, 170, 99, 0.1); color: var(--gold); border-radius: 4px; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">{{ $doc->type->getLabel() }}</span>
+                                        <div class="financial-document-title">{{ $doc->getTranslation('title', app()->getLocale(), false) ?: $doc->title }}</div>
+                                        <div class="financial-document-meta">
+                                            <span class="financial-document-type">{{ $doc->type->getLabel() }}</span>
                                             @if($doc->getTranslation('description', app()->getLocale(), false) ?? $doc->description)
                                                 <span>{{ $doc->getTranslation('description', app()->getLocale(), false) ?? $doc->description }}</span>
                                             @endif
                                         </div>
                                     </div>
-                                    <div style="color: var(--gold); background: rgba(217, 170, 99, 0.05); padding: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.3s;" onmouseover="this.style.background='rgba(217, 170, 99, 0.15)'" onmouseout="this.style.background='rgba(217, 170, 99, 0.05)'">
+                                    <div class="financial-document-icon">
                                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                                     </div>
                                 </a>
@@ -117,7 +117,7 @@
                     @endif
 
                     @if(session('error'))
-                        <div class="form-error-msg" style="margin-bottom: 15px;">
+                        <div class="form-error-msg proloco-form-error">
                             {{ session('error') }}
                         </div>
                     @endif
@@ -144,12 +144,12 @@
                     @error('message')<div class="form-error-msg" id="error-message">{{ $message }}</div>@enderror
 
                     <div class="proloco-form-privacy mt-15">
-                        <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ed-color-theme); cursor: pointer;">
-                            <input type="checkbox" name="privacy" value="1" required {{ old('privacy') ? 'checked' : '' }} style="margin-top: 4px;" />
+                        <label>
+                            <input type="checkbox" name="privacy" value="1" required {{ old('privacy') ? 'checked' : '' }} />
                             <span>
-                                {!! (app()->getLocale() === 'en') 
-                                    ? 'I consent to the processing of my personal data pursuant to the GDPR and according to the <a href="'.route('privacy.en').'" target="_blank" rel="noopener noreferrer" style="color:var(--ed-color-theme); text-decoration:underline; font-weight:bold;">Privacy Policy</a>.' 
-                                    : 'Acconsento al trattamento dei miei dati personali ai sensi del GDPR e secondo la <a href="'.route('privacy.it').'" target="_blank" rel="noopener noreferrer" style="color:var(--ed-color-theme); text-decoration:underline; font-weight:bold;">Privacy Policy</a>.' 
+                                {!! (app()->getLocale() === 'en')
+                                    ? 'I consent to the processing of my personal data pursuant to the GDPR and according to the <a href="'.route('privacy.en').'" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.'
+                                    : 'Acconsento al trattamento dei miei dati personali ai sensi del GDPR e secondo la <a href="'.route('privacy.it').'" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.'
                                 !!}
                             </span>
                         </label>
@@ -190,10 +190,10 @@
                     </div>
                 </div>
                 <div class="cont-photo proloco-map-wrap">
-                    <x-external-embed 
-                        provider="google-maps" 
-                        title="Google Maps" 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12046.208151528646!2d16.0505193!3d40.5183377!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1338d41edec1d0db%3A0x88f572a1cd3de995!2s85010%20Pietrapertosa%20PZ!5e0!3m2!1sit!2sit!4v1700000000000!5m2!1sit!2sit" 
+                    <x-external-embed
+                        provider="google-maps"
+                        title="Google Maps"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12046.208151528646!2d16.0505193!3d40.5183377!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1338d41edec1d0db%3A0x88f572a1cd3de995!2s85010%20Pietrapertosa%20PZ!5e0!3m2!1sit!2sit!4v1700000000000!5m2!1sit!2sit"
                         ratio="auto"
                     />
                 </div>

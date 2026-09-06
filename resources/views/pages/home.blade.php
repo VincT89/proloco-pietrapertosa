@@ -57,8 +57,8 @@
                     <p class="hero-desc">{{ __('home.hero_desc') }}</p>
                 @endif
                 @if($page?->getTranslation('hero_cta_text') && $page?->hero_cta_url)
-                    <div style="margin-top: 30px;">
-                        <a href="{{ $page->hero_cta_url }}" class="ed-btn ed-btn-gold" style="font-size: 1.1rem; padding: 12px 30px;">{{ $page->getTranslation('hero_cta_text') }}</a>
+                    <div class="hero-action">
+                        <a href="{{ $page->hero_cta_url }}" class="ed-btn ed-btn-gold">{{ $page->getTranslation('hero_cta_text') }}</a>
                     </div>
                 @endif
             </div>

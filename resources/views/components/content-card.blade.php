@@ -11,8 +11,12 @@
 @endphp
 <article class="content-card">
     @if($cover)
-        <a href="{{ $href }}" class="content-card-image {{ $kind === 'tradition' ? 'is-photo' : '' }}" tabindex="-1" aria-hidden="true">
-            <img src="{{ $cover->optimizedUrl('poster') }}" alt="" loading="lazy" decoding="async">
+        @php($coverUrl = $cover->optimizedUrl('poster'))
+        <a href="{{ $href }}" class="content-card-image {{ $kind === 'tradition' ? 'is-photo' : 'cover-frame' }}" tabindex="-1" aria-hidden="true">
+            @if($kind !== 'tradition')
+                <img class="cover-backdrop" src="{{ $coverUrl }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+            @endif
+            <img class="cover-foreground" src="{{ $coverUrl }}" alt="" loading="lazy" decoding="async">
         </a>
     @endif
     <div class="content-card-copy">
