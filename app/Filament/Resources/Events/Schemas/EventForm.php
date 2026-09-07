@@ -40,14 +40,14 @@ class EventForm
                     ]),
                     Tab::make('Inglese')->schema([
                         TextInput::make('title_en')->label('Titolo (EN)')->default(null)
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('title_en', $get('title')))),
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('title_en', $get('title')))),
                         RichEditor::make('description_en')->label('Descrizione (EN)')->default(null)->columnSpanFull(),
                         TextInput::make('location_en')->label('Luogo (EN)')->default(null)
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('location_en', $get('location')))),
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('location_en', $get('location')))),
                         TextInput::make('category_en')->label('Categoria (EN)')->default(null)
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('category_en', $get('category')))),
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('category_en', $get('category')))),
                         Textarea::make('seo_description_en')->label('Descrizione SEO (EN)')->default(null)->columnSpanFull()
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('seo_description_en', $get('seo_description')))),
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('seo_description_en', $get('seo_description')))),
                     ]),
                 ])->columnSpanFull(),
                 Grid::make(2)->columnSpanFull()->schema([

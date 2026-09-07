@@ -183,7 +183,7 @@ class ChatbotSearchService
 
     protected function searchNews(array $terms, string $locale): Collection
     {
-        $query = News::with('cover')->where('status', 'published');
+        $query = News::with('cover')->visibleToPublic();
         
         $query->where(function($q) use ($terms) {
             foreach ($terms as $term) {

@@ -6,7 +6,7 @@
         'subtitle' => $page?->getTranslation('hero_subtitle') ?? __('events.hero_subtitle'),
         'img' => $page?->heroMedia?->optimizedUrl('hero') ?? asset('images/PietrapertosaEventi.jpeg')
     ])
-    <section class="wrap content-list-section" aria-labelledby="upcoming-title">
+    <section class="wrap content-list-section content-list-opening" aria-labelledby="upcoming-title">
         <h2 class="content-section-title" id="upcoming-title">{{ app()->getLocale() === 'en' ? 'Upcoming events' : 'Prossimi appuntamenti' }}</h2>
         <div class="content-grid">
             @forelse($events as $item)

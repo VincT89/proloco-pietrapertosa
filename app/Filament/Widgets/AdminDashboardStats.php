@@ -14,20 +14,20 @@ class AdminDashboardStats extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Notizie', News::count())
-                ->description('Ultime pubblicazioni')
+            Stat::make('Notizie online', News::visibleToPublic()->count())
+                ->description('Visibili sul sito')
                 ->descriptionIcon('heroicon-o-document-text')
                 ->color('primary'),
-            Stat::make('Eventi', Event::count())
-                ->description('Eventi in programma')
+            Stat::make('Eventi in programma', Event::currentAndUpcoming()->count())
+                ->description('In corso e futuri, pubblicati')
                 ->descriptionIcon('heroicon-o-calendar')
                 ->color('success'),
-            Stat::make('Directory', DirectoryItem::count())
-                ->description('Aziende e luoghi')
+            Stat::make('Attività', DirectoryItem::count())
+                ->description('Luoghi, tradizioni e realtà locali')
                 ->descriptionIcon('heroicon-o-map-pin')
                 ->color('warning'),
-            Stat::make('Media File', Media::count())
-                ->description('Immagini su Cloudinary')
+            Stat::make('Libreria media', Media::count())
+                ->description('Immagini, video e documenti')
                 ->descriptionIcon('heroicon-o-photo')
                 ->color('info'),
         ];

@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources\PageSettings\Tables;
 
+use App\Filament\Support\ContentLabels;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
@@ -15,23 +18,33 @@ class PageSettingsTable
     {
         return $table
             ->columns([
-                TextColumn::make('page_slug')->label('Slug Pagina')
-                    ->searchable(),
-                TextColumn::make('hero_title')->label('Titolo Hero')
-                    ->searchable(),
-                TextColumn::make('hero_title_en')->label('Titolo Hero (EN)')
-                    ->searchable(),
-                TextColumn::make('hero_subtitle')->label('Sottotitolo Hero')
-                    ->searchable(),
-                TextColumn::make('hero_subtitle_en')->label('Sottotitolo Hero (EN)')
-                    ->searchable(),
-                ImageColumn::make('heroMedia.url')->label('Immagine Hero')->square(),
-                TextColumn::make('intro_title')->label('Titolo Intro')
-                    ->searchable(),
-                TextColumn::make('intro_title_en')->label('Titolo Intro (EN)')
-                    ->searchable(),
+                TextColumn::make('page_slug')->label('Pagina')
+                    ->searchable()->wrap()
+                    ->formatStateUsing(fn (string $state) => ContentLabels::PAGES[$state] ?? $state)
+                    ->description(fn ($record) => ContentLabels::mobileSummary(strip_tags($record->hero_title ?? ''))),
+                TextColumn::make('hero_title')->label('Titolo della testata')
+                    ->searchable()->wrap()->visibleFrom('md')
+                    ->formatStateUsing(fn (string $state) => strip_tags($state)),
+                TextColumn::make('hero_title_en')->label('Titolo della testata (EN)')
+                    ->searchable()->wrap()->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn (string $state) => strip_tags($state)),
+                TextColumn::make('hero_subtitle')->label('Sottotitolo')
+                    ->searchable()->wrap()->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn (string $state) => strip_tags($state)),
+                TextColumn::make('hero_subtitle_en')->label('Sottotitolo (EN)')
+                    ->searchable()->wrap()->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn (string $state) => strip_tags($state)),
+                ImageColumn::make('heroMedia.url')->label('Immagine della testata')->square()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('intro_title')->label('Titolo introduttivo')
+                    ->searchable()->wrap()->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn (string $state) => strip_tags($state)),
+                TextColumn::make('intro_title_en')->label('Titolo introduttivo (EN)')
+                    ->searchable()->wrap()->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn (string $state) => strip_tags($state)),
                 TextColumn::make('translation_status')->label('Stato Traduzione')
-                    ->badge(),
+                    ->badge()->visibleFrom('md')
+                    ->formatStateUsing(fn (string $state) => ContentLabels::TRANSLATIONS[$state] ?? $state),
 
                 TextColumn::make('created_at')->label('Creato il')
                     ->dateTime()
@@ -46,12 +59,14 @@ class PageSettingsTable
                 //
             ])
             ->recordActions([
-                \Filament\Actions\EditAction::make(),
-                \Filament\Actions\DeleteAction::make(),
+                ActionGroup::make([
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])->label('Azioni'),
             ])
             ->bulkActions([
-                \Filament\Actions\BulkActionGroup::make([
-                    \Filament\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

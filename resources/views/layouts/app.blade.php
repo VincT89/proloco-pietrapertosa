@@ -12,7 +12,11 @@
     </title>
     <meta name="description" content="@yield('seo_description', 'Associazione Pro Loco Pietrapertosana: il borgo più alto della Basilicata, tra le guglie delle Dolomiti Lucane. Castello saraceno, Arabata, Volo dell\'Angelo, news, eventi, locandine e foto.')">
     
-    {!! \App\Services\SeoService::generateTags() !!}
+    @if($isContentPreview ?? false)
+        <meta name="robots" content="noindex, nofollow">
+    @else
+        {!! \App\Services\SeoService::generateTags() !!}
+    @endif
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 

@@ -17,6 +17,6 @@
     @endforeach
 </div>
 @if(isset($previewLimit) && $mediaItems->count() > $previewLimit)
-    <button type="button" class="content-read-more gallery-view-all" data-gallery-index="{{ $previewLimit }}">{{ app()->getLocale() === 'en' ? 'View the complete album' : 'Guarda l’album completo' }} ({{ $mediaItems->count() }})</button>
+    <button type="button" class="content-read-more gallery-view-all" data-gallery-index="0">{{ app()->getLocale() === 'en' ? 'View the complete album' : 'Guarda l’album completo' }} ({{ $mediaItems->count() }})</button>
 @endif
 </div>

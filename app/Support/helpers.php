@@ -9,6 +9,9 @@ if (! function_exists('localized_route')) {
     function localized_route(string $currentPath, string $targetLocale): string
     {
         $current = request()->route();
+        if ($current?->getName() === 'admin.content-preview') {
+            return route('admin.content-preview', array_replace($current->parameters(), ['locale' => $targetLocale]));
+        }
         if ($current && $current->getName()) {
             $name = preg_replace('/\.(it|en)$/', '.'.$targetLocale, $current->getName());
             if (Route::has($name)) {

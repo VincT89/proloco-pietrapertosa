@@ -8,6 +8,7 @@
         'bgPosition' => 'center 30%'
     ])
     @include('components.page-intro', [
+        'compact' => true,
         'title' => $page?->getTranslation('intro_title') ?? __('news.intro_title'),
         'text' => $page?->getTranslation('intro_text') ?? __('news.intro_text')
     ])

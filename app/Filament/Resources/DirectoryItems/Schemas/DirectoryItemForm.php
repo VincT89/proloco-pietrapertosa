@@ -29,12 +29,12 @@ class DirectoryItemForm
                     ]),
                     Tab::make('Inglese')->schema([
                         TextInput::make('title_en')->label('Titolo (EN)')->default(null)
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('title_en', $get('title')))),
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('title_en', $get('title')))),
                         TextInput::make('subtitle_en')->label('Sottotitolo (EN)')->default(null)
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('subtitle_en', $get('subtitle')))),
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('subtitle_en', $get('subtitle')))),
                         RichEditor::make('description_en')->label('Descrizione (EN)')->default(null)->columnSpanFull(),
                         Textarea::make('contact_info_en')->label('Info Contatti (EN)')->default(null)->columnSpanFull()
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('contact_info_en', $get('contact_info')))),
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('contact_info_en', $get('contact_info')))),
                     ]),
                 ])->columnSpanFull(),
                 Grid::make(2)->columnSpanFull()->schema([
@@ -56,7 +56,8 @@ class DirectoryItemForm
                         ->columnSpanFull(),
 
                     KeyValue::make('stats')->label('Statistiche')->default(null)->columnSpanFull(),
-                    TextInput::make('sort_order')->label('Ordine')->required()->numeric()->default(0),
+                    TextInput::make('sort_order')->label('Ordine')->required()->integer()->default(0)
+                        ->helperText('I numeri più bassi compaiono prima all’interno della stessa sezione del sito.'),
                     Select::make('translation_status')->label('Stato Traduzione')->options(['draft' => 'Bozza', 'missing' => 'Mancante', 'reviewed' => 'Revisionato'])->default('missing')->required(),
                 ]),
             ]);

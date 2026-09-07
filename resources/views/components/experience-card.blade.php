@@ -1,4 +1,4 @@
-<div class="exp-row {{ ($reverse ?? false) ? 'rev' : '' }}">
+<div class="exp-row {{ ($reverse ?? false) ? 'rev' : '' }}" @if(isset($entryId)) id="{{ $entryId }}" @endif>
     <div class="exp-img cur" onclick="openGallery(['{{ $img }}'])">
         <img class="bgi-img" src="{{ $img }}" alt="" />
     </div>

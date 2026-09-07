@@ -58,7 +58,7 @@ class SitemapController extends Controller
         }
 
         foreach (['it', 'en'] as $locale) {
-            foreach (News::where('status', 'published')->select(['slug', 'updated_at'])->cursor() as $news) {
+            foreach (News::visibleToPublic()->select(['slug', 'updated_at'])->cursor() as $news) {
                 $sitemap->add(Url::create(route('news.show.'.$locale, $news->slug))->setLastModificationDate($news->updated_at));
             }
             foreach (Event::where('status', 'published')->select(['slug', 'updated_at'])->cursor() as $event) {

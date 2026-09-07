@@ -616,7 +616,7 @@ footer{padding:clamp(40px,5vw,70px) var(--gutter) 30px;border-top:1px solid var(
 .cta-buttons-wrapper { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
 .cta-line-visible { opacity: 1; }
 .cta-no-padding { padding-left: 0; padding-right: 0; }
-.cta-bgi { background-image: url('/images/pietrapertosaPrimaFooter.jpg'); }
+.cta-bgi { background-color: var(--ink-2); }
 .cta-subtitle { display: block; margin-bottom: .75rem; }
 .cta-text { margin: 24px auto 40px; max-width: 52ch; }
 

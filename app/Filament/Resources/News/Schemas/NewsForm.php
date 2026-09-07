@@ -40,17 +40,19 @@ class NewsForm
                     ]),
                     Tab::make('Inglese')->schema([
                         TextInput::make('title_en')->label('Titolo (EN)')->default(null)
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('title_en', $get('title')))),
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('title_en', $get('title')))),
                         Textarea::make('excerpt_en')->label('Riassunto (EN)')->default(null)->columnSpanFull()
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('excerpt_en', $get('excerpt')))),
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('excerpt_en', $get('excerpt')))),
                         RichEditor::make('content_en')->label('Contenuto (EN)')->default(null)->columnSpanFull(),
                         Textarea::make('seo_description_en')->label('Descrizione SEO (EN)')->default(null)->columnSpanFull()
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('seo_description_en', $get('seo_description')))),
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('seo_description_en', $get('seo_description')))),
                     ]),
                 ])->columnSpanFull(),
                 Grid::make(2)->columnSpanFull()->schema([
                     TextInput::make('slug')->label('Slug (URL)')->required()->unique(ignoreRecord: true),
-                    DateTimePicker::make('published_at')->label('Data di Pubblicazione'),
+                    DateTimePicker::make('published_at')->label('Data di pubblicazione')
+                        ->seconds(false)
+                        ->helperText('Una data futura programma la pubblicazione. Senza data, il contenuto viene pubblicato subito quando scegli «Pubblicato». Orario UTC.'),
                     MediaPicker::make('cover_media_id')->label('Copertina'),
                     MediaUpload::make('gallery_files', 'gallery')
                         ->label('Galleria immagini e video')
@@ -65,7 +67,9 @@ class NewsForm
                     )
                         ->label('Allegati Scaricabili (PDF/Doc/Zip)')
                         ->columnSpanFull(),
-                    Select::make('status')->label('Stato')->options(['draft' => 'Bozza', 'published' => 'Pubblicato', 'archived' => 'Archiviato'])->default('draft')->required(),
+                    Select::make('status')->label('Stato')->options(['draft' => 'Bozza', 'published' => 'Pubblicato / programmato', 'archived' => 'Archiviato'])
+                        ->helperText('Bozza e Archiviato non sono visibili sul sito. Dopo il salvataggio puoi aprire l’anteprima della bozza.')
+                        ->default('draft')->required(),
                     Select::make('translation_status')->label('Stato Traduzione')->options(['draft' => 'Bozza', 'missing' => 'Mancante', 'reviewed' => 'Revisionato'])->default('missing')->required(),
                 ]),
             ]);

@@ -4,7 +4,7 @@
         || preg_match('/<(img|video|audio|iframe|table)\b/i', $text ?? '');
 @endphp
 @if($hasIntroTitle || $hasIntroText)
-<div class="wrap page-intro-wrap">
+<div class="wrap page-intro-wrap {{ ($compact ?? false) ? 'page-intro-compact' : '' }}">
     <div class="page-intro-inner fad">
         @if($hasIntroTitle)
         <h2 class="page-intro-title">

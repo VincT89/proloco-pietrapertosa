@@ -22,23 +22,23 @@ class PageSettingForm
             ->components([
                 Tabs::make('Lingue')->tabs([
                     Tab::make('Italiano')->schema([
-                        TextInput::make('hero_title')->label('Titolo Hero')->default(null),
-                        TextInput::make('hero_subtitle')->label('Sottotitolo Hero')->default(null),
-                        TextInput::make('hero_cta_text')->label('Testo Pulsante (CTA) Hero')->default(null),
+                        TextInput::make('hero_title')->label('Titolo della testata')->default(null),
+                        TextInput::make('hero_subtitle')->label('Sottotitolo della testata')->default(null),
+                        TextInput::make('hero_cta_text')->label('Testo del pulsante nella testata')->default(null),
                         TextInput::make('hero_cta_url')->label('URL Pulsante (CTA) Hero')->default(null)->rule('regex:/^(https?:\/\/|\/)[a-zA-Z0-9\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=\%]+$/i'),
-                        TextInput::make('intro_title')->label('Titolo Intro')->default(null),
-                        RichEditor::make('intro_text')->label('Testo Intro')->default(null)->columnSpanFull(),
+                        TextInput::make('intro_title')->label('Titolo introduttivo')->default(null),
+                        RichEditor::make('intro_text')->label('Testo introduttivo')->default(null)->columnSpanFull(),
                     ]),
                     Tab::make('Inglese')->schema([
-                        TextInput::make('hero_title_en')->label('Titolo Hero (EN)')->default(null)
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('hero_title_en', $get('hero_title')))),
-                        TextInput::make('hero_subtitle_en')->label('Sottotitolo Hero (EN)')->default(null)
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('hero_subtitle_en', $get('hero_subtitle')))),
-                        TextInput::make('hero_cta_text_en')->label('Testo Pulsante (CTA) Hero (EN)')->default(null)
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('hero_cta_text_en', $get('hero_cta_text')))),
-                        TextInput::make('intro_title_en')->label('Titolo Intro (EN)')->default(null)
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('intro_title_en', $get('intro_title')))),
-                        RichEditor::make('intro_text_en')->label('Testo Intro (EN)')->default(null)->columnSpanFull(),
+                        TextInput::make('hero_title_en')->label('Titolo della testata (EN)')->default(null)
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('hero_title_en', $get('hero_title')))),
+                        TextInput::make('hero_subtitle_en')->label('Sottotitolo della testata (EN)')->default(null)
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('hero_subtitle_en', $get('hero_subtitle')))),
+                        TextInput::make('hero_cta_text_en')->label('Testo del pulsante nella testata (EN)')->default(null)
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('hero_cta_text_en', $get('hero_cta_text')))),
+                        TextInput::make('intro_title_en')->label('Titolo introduttivo (EN)')->default(null)
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('intro_title_en', $get('intro_title')))),
+                        RichEditor::make('intro_text_en')->label('Testo introduttivo (EN)')->default(null)->columnSpanFull(),
                     ]),
                 ])->columnSpanFull(),
                 Tabs::make('Home Extra')->tabs([
@@ -94,7 +94,7 @@ class PageSettingForm
                         ->required()
                         ->unique(ignoreRecord: true),
                     MediaPicker::make('hero_media_id')->label('Immagine principale'),
-                    TextInput::make('hero_overlay_opacity')->label('Opacità Sfondo Hero')
+                    TextInput::make('hero_overlay_opacity')->label('Intensità dello sfondo scuro nella testata')
                         ->numeric()
                         ->default(0.4)
                         ->minValue(0)

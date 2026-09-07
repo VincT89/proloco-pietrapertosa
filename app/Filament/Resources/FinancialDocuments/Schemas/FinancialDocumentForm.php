@@ -21,7 +21,7 @@ class FinancialDocumentForm
     {
         return $schema
             ->components([
-                Tabs::make('Translations')
+                Tabs::make('Lingue')
                     ->tabs([
                         Tab::make('Italiano')
                             ->schema([
@@ -33,17 +33,17 @@ class FinancialDocumentForm
                                     ->default(null)
                                     ->columnSpanFull(),
                             ]),
-                        Tab::make('English')
+                        Tab::make('Inglese')
                             ->schema([
                                 TextInput::make('title_en')
-                                    ->label('Title (EN)')
+                                    ->label('Titolo (EN)')
                                     ->default(null)
-                                    ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('title_en', $get('title')))),
+                                    ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('title_en', $get('title')))),
                                 Textarea::make('description_en')
-                                    ->label('Description (EN)')
+                                    ->label('Descrizione (EN)')
                                     ->default(null)
                                     ->columnSpanFull()
-                                    ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('description_en', $get('description')))),
+                                    ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('description_en', $get('description')))),
                             ]),
                     ])->columnSpanFull(),
 

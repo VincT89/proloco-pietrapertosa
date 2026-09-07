@@ -24,7 +24,7 @@
                 $gallery = $asso->galleryMedia->map(fn($m) => $m->optimizedUrl('large'))->toArray();
                 $thumbs = $asso->galleryMedia->map(fn($m) => $m->optimizedUrl('card'))->toArray();
             @endphp
-            <div class="sticky-split">
+            <div class="sticky-split" id="place-{{ $asso->id }}">
                 <div class="sticky-text">
                     <span class="cm-subtitle">
                         {{ $asso->getTranslation('subtitle') }}
@@ -33,13 +33,13 @@
                         {{ $asso->getTranslation('title') }}
                     </h3>
                     <div class="cm-desc">{!! clean($asso->getTranslation('description')) !!}</div>
-                    @if($asso->contact_info)
-                        <div class="cm-contact">{{ (app()->getLocale() === 'en') ? "Contact:" : "Contatto:" }} {{ $asso->contact_info }}</div>
+                    @if($asso->getTranslation('contact_info'))
+                        <div class="cm-contact">{{ (app()->getLocale() === 'en') ? "Contact:" : "Contatto:" }} {{ $asso->getTranslation('contact_info') }}</div>
                     @endif
                 </div>
 
                 <div class="community-media">
-                    @include('components.media-gallery', ['mediaItems' => $asso->galleryMedia, 'galleryTitle' => $asso->getTranslation('title'), 'previewLimit' => 3])
+                    @include('components.media-gallery', ['mediaItems' => $asso->galleryMedia, 'galleryTitle' => $asso->getTranslation('title'), 'previewLimit' => 1])
                 </div>
             </div>
         @endforeach

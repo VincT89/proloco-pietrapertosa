@@ -24,7 +24,7 @@ class GalleryAlbumForm
                     ]),
                     Tab::make('Inglese')->schema([
                         TextInput::make('title_en')->label('Titolo (EN)')->default(null)
-                            ->hintAction(Action::make('copy')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('title_en', $get('title')))),
+                            ->hintAction(Action::make('copy')->label('Copia dall’italiano')->icon('heroicon-m-document-duplicate')->action(fn ($set, $get) => $set('title_en', $get('title')))),
                     ]),
                 ])->columnSpanFull(),
                 Grid::make(2)->columnSpanFull()->schema([
@@ -32,8 +32,9 @@ class GalleryAlbumForm
                         ->label('Galleria immagini e video')
                         ->columnSpanFull(),
 
-                    DatePicker::make('section_date')->label('Data Sezione'),
-                    TextInput::make('sort_order')->label('Ordine')->required()->numeric()->default(0),
+                    DatePicker::make('section_date')->label('Data album'),
+                    TextInput::make('sort_order')->label('Ordine')->required()->integer()->default(0)
+                        ->helperText('I numeri più bassi compaiono prima. A parità di ordine, vengono prima gli album con la data più recente.'),
                     Select::make('translation_status')->label('Stato Traduzione')->options(['draft' => 'Bozza', 'missing' => 'Mancante', 'reviewed' => 'Revisionato'])->default('missing')->required(),
                 ]),
             ]);

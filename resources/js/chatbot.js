@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let context = {};
     let isTyping = false;
+    let suggestionsLoading = false;
 
     // Load history from session storage
     let messageHistory = [];
@@ -28,8 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize
     function init() {
         if (messageHistory.length === 0) {
-            // Fetch initial suggestions
-            fetchSuggestions();
+            if (chatbotPanel.classList.contains('is-open')) fetchSuggestions();
             // Show welcome message client-side
             const welcomeMsg = locale === 'en' 
                 ? "Hello! I am the Pro Loco virtual assistant. How can I help you today?" 
@@ -58,7 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
         chatbotPanel.classList.toggle('is-open', open);
         chatbotPanel.inert = !open;
         chatbotToggle.setAttribute('aria-expanded', String(open));
-        if (open) chatbotInput.focus();
+        if (open) {
+            chatbotInput.focus();
+            if (messageHistory.length === 0) fetchSuggestions();
+        }
     }
 
     function closeChat() {
@@ -95,15 +98,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function fetchSuggestions() {
-        fetch(`${baseUrl}/suggestions`)
-            .then(res => res.json())
-            .then(data => {
-                if (Array.isArray(data)) {
-                    renderSuggestions(data);
-                }
-            })
-            .catch(err => console.error(err));
+    async function fetchSuggestions() {
+        if (suggestionsLoading || chatbotSuggestions.childElementCount > 0) return;
+        suggestionsLoading = true;
+        try {
+            const response = await fetch(`${baseUrl}/suggestions`, {
+                headers: { 'Accept': 'application/json' }
+            });
+            if (!response.ok) return;
+            const data = await response.json();
+            if (Array.isArray(data) && messageHistory.length === 0) {
+                renderSuggestions(data);
+            }
+        } catch {
+            // Optional suggestions must not prevent the visitor from using the chat.
+        } finally {
+            suggestionsLoading = false;
+        }
     }
 
     function renderSuggestions(suggestions) {
@@ -137,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${baseUrl}/message`, {
                 method: 'POST',
                 headers: {
+                    'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
@@ -148,7 +160,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) {
                 removeTypingIndicator();
-                appendMessage('bot', locale === 'en' ? 'Server error. Please try again later.' : 'Errore del server. Riprova più tardi.');
+                const message = response.status === 429
+                    ? (locale === 'en' ? 'Please wait a moment before sending another message.' : 'Attendi un momento prima di inviare un altro messaggio.')
+                    : (locale === 'en' ? 'Server error. Please try again later.' : 'Errore del server. Riprova più tardi.');
+                appendMessage('bot', message);
                 return;
             }
 

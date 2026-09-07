@@ -25,6 +25,7 @@
                     $img = count($sapore->galleryMedia) > 0 ? $sapore->galleryMedia[0]->optimizedUrl('card') : asset('images/pietrapertosaBacheca.jpg');
                 @endphp
                 @include('components.experience-card', [
+                    'entryId' => 'place-'.$sapore->id,
                     'reverse' => $i % 2 !== 0,
                     'img' => $img,
                     'title' => $sapore->getTranslation('title'),

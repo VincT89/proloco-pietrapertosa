@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Media\Tables;
 use App\Models\Media;
 use App\Services\MediaManager;
 use App\Services\MediaUsage;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -27,6 +28,7 @@ class MediaTable
                     ->searchable(query: fn ($query, $search) => $query->searchLibrary($search))->wrap(),
                 ImageColumn::make('preview')
                     ->label('Anteprima')
+                    ->visibleFrom('md')
                     ->getStateUsing(function ($record) {
                         $url = $record->thumbnail_url ?: ($record->type === 'image' ? $record->optimizedUrl('small') : null);
 
@@ -34,6 +36,9 @@ class MediaTable
                     }),
                 TextColumn::make('type')->label('Tipo')
                     ->badge()
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'image' => 'Immagine', 'video' => 'Video', 'document' => 'Documento', default => $state,
+                    })->toggleable(isToggledHiddenByDefault: true)
                     ->color(fn (string $state): string => match ($state) {
                         'image' => 'success',
                         'video' => 'info',
@@ -44,6 +49,7 @@ class MediaTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('provider')->label('Provider')
                     ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->color(fn (string $state): string => match ($state) {
                         'cloudinary' => 'primary',
                         'facebook' => 'info',
@@ -60,10 +66,11 @@ class MediaTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('alt')->label('Testo Alternativo')
-                    ->searchable(),
+                    ->searchable()->wrap()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('caption')->label('Didascalia')
-                    ->searchable(),
+                    ->searchable()->wrap()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('usage')->label('Utilizzato in')
+                    ->visibleFrom('md')
                     ->getStateUsing(function ($record, $livewire) {
                         $records = $livewire->getTableRecords();
                         $records = $records instanceof Collection ? $records : $records->getCollection();
@@ -74,7 +81,7 @@ class MediaTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')->label('Creato il')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 TextColumn::make('updated_at')->label('Aggiornato il')
                     ->dateTime()
@@ -86,18 +93,20 @@ class MediaTable
                     ->options(['image' => 'Immagini', 'video' => 'Video', 'document' => 'Documenti']),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make()
-                    ->using(function (Media $record, DeleteAction $action) {
-                        if (! app(MediaManager::class)->delete($record)) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Impossibile eliminare')
-                                ->body('Il media è in uso e non può essere cancellato.')
-                                ->send();
-                            $action->halt();
-                        }
-                    }),
+                ActionGroup::make([
+                    EditAction::make(),
+                    DeleteAction::make()
+                        ->using(function (Media $record, DeleteAction $action) {
+                            if (! app(MediaManager::class)->delete($record)) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title('Impossibile eliminare')
+                                    ->body('Il media è in uso e non può essere cancellato.')
+                                    ->send();
+                                $action->halt();
+                            }
+                        }),
+                ])->label('Azioni'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

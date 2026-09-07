@@ -24,7 +24,7 @@
                     @endphp
                     
                     @if(count($allGalleryMedia) > 0)
-                        <div>
+                        <div id="album-{{ $album->id }}">
                             @if($title || $dateStr)
                                 <div class="gal-header-wrap mb-20">
                                     <div class="ed-split">

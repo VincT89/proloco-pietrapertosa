@@ -2,11 +2,16 @@
 
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ContentPreviewController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
+Route::get('/admin/anteprima/{locale}/{type}/{record}', [ContentPreviewController::class, 'show'])
+    ->whereIn('locale', ['it', 'en'])->whereIn('type', ['news', 'event'])->whereNumber('record')
+    ->name('admin.content-preview');
 
 Route::get('/', function () {
     return redirect('/it');

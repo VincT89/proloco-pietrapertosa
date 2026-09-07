@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\DirectoryItems\Tables;
 
+use App\Filament\Support\ContentLabels;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class DirectoryItemsTable
@@ -13,22 +15,28 @@ class DirectoryItemsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('sort_order')
             ->columns([
-                TextColumn::make('category')->label('Categoria')
-                    ->searchable(),
                 TextColumn::make('title')->label('Titolo')
-                    ->searchable(),
+                    ->searchable()->wrap()
+                    ->description(fn ($record) => ContentLabels::mobileSummary(
+                        (ContentLabels::CATEGORIES[$record->category] ?? $record->category).' · Ordine '.$record->sort_order
+                    )),
+                TextColumn::make('category')->label('Sezione')
+                    ->searchable()->wrap()->visibleFrom('md')
+                    ->formatStateUsing(fn (string $state) => ContentLabels::CATEGORIES[$state] ?? $state),
                 TextColumn::make('title_en')->label('Titolo (EN)')
-                    ->searchable(),
+                    ->searchable()->wrap()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('subtitle')->label('Sottotitolo')
-                    ->searchable(),
+                    ->searchable()->wrap()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('subtitle_en')->label('Sottotitolo (EN)')
-                    ->searchable(),
+                    ->searchable()->wrap()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('sort_order')->label('Ordine')
-                    ->numeric()
+                    ->numeric()->visibleFrom('md')
                     ->sortable(),
                 TextColumn::make('translation_status')->label('Stato Traduzione')
-                    ->badge(),
+                    ->badge()->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn (string $state) => ContentLabels::TRANSLATIONS[$state] ?? $state),
                 TextColumn::make('created_at')->label('Creato il')
                     ->dateTime()
                     ->sortable()
@@ -39,7 +47,7 @@ class DirectoryItemsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                \Filament\Tables\Filters\SelectFilter::make('category')
+                SelectFilter::make('category')
                     ->label('Filtra per Categoria')
                     ->options([
                         'comunita' => 'Comunità',

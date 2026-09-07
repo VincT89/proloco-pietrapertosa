@@ -22,7 +22,7 @@ class ChatbotDocumentRepository
     {
         // Return news that have attachments
         return News::with('attachmentsMedia')
-            ->where('status', 'published')
+            ->visibleToPublic()
             ->whereHas('attachmentsMedia')
             ->orderBy('published_at', 'desc')
             ->take(3)

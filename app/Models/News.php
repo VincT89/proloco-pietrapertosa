@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\HasTranslations;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class News extends Model
 {
-    use \App\Traits\HasTranslations;
+    use HasTranslations;
 
     protected $fillable = [
-        'title', 'title_en', 'slug', 'excerpt', 'excerpt_en', 'content', 'content_en', 
-        'cover_media_id', 'status', 'translation_status', 'seo_title', 'seo_title_en', 
-        'seo_description', 'seo_description_en', 'published_at'
+        'title', 'title_en', 'slug', 'excerpt', 'excerpt_en', 'content', 'content_en',
+        'cover_media_id', 'status', 'translation_status', 'seo_title', 'seo_title_en',
+        'seo_description', 'seo_description_en', 'published_at',
     ];
 
     protected function casts(): array
@@ -19,6 +21,24 @@ class News extends Model
         return [
             'published_at' => 'datetime',
         ];
+    }
+
+    public function scopeVisibleToPublic(Builder $query): Builder
+    {
+        return $query->where('status', 'published')
+            ->where(fn (Builder $query) => $query
+                ->whereNull('published_at')
+                ->orWhere('published_at', '<=', now()));
+    }
+
+    public function isScheduled(): bool
+    {
+        return $this->status === 'published' && $this->published_at?->isFuture();
+    }
+
+    public function isVisibleToPublic(): bool
+    {
+        return $this->status === 'published' && ! $this->isScheduled();
     }
 
     public function cover()

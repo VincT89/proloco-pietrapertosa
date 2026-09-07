@@ -50,3 +50,15 @@ body, .fi-layout {
 .fi-sidebar-header {
     border-bottom: 1px solid rgba(184, 135, 70, 0.2) !important;
 }
+
+/* Keep the essential record information together on narrow screens. */
+.bo-mobile-summary { display: block; line-height: 1.5; }
+.fi-ta-text-item-label { overflow-wrap: anywhere; }
+@media (min-width: 768px) {
+    .bo-mobile-summary,
+    .fi-ta-text-description:has(.bo-mobile-summary) { display: none; }
+}
+@media (max-width: 767px) {
+    .fi-ta-cell .fi-ta-text { padding-inline: .75rem; }
+    .fi-ta-text-item-label { white-space: normal; }
+}

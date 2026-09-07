@@ -16,22 +16,13 @@ class PublicController extends Controller
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'home')->first();
 
-        $cutoff = Carbon::today();
-
         $events = Event::with('cover')
-            ->where('status', 'published')
-            ->where(function ($query) use ($cutoff) {
-                $query->where('end_date', '>=', $cutoff)
-                    ->orWhere(function ($q) use ($cutoff) {
-                        $q->whereNull('end_date')->where('start_date', '>=', $cutoff);
-                    })
-                    ->orWhere(fn ($q) => $q->whereNull('start_date')->whereNull('end_date'));
-            })
+            ->currentAndUpcoming()
             ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
             ->orderBy('start_date', 'asc')
             ->take(3)
             ->get();
-        $news = News::with('cover')->where('status', 'published')->orderBy('published_at', 'desc')->take(3)->get();
+        $news = News::with('cover')->visibleToPublic()->orderBy('published_at', 'desc')->take(3)->get();
 
         return view('pages.home', compact('page', 'events', 'news'));
     }
@@ -54,7 +45,7 @@ class PublicController extends Controller
     public function community()
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'comunita')->first();
-        $realta = DirectoryItem::with('galleryMedia')->where('category', 'comunita')->get();
+        $realta = DirectoryItem::with('galleryMedia')->where('category', 'comunita')->orderBy('sort_order')->orderBy('id')->get();
 
         return view('pages.community', compact('page', 'realta'));
     }
@@ -72,7 +63,7 @@ class PublicController extends Controller
     public function tastes()
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'sapori')->first();
-        $piatti = DirectoryItem::with('galleryMedia')->where('category', 'sapori_piatti')->get();
+        $piatti = DirectoryItem::with('galleryMedia')->where('category', 'sapori_piatti')->orderBy('sort_order')->orderBy('id')->get();
 
         return view('pages.tastes', compact('page', 'piatti'));
     }
@@ -93,7 +84,7 @@ class PublicController extends Controller
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'notizie')->first();
         $news = News::with('cover')
-            ->where('status', 'published')
+            ->visibleToPublic()
             ->orderBy('published_at', 'desc')
             ->paginate(9)->withQueryString()->fragment('news-list');
 
@@ -102,7 +93,7 @@ class PublicController extends Controller
 
     public function newsShow(News $news)
     {
-        abort_unless($news->status === 'published', 404);
+        abort_unless($news->isVisibleToPublic(), 404);
         $news->load(['cover', 'attachmentsMedia', 'galleryMedia', 'externalMedia']);
 
         return view('pages.content-detail', ['item' => $news, 'kind' => 'news']);
@@ -131,12 +122,7 @@ class PublicController extends Controller
         $cutoff = Carbon::today();
 
         $events = Event::with('cover')
-            ->where('status', 'published')
-            ->where(function ($query) use ($cutoff) {
-                $query->where('end_date', '>=', $cutoff)
-                    ->orWhere(fn ($query) => $query->whereNull('end_date')->where('start_date', '>=', $cutoff))
-                    ->orWhere(fn ($query) => $query->whereNull('start_date')->whereNull('end_date'));
-            })
+            ->currentAndUpcoming()
             ->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END')
             ->orderBy('start_date')
             ->paginate(9)->withQueryString()->fragment('upcoming-title');
@@ -159,9 +145,7 @@ class PublicController extends Controller
     {
         $page = PageSetting::with('heroMedia')->where('page_slug', 'galleria')->first();
         $albums = GalleryAlbum::with(['galleryMedia', 'externalMedia'])
-            ->orderByRaw('CASE WHEN section_date IS NULL THEN 1 ELSE 0 END')
-            ->orderBy('section_date', 'desc')
-            ->orderBy('created_at', 'desc')
+            ->orderedForDisplay()
             ->paginate(12)->withQueryString()->fragment('gallery-list');
 
         return view('pages.gallery', compact('page', 'albums'));

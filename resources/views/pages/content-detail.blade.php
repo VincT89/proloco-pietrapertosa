@@ -12,6 +12,12 @@
 @section('seo_description', $item->getTranslation('seo_description') ?: \Illuminate\Support\Str::limit(strip_tags($content ?? ''), 160))
 @section('content')
     <article class="content-detail wrap">
+        @if($isContentPreview ?? false)
+            <aside class="content-preview-note" aria-label="{{ app()->getLocale() === 'en' ? 'Preview' : 'Anteprima' }}">
+                <p>{{ app()->getLocale() === 'en' ? 'Preview of the last saved version. Only administrators can access this page.' : 'Anteprima dell’ultima versione salvata. Questa pagina è accessibile solo agli amministratori.' }}</p>
+                <a href="{{ $previewEditUrl }}">{{ app()->getLocale() === 'en' ? 'Back to editing' : 'Torna alla modifica' }}</a>
+            </aside>
+        @endif
         <header class="detail-header">
             <a class="detail-back" href="{{ $listUrl }}">{{ $backLabel }}</a>
             <h1>{{ $title }}</h1>
